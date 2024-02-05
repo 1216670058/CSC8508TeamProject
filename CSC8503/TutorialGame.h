@@ -6,7 +6,7 @@
 #include "GameTechVulkanRenderer.h"
 #endif
 #include "PhysicsSystem.h"
-
+#include "NavigationGrid.h"
 #include "StateGameObject.h"
 
 namespace NCL {
@@ -44,6 +44,8 @@ namespace NCL {
 			void DebugObjectMovement();
 			void LockedObjectMovement();
 
+			void  AddSceneToWorld();
+
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
@@ -65,7 +67,7 @@ namespace NCL {
 #endif
 			PhysicsSystem*		physics;
 			GameWorld*			world;
-
+			std::vector<GameObject*> scene;
 			KeyboardMouseController controller;
 
 			bool useGravity;
@@ -95,6 +97,9 @@ namespace NCL {
 			}
 
 			GameObject* objClosest = nullptr;
+
+			vector<Vector3> mazeNodes;
+			NavigationGrid* navGrid;
 		};
 	}
 }
