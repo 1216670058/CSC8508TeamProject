@@ -25,6 +25,9 @@
     <ClCompile Include="C:\Users\84251\Desktop\C++\TeamProject\TeamProject\CSC8503\Audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\8509\CSC8503\TrainObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\84251\Desktop\C++\TeamProject\TeamProject\CSC8503\GameTechRenderer.h">
