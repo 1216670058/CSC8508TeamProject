@@ -1,69 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\cmake_pch.cxx">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\cmake_pch.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\GameTechRenderer.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\GameTechRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\Main.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\NetworkedGame.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\NetworkedGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\NetworkPlayer.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\NetworkPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\StateGameObject.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\StateGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\TutorialGame.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\TutorialGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\Audio.cpp">
+    <ClCompile Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\Audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\GameTechRenderer.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\GameTechRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\NetworkedGame.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\NetworkedGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\NetworkPlayer.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\NetworkPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\StateGameObject.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\StateGameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\TutorialGame.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\TutorialGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\Audio.h">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\Audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\Debug\cmake_pch.hxx">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\Debug\cmake_pch.hxx">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\Release\cmake_pch.hxx">
+    <ClInclude Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\CMakeFiles\CSC8503.dir\Release\cmake_pch.hxx">
       <Filter>Precompile Header File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\CMakeLists.txt" />
+    <CustomBuild Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{BE106561-0079-3A57-89FA-099F3D8276A3}</UniqueIdentifier>
+      <UniqueIdentifier>{8F6B83B7-D41B-3E2D-8820-0887BD911D77}</UniqueIdentifier>
     </Filter>
     <Filter Include="Precompile Header File">
-      <UniqueIdentifier>{49A54A81-B84E-35F6-AFEF-E92CE866A199}</UniqueIdentifier>
+      <UniqueIdentifier>{1B072BE4-83F4-312A-B17C-96F3E2B01679}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{0E2D62F7-54A3-3608-A01E-C644CAD871CB}</UniqueIdentifier>
+      <UniqueIdentifier>{46F5D404-727B-3A48-9373-D12DC9D5355E}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

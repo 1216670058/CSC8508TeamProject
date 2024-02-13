@@ -17,7 +17,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{178450AB-F955-38DB-A3F8-D0AB9F1EE435}</ProjectGuid>
+    <ProjectGuid>{A50E77C8-1A2C-3544-B358-FE17961C7CE3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -68,11 +68,11 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeLists.txt">
+    <CustomBuild Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/Study/CSC8508/4/CSC8508-TeamProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\cmake\bin\cmake.exe -SF:/Study/CSC8508/4/CSC8508-TeamProject -BF:/Study/CSC8508/4/CSC8508-TeamProject --check-stamp-file F:/Study/CSC8508/4/CSC8508-TeamProject/CMakeFiles/generate.stamp
+D:\cmake\bin\cmake.exe -SF:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject -BF:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject --check-stamp-file F:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -80,12 +80,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\cmake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMake\Utils.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeCXXCompiler.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeRCCompiler.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\cmake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMake\Utils.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeCXXCompiler.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeRCCompiler.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/Study/CSC8508/4/CSC8508-TeamProject/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\cmake\bin\cmake.exe -SF:/Study/CSC8508/4/CSC8508-TeamProject -BF:/Study/CSC8508/4/CSC8508-TeamProject --check-stamp-file F:/Study/CSC8508/4/CSC8508-TeamProject/CMakeFiles/generate.stamp
+D:\cmake\bin\cmake.exe -SF:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject -BF:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject --check-stamp-file F:/Study/CSC8508/CSC8508-TeamProject/CSC8508-TeamProject/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -93,30 +93,30 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\cmake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMake\Utils.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeCXXCompiler.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeRCCompiler.cmake;F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\Study\CSC8508\4\CSC8508-TeamProject\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\cmake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\Windows.cmake;D:\cmake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMake\Utils.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeCXXCompiler.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeRCCompiler.cmake;F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\3.28.0-rc3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:\Study\CSC8508\4\CSC8508-TeamProject\ZERO_CHECK.vcxproj">
-      <Project>{453A914B-7ABF-3653-8FF3-01297CE4E972}</Project>
+    <ProjectReference Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\ZERO_CHECK.vcxproj">
+      <Project>{3B9BA179-423F-3255-ACB3-D100D3BA585E}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503\CSC8503.vcxproj">
-      <Project>{DAE0BD26-EAF3-3DD2-8F78-740C0EC0D0D3}</Project>
+    <ProjectReference Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503\CSC8503.vcxproj">
+      <Project>{C5804A20-91A2-3155-AD9B-7BA9C3631B34}</Project>
       <Name>CSC8503</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Study\CSC8508\4\CSC8508-TeamProject\CSC8503CoreClasses\CSC8503CoreClasses.vcxproj">
-      <Project>{4AF9FFF6-53CA-3645-96EA-637CBBC26600}</Project>
+    <ProjectReference Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\CSC8503CoreClasses\CSC8503CoreClasses.vcxproj">
+      <Project>{8D4BEE06-5577-34C5-9DEB-D64A8A9C1F59}</Project>
       <Name>CSC8503CoreClasses</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Study\CSC8508\4\CSC8508-TeamProject\NCLCoreClasses\NCLCoreClasses.vcxproj">
-      <Project>{3AF7F7DA-2E94-31BF-8566-D1B2CD51F9A5}</Project>
+    <ProjectReference Include="F:\Study\CSC8508\CSC8508-TeamProject\CSC8508-TeamProject\NCLCoreClasses\NCLCoreClasses.vcxproj">
+      <Project>{9FD0DD67-6D5A-3EC6-BB9A-C991166FCB9C}</Project>
       <Name>NCLCoreClasses</Name>
     </ProjectReference>
   </ItemGroup>

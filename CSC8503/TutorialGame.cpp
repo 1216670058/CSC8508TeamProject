@@ -62,7 +62,23 @@ void TutorialGame::InitialiseAssets() {
 
     basicTex = renderer->LoadTexture("checkerboard.png");
     trainTex = renderer->LoadTexture("Train.jpg");
-    basicShader = renderer->LoadShader("scene.vert", "scene.frag");
+    lightTex = renderer->LoadTexture("redstone_lamp_on.png");
+
+    lightBumpTex = renderer->LoadTexture("redstone_lamp_on_n.png");
+
+    lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
+
+    basicDayShader = renderer->LoadShader("PerPixel.vert", "PerPixelScene.frag");
+    bumpDayShader = renderer->LoadShader("Bump.vert", "BumpScene.frag");
+    specDayShader = renderer->LoadShader("Bump.vert", "SpecScene.frag");
+
+    basicNightShader = renderer->LoadShader("PerPixel.vert", "PerPixelBuffer.frag");
+    bumpNightShader  = renderer->LoadShader("Bump.vert", "BumpBuffer.frag");
+    specNightShader  = renderer->LoadShader("Bump.vert", "SpecBuffer.frag");
+
+    basicShader  = new ShaderGroup(basicDayShader, basicNightShader);
+    bumpShader   = new ShaderGroup(bumpDayShader, bumpNightShader);
+    specShader   = new ShaderGroup(specDayShader, specNightShader);
 
     InitCamera();
     InitWorld();
@@ -465,6 +481,31 @@ GameObject* TutorialGame::AddCreeperToWorld(const Vector3& position) {
     return creeper;
 }
 
+GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position) {
+    GameObject* cube = new GameObject();
+
+    AABBVolume* volume = new AABBVolume(Vector3(0.5, 0.5, 0.5));
+    cube->SetBoundingVolume((CollisionVolume*)volume);
+
+    cube->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(1, 1, 1));
+  
+    cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, lightTex, bumpShader));
+    cube->GetRenderObject()->SetBumpTexture(lightBumpTex);
+    cube->GetRenderObject()->SetSpecTexture(lightSpecTex);
+    cube->GetRenderObject()->SetEmissive(true);
+
+    cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+    cube->GetPhysicsObject()->SetInverseMass(1);
+    cube->GetPhysicsObject()->InitCubeInertia();
+
+    world->AddGameObject(cube);
+
+    return cube;
+}
+
 
 void TutorialGame::InitDefaultFloor() {
     AddFloorToWorld(Vector3(0, 0, 0));
@@ -475,6 +516,9 @@ void TutorialGame::InitGameExamples() {
     AddEnemyToWorld(Vector3(5, 5, 0));
     AddTrainToWorld(Vector3(10, 5, 0));
     AddCreeperToWorld(Vector3(15, 5, 0));
+    AddTestingLightToWorld(Vector3(10, 20, 0));
+    AddTestingLightToWorld(Vector3(30, 20, 40));
+    AddTestingLightToWorld(Vector3(60, 20, 20));
 }
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {

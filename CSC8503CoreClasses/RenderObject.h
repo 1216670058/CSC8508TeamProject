@@ -14,8 +14,8 @@ namespace NCL {
 		class RenderObject
 		{
 		public:
-			RenderObject(Transform* parentTransform, Mesh* mesh, Texture* tex, Shader* shader, bool isOBJ = false);
-			RenderObject(Transform* parentTransform, OBJMesh* mesh, Texture* tex, Shader* shader, bool isOBJ = true);
+			RenderObject(Transform* parentTransform, Mesh* mesh, Texture* tex, ShaderGroup* shader, bool isOBJ = false);
+			RenderObject(Transform* parentTransform, OBJMesh* mesh, Texture* tex, ShaderGroup* shader, bool isOBJ = true);
 			~RenderObject();
 
 			void SetDefaultTexture(Texture* t) {
@@ -24,6 +24,20 @@ namespace NCL {
 
 			Texture* GetDefaultTexture() const {
 				return texture;
+			}
+
+			Texture* GetBumpTexture() const {
+				return bumpTexture;
+			}
+			void SetBumpTexture(Texture* b) {
+				bumpTexture = b;
+			}
+
+			Texture* GetSpecTexture() const {
+				return specTexture;
+			}
+			void SetSpecTexture(Texture* s) {
+				specTexture = s;
 			}
 
 			Mesh*	GetMesh() const {
@@ -42,8 +56,8 @@ namespace NCL {
 				return transform;
 			}
 
-			Shader*		GetShader() const {
-				return shader;
+			ShaderGroup*	GetShaderGroup() const {
+				return shaderGroup;
 			}
 
 			void SetColour(const Vector4& c) {
@@ -54,14 +68,24 @@ namespace NCL {
 				return colour;
 			}
 
+			void SetEmissive(bool e) {
+				emissive = e;
+			}
+			int GetEmissive() const {
+				return emissive;
+			}
+
 		protected:
-			Mesh*		mesh;
-			OBJMesh*    objMesh;
-			Texture*	texture;
-			Shader*		shader;
-			Transform*	transform;
-			Vector4		colour;
-			bool isOBJ;
+			Mesh*		    mesh;
+			OBJMesh*        objMesh;
+			Texture*	    texture;
+			Texture*        bumpTexture;
+			Texture*        specTexture;
+			ShaderGroup*	shaderGroup;
+			Transform*	    transform;
+			Vector4		    colour;
+			bool            isOBJ;
+			bool            emissive;
 		};
 	}
 }

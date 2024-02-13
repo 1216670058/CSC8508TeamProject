@@ -56,6 +56,7 @@ namespace NCL {
             GameObject* AddEnemyToWorld(const Vector3& position);
             GameObject* AddTrainToWorld(const Vector3& position);
             GameObject* AddCreeperToWorld(const Vector3& position);
+            GameObject* AddTestingLightToWorld(const Vector3& position);
 
             StateGameObject* AddStateObjectToWorld(const Vector3& position);
             StateGameObject* testStateObject = nullptr;
@@ -87,7 +88,23 @@ namespace NCL {
 
             Texture* basicTex = nullptr;
             Texture* trainTex = nullptr;
-            Shader* basicShader = nullptr;
+            Texture* lightTex = nullptr;
+
+            Texture* lightBumpTex = nullptr;
+
+            Texture* lightSpecTex = nullptr;
+
+            Shader* basicDayShader = nullptr;
+            Shader* bumpDayShader = nullptr;
+            Shader* specDayShader = nullptr;
+
+            Shader* basicNightShader = nullptr;
+            Shader* bumpNightShader = nullptr;
+            Shader* specNightShader = nullptr;
+
+            ShaderGroup* basicShader;
+            ShaderGroup* bumpShader;
+            ShaderGroup* specShader;
 
             //Coursework Meshes
             Mesh* charMesh = nullptr;

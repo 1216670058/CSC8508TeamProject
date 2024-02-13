@@ -3,6 +3,7 @@
 #include "OGLShader.h"
 #include "OGLTexture.h"
 #include "OGLMesh.h"
+#include "Light.h"
 
 #include "GameWorld.h"
 
@@ -28,27 +29,62 @@ namespace NCL {
 
 			void RenderFrame()	override;
 
-			OGLShader*		defaultShader;
+			OGLShader*	defaultShader;
 
 			GameWorld&	gameWorld;
+
+			void InitBuffers();
+			void ClearAllBuffers();
+
+			void GenerateShadowTexture();
+			void GenerateCombinedTexture();
+			void GenerateScreenTexture(GLuint& into, bool depth = false);
 
 			void BuildObjectList();
 			void SortObjectList();
 			void RenderShadowMap();
-			void RenderCamera(); 
+			void RenderCamera();
 			void RenderSkybox();
+			void DrawLightBuffer();
+
+			void SetShaderLight(const Light& l);
+			void DrawPointLights();
+
+			void CombineBuffers();
 
 			void LoadSkybox();
 
 			void SetDebugStringBufferSizes(size_t newVertCount);
 			void SetDebugLineBufferSizes(size_t newVertCount);
 
+			void Draw(Mesh* mesh, bool multilayer = true);
+
 			vector<const RenderObject*> activeObjects;
+
+			GLuint worldFBO;
+			GLuint worldColourTex; 
+			GLuint worldNormalTex; 
+			GLuint worldSpecTex; 
+			GLuint worldEmisTex; 
+			GLuint worldDepthTex; 
+			GLuint worldShadowTex;
+
+			GLuint lightFBO;
+			GLuint lightDiffuseTex; 
+			GLuint lightSpecularTex;
+
+			GLuint combinedFBO;
+			GLuint combinedTex;
+
+			GLuint processFBO;
+			GLuint processTex;
 
 			OGLShader*  debugShader;
 			OGLShader*  skyboxShader;
 			OGLMesh*	skyboxMesh;
 			GLuint		skyboxTex;
+			GLuint		skyboxBufferTex;
+			GLuint      skyboxFBO;
 
 			//shadow mapping things
 			OGLShader*	shadowShader;
@@ -56,9 +92,16 @@ namespace NCL {
 			GLuint		shadowFBO;
 			Matrix4     shadowMatrix;
 
-			Vector4		lightColour;
-			float		lightRadius;
-			Vector3		lightPosition;
+			Light*      sunLight;
+			Light*      redstoneLight1;
+			Light*      redstoneLight2;
+			Light*      redstoneLight3;
+
+			OGLShader*  pointLightShader;
+			Mesh*       sphere;
+			Mesh*       quad;
+
+			OGLShader*  combineShader;
 
 			//Debug data storage things
 			vector<Vector3> debugLineData;
@@ -76,6 +119,8 @@ namespace NCL {
 			GLuint textColourVBO;
 			GLuint textTexVBO;
 			size_t textCount;
+
+			bool   isNight;
 		};
 	}
 }
