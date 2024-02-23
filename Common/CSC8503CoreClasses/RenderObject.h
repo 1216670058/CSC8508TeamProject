@@ -71,13 +71,6 @@ namespace NCL {
                 shaderGroup = s;
             }
 
-            void SetMaterial(MeshMaterial* m) {
-                material = m;
-            }
-            MeshMaterial* GetMaterial() const {
-                return material;
-            }
-
             void SetTextures(vector<GLuint> t) {
                 textures = t;
             }
@@ -133,7 +126,6 @@ namespace NCL {
             Texture* bumpTexture;
             Texture* specTexture;
             ShaderGroup* shaderGroup;
-            MeshMaterial* material;
             vector<GLuint> textures;
             vector<GLuint> bumpTextures;
             Transform* transform;

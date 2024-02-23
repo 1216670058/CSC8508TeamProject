@@ -30,12 +30,18 @@ set(GameObjects
         "TrainCarriage.h"
         "PlayerObject.h"
         "TreeObject.h"
+        "AnimalObject.h"
+        "DroneObject.h"
+        "RobotObject.h"
         "CollectableObject.cpp"
         "PickaxeObject.cpp"
         "PlayerObject.cpp"
         "TrainObject.cpp"
         "TrainCarriage.cpp"
         "TreeObject.cpp"
+        "AnimalObject.cpp"
+        "DroneObject.cpp"
+        "RobotObject.cpp"
 )
 
 if (USE_VULKAN)

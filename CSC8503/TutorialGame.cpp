@@ -75,6 +75,9 @@ void TutorialGame::InitialiseAssets() {
     //assassinMesh = renderer->LoadMesh("Assassin.msh");
     //girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
+    mooseMesh = renderer->LoadMesh("Moose.msh");
+    robotMesh = renderer->LoadMesh("Robot.msh");
+    droneMesh = renderer->LoadMesh("Drone.msh");
 
     meshes.push_back(maleMesh);
     //meshes.push_back(femaleMesh);
@@ -101,18 +104,21 @@ void TutorialGame::InitialiseAssets() {
     specDayShader = renderer->LoadShader("Bump.vert", "SpecScene.frag");
     skinningPerPixelDayShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelScene.frag");
     skinningBumpDayShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpScene.frag");
+    skinningBumpDayShader2 = renderer->LoadShader("SkinningBump.vert", "BumpScene.frag");
 
     basicNightShader = renderer->LoadShader("PerPixel.vert", "PerPixelBuffer.frag");
     bumpNightShader = renderer->LoadShader("Bump.vert", "BumpBuffer.frag");
     specNightShader = renderer->LoadShader("Bump.vert", "SpecBuffer.frag");
     skinningPerPixelNightShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelBuffer.frag");
     skinningBumpNightShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpBuffer.frag");
+    skinningBumpNightShader2 = renderer->LoadShader("SkinningBump.vert", "BumpBuffer.frag");
 
     basicShader = new ShaderGroup(basicDayShader, basicNightShader);
     bumpShader = new ShaderGroup(bumpDayShader, bumpNightShader);
     specShader = new ShaderGroup(specDayShader, specNightShader);
     skinningPerPixelShader = new ShaderGroup(skinningPerPixelDayShader, skinningPerPixelNightShader);
     skinningBumpShader = new ShaderGroup(skinningBumpDayShader, skinningBumpNightShader);
+    skinningBumpShader2 = new ShaderGroup(skinningBumpDayShader2, skinningBumpNightShader2);
 
     shaders.push_back(skinningBumpShader);
     shaders.push_back(skinningBumpShader);
@@ -216,6 +222,51 @@ void TutorialGame::InitMaterials() {
     //    smurfBumpTextures.emplace_back(texID2);
     //}
 
+    mooseMaterial = new MeshMaterial("Moose.mat");
+    for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            mooseMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        mooseTextures.emplace_back(texID);
+    }
+
+    robotMaterial = new MeshMaterial("Robot.mat");
+    for (int i = 0; i < robotMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            robotMaterial->GetMaterialForLayer(i);
+
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        robotTextures.emplace_back(texID);
+
+        matEntry->GetEntry("Bump", &filename);
+        string path2 = Assets::TEXTUREDIR + *filename;
+        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        robotBumpTextures.emplace_back(texID2);
+    }
+
+    droneMaterial = new MeshMaterial("Drone.mat");
+    for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            droneMaterial->GetMaterialForLayer(i);
+
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        droneTextures.emplace_back(texID);
+    }
+
     textures.push_back(maleTextures);
     //textures.push_back(femaleTextures);
     //textures.push_back(assassinTextures);
@@ -279,6 +330,30 @@ void TutorialGame::InitAnimations() {
     //smurfAnimation->SetAnim5(new MeshAnimation("Smurf.anm"));
     //smurfAnimation->SetActiveAnim(smurfAnimation->GetAnim1());
     //smurfAnimation->SetIdle(false);
+
+    mooseAnimation = new AnimationObject();
+    mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim2(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim3(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim4(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
+
+    robotAnimation = new AnimationObject();
+    robotAnimation->SetAnim1(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim2(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim3(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim4(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim5(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetActiveAnim(robotAnimation->GetAnim1());
+
+    droneAnimation = new AnimationObject();
+    droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim3(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
 
     animations.push_back(maleAnimation);
     //animations.push_back(femaleAnimation);
@@ -707,7 +782,6 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 
     player->SetRenderObject(new RenderObject(&player->GetTransform(), maleMesh, nullptr, skinningBumpShader, 3));
     player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-    player->GetRenderObject()->SetMaterial(maleMaterial);
     player->GetRenderObject()->SetAnimationObject(maleAnimation);
     player->GetRenderObject()->SetTextures(maleTextures);
     player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
@@ -768,10 +842,10 @@ CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)
         groundObject->SetRenderObject(new RenderObject(&object->GetTransform(), sphereMesh, nullptr, basicShader));
         break;
     case 2:
-        //�����Ʒ
+
         break;
     default:
-        //�����Ʒ
+
         break;
     }
     world->AddGameObject(object);
@@ -791,8 +865,9 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
         .SetPosition(pickaxe->findNearestGridCenter(position))
         .SetScale(Vector3(1, 1, 1));
 
-    pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), cubeMesh, basicTex, basicShader));
+    pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), cubeMesh, nullptr, basicShader));
     pickaxe->SetPhysicsObject(new PhysicsObject(&pickaxe->GetTransform(), pickaxe->GetBoundingVolume()));
+    pickaxe->GetRenderObject()->SetColour(Debug::CYAN);
     pickaxe->GetPhysicsObject()->SetGravity(false);
     pickaxe->GetPhysicsObject()->SetResolve(false);
 
@@ -802,6 +877,76 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     world->AddGameObject(pickaxe);
 
     return pickaxe;
+}
+
+AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
+    AnimalObject* moose = new AnimalObject();
+    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    moose->SetBoundingVolume((CollisionVolume*)volume);
+
+    moose->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(3, 3, 3));
+
+    moose->SetRenderObject(new RenderObject(&moose->GetTransform(), mooseMesh, nullptr, skinningPerPixelShader, 3));
+    moose->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+    moose->GetRenderObject()->SetAnimationObject(mooseAnimation);
+    moose->GetRenderObject()->SetTextures(mooseTextures);
+
+    moose->SetPhysicsObject(new PhysicsObject(&moose->GetTransform(), moose->GetBoundingVolume()));
+    moose->GetPhysicsObject()->SetInverseMass(1);
+    moose->GetPhysicsObject()->InitCubeInertia();
+
+    world->AddGameObject(moose);
+
+    return moose;
+}
+
+RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
+    RobotObject* robot = new RobotObject();
+    AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
+    robot->SetBoundingVolume((CollisionVolume*)volume);
+
+    robot->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(2, 2, 2));
+
+    robot->SetRenderObject(new RenderObject(&robot->GetTransform(), robotMesh, nullptr, skinningBumpShader2, 3));
+    robot->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+    robot->GetRenderObject()->SetAnimationObject(robotAnimation);
+    robot->GetRenderObject()->SetTextures(robotTextures);
+    robot->GetRenderObject()->SetBumpTextures(robotBumpTextures);
+
+    robot->SetPhysicsObject(new PhysicsObject(&robot->GetTransform(), robot->GetBoundingVolume()));
+    robot->GetPhysicsObject()->SetInverseMass(1);
+    robot->GetPhysicsObject()->InitCubeInertia();
+
+    world->AddGameObject(robot);
+
+    return robot;
+}
+
+DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
+    DroneObject* drone = new DroneObject();
+    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    drone->SetBoundingVolume((CollisionVolume*)volume);
+
+    drone->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(3, 3, 3));
+
+    drone->SetRenderObject(new RenderObject(&drone->GetTransform(), droneMesh, nullptr, skinningPerPixelShader, 3));
+    drone->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+    drone->GetRenderObject()->SetAnimationObject(droneAnimation);
+    drone->GetRenderObject()->SetTextures(droneTextures);
+
+    drone->SetPhysicsObject(new PhysicsObject(&drone->GetTransform(), drone->GetBoundingVolume()));
+    drone->GetPhysicsObject()->SetInverseMass(1);
+    drone->GetPhysicsObject()->InitCubeInertia();
+
+    world->AddGameObject(drone);
+
+    return drone;
 }
 
 //CollectableObject* TutorialGame::AddRailToWorld(int direction,Vector3 RailPosition,Vector3 lastRailPosition)
@@ -831,8 +976,11 @@ void TutorialGame::InitGameExamples() {
     AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
     player = AddPlayerToWorld(Vector3(20, 5, 0));
-    pickaxe = AddPickaxeToWorld(Vector3(20,5,20));
+    pickaxe = AddPickaxeToWorld(Vector3(20 ,5, 20));
     AddTreeToWorld(Vector3(30, 3, 0));
+    AddMooseToWorld(Vector3(40, 3, 0));
+    AddRobotToWorld(Vector3(50, 3, 0));
+    AddDroneToWorld(Vector3(60, 3, 0));
 }
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
