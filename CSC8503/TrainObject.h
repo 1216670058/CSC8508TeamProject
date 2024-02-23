@@ -19,7 +19,7 @@ namespace NCL::CSC8503 {
 
     public:
         TrainObject();
-        TrainObject(GameWorld* w, OBJMesh* mesh, ShaderGroup* shader);
+        TrainObject(GameWorld* w);
         ~TrainObject();
 
         void OnCollisionBegin(GameObject* otherObject) override;
@@ -36,16 +36,17 @@ namespace NCL::CSC8503 {
 
         void UpdateOrientation(Vector3 direction);
 
-    public:
+        void UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader);
+
+    protected:
         //0  1  2 3 up down left right
         std::vector< std::pair<Vector3, int> > path;
         TrainCarriage* trainCarriage;
         int trainIndex = 0;
         GameWorld* world;
-        OBJMesh* trainMesh = nullptr;
+        Mesh* carriageMesh = nullptr;
+        Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
-        OBJMesh* carriageMesh = nullptr;
-        Shader* carriageShader = nullptr;
     };
 }
 

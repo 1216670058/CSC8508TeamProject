@@ -14,7 +14,13 @@
 #include "TrainObject.h"
 #include "PlayerObject.h"
 #include "TreeObject.h"
+#include "RockObject.h"
 #include "PickaxeObject.h"
+#include "AxeObject.h"
+#include "BucketObject.h"
+#include "PlankObject.h"
+#include "StoneObject.h"
+#include "RailObject.h"
 #include "AnimalObject.h"
 #include "RobotObject.h"
 #include "DroneObject.h"
@@ -77,8 +83,14 @@ namespace NCL {
             GameObject* AddTestingLightToWorld(const Vector3& position, const Vector4& colour);
             PlayerObject* AddPlayerToWorld(const Vector3& position);
             TreeObject* AddTreeToWorld(const Vector3& position);
+            RockObject* AddRockToWorld(const Vector3& position);
             CollectableObject* AddCollectableObjectToGround(int ID);
             PickaxeObject* AddPickaxeToWorld(const Vector3& position);
+            AxeObject* AddAxeToWorld(const Vector3& position);
+            BucketObject* AddBucketToWorld(const Vector3& position);
+            PlankObject* AddPlankToWorld(const Vector3& position);
+            StoneObject* AddStoneToWorld(const Vector3& position);
+            RailObject* AddRailToWorld(const Vector3& position);
             AnimalObject* AddMooseToWorld(const Vector3& position);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);
@@ -117,38 +129,7 @@ namespace NCL {
             Mesh* capsuleMesh = nullptr;
             Mesh* cubeMesh = nullptr;
             Mesh* sphereMesh = nullptr;
-
-            Texture* basicTex = nullptr;
-            Texture* woodTex = nullptr;
-            Texture* floorBumpTex = nullptr;
-            Texture* trainTex = nullptr;
-            Texture* lightTex = nullptr;
-
-            Texture* lightBumpTex = nullptr;
-
-            Texture* lightSpecTex = nullptr;
-
-            Shader* basicDayShader = nullptr;
-            Shader* bumpDayShader = nullptr;
-            Shader* specDayShader = nullptr;
-            Shader* skinningPerPixelDayShader = nullptr;
-            Shader* skinningBumpDayShader = nullptr;
-            Shader* skinningBumpDayShader2 = nullptr;
-
-            Shader* basicNightShader = nullptr;
-            Shader* bumpNightShader = nullptr;
-            Shader* specNightShader = nullptr;
-            Shader* skinningPerPixelNightShader = nullptr;
-            Shader* skinningBumpNightShader = nullptr;
-            Shader* skinningBumpNightShader2 = nullptr;
-
-            ShaderGroup* basicShader = nullptr;
-            ShaderGroup* bumpShader = nullptr;
-            ShaderGroup* specShader = nullptr;
-            ShaderGroup* skinningPerPixelShader = nullptr;
-            ShaderGroup* skinningBumpShader = nullptr;
-            ShaderGroup* skinningBumpShader2 = nullptr;
-
+          
             //Coursework Meshes
             Mesh* charMesh = nullptr;
             Mesh* enemyMesh = nullptr;
@@ -162,11 +143,44 @@ namespace NCL {
             Mesh* mooseMesh = nullptr;
             Mesh* robotMesh = nullptr;
             Mesh* droneMesh = nullptr;
+            Mesh* carriageMesh = nullptr;
+            Mesh* treeMesh = nullptr;
+            Mesh* rockMesh = nullptr;
+            Mesh* pickaxeMesh = nullptr;
+            Mesh* axeMesh = nullptr;
+            Mesh* bucketMesh = nullptr;
+            Mesh* plankMesh = nullptr;
+            Mesh* stoneMesh = nullptr;
+            Mesh* railMesh = nullptr;
 
             OBJMesh* trainMesh = nullptr;
             OBJMesh* creeperMesh = nullptr;
-            OBJMesh* pickaxeMesh = nullptr;
-            OBJMesh* axeMesh = nullptr;
+
+            Texture* basicTex = nullptr;
+            Texture* woodTex = nullptr;
+            Texture* floorBumpTex = nullptr;
+            Texture* trainTex = nullptr;
+            Texture* carriageTex = nullptr;
+            Texture* treeTex = nullptr;
+            Texture* rockTex = nullptr;
+            Texture* lightTex = nullptr;
+            Texture* pickaxeTex = nullptr;
+            Texture* axeTex = nullptr;
+            Texture* bucketTex = nullptr;
+            Texture* plankTex = nullptr;
+            Texture* stoneTex = nullptr;
+            Texture* railTex = nullptr;
+
+            Texture* rockBumpTex = nullptr;
+            Texture* lightBumpTex = nullptr;
+            Texture* pickaxeBumpTex = nullptr;
+            Texture* axeBumpTex = nullptr;
+            Texture* bucketBumpTex = nullptr;
+            Texture* plankBumpTex = nullptr;
+            Texture* stoneBumpTex = nullptr;
+            Texture* railBumpTex = nullptr;
+
+            Texture* lightSpecTex = nullptr;
 
             MeshMaterial* maleMaterial = nullptr;
             MeshMaterial* femaleMaterial = nullptr;
@@ -201,6 +215,27 @@ namespace NCL {
             AnimationObject* robotAnimation = nullptr;
             AnimationObject* droneAnimation = nullptr;
 
+            Shader* basicDayShader = nullptr;
+            Shader* bumpDayShader = nullptr;
+            Shader* specDayShader = nullptr;
+            Shader* skinningPerPixelDayShader = nullptr;
+            Shader* skinningBumpDayShader = nullptr;
+            Shader* skinningBumpDayShader2 = nullptr;
+
+            Shader* basicNightShader = nullptr;
+            Shader* bumpNightShader = nullptr;
+            Shader* specNightShader = nullptr;
+            Shader* skinningPerPixelNightShader = nullptr;
+            Shader* skinningBumpNightShader = nullptr;
+            Shader* skinningBumpNightShader2 = nullptr;
+
+            ShaderGroup* basicShader = nullptr;
+            ShaderGroup* bumpShader = nullptr;
+            ShaderGroup* specShader = nullptr;
+            ShaderGroup* skinningPerPixelShader = nullptr;
+            ShaderGroup* skinningBumpShader = nullptr;
+            ShaderGroup* skinningBumpShader2 = nullptr;
+
             vector<Mesh*> meshes;
             vector<vector<GLuint>> textures;
             vector<vector<GLuint>> bumpTextures;
@@ -225,6 +260,8 @@ namespace NCL {
             CollectableObject* groundObject = nullptr;
 
             PickaxeObject* pickaxe = nullptr;
+            AxeObject* axe = nullptr;
+            BucketObject* bucket = nullptr;
 
             vector<Vector3> mazeNodes;
             NavigationGrid* navGrid;

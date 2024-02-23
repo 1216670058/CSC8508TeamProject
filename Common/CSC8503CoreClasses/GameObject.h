@@ -14,6 +14,11 @@ namespace NCL::CSC8503 {
     class RenderObject;
     class PhysicsObject;
 
+    struct GridCenter {
+        int x;
+        int y;
+    };
+
     class GameObject {
     public:
         GameObject(const std::string& name = "");
@@ -115,6 +120,9 @@ namespace NCL::CSC8503 {
             return typeID;
         }
 
+        double EuclideanDistance(float x1, float y1, float x2, float y2);
+        Vector3 FindNearestGridCenter(const Vector3& position);
+
     protected:
         Transform			transform;
 
@@ -129,6 +137,11 @@ namespace NCL::CSC8503 {
         int			worldID;
         int         typeID;
         std::string	name;
+
+        int GRID_SIZE_X = 10;
+        int GRID_SIZE_Y = 10;
+        float GRID_CENTER_X = 5.0f;
+        float  GRID_CENTER_Y = 5.0f;
 
         Vector3 broadphaseAABB;
     };
