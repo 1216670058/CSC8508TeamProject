@@ -225,7 +225,7 @@ namespace NCL {
 
             vector<Vector3> mazeNodes;
             NavigationGrid* navGrid;
-           
+
             static TutorialGame* instance;
         };
     }

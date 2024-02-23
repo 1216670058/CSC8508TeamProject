@@ -68,8 +68,8 @@ void TutorialGame::InitialiseAssets() {
     capsuleMesh = renderer->LoadMesh("capsule.msh");
     trainMesh = renderer->LoadOBJMesh("Train.obj");
     creeperMesh = renderer->LoadOBJMesh("Creeper.obj");
-   // pickaxeMesh = renderer->LoadOBJMesh("PickAxe.obj");
-   // axeMesh = renderer->LoadOBJMesh("Axe.obj");
+    // pickaxeMesh = renderer->LoadOBJMesh("PickAxe.obj");
+    // axeMesh = renderer->LoadOBJMesh("Axe.obj");
     maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     //assassinMesh = renderer->LoadMesh("Assassin.msh");
@@ -441,6 +441,7 @@ void TutorialGame::UpdateGame(float dt) {
     world->UpdateWorld(dt);
     renderer->Update(dt);
     physics->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
 
     if (testStateObject) {
         //std::cout<<"debug"<<std::endl;
@@ -466,6 +467,10 @@ void TutorialGame::UpdateKeys() {
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
         renderer->ToggleNight();
+    }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F4)) {
+        renderer->GetUI()->ToggleShowUIdemo();
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
