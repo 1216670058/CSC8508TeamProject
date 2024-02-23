@@ -5,7 +5,7 @@ using namespace NCL::CSC8503;
 
 void CollectableObject::Update(float dt) {
     if (putDown) {
-        physicsObject->AddTorque(Vector3(10, 10, 0));
+        physicsObject->SetAngularVelocity(Vector3(10, 10, 0));
     }
     else {
         Vector3 playerPosition = player->GetTransform().GetPosition();

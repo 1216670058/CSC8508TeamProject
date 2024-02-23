@@ -15,6 +15,9 @@
 #include "PlayerObject.h"
 #include "TreeObject.h"
 #include "PickaxeObject.h"
+#include "AnimalObject.h"
+#include "RobotObject.h"
+#include "DroneObject.h"
 #include <cmath>
 #include <limits>
 
@@ -74,6 +77,9 @@ namespace NCL {
             TreeObject* AddTreeToWorld(const Vector3& position);
             CollectableObject* AddCollectableObjectToGround(int ID);
             PickaxeObject* AddPickaxeToWorld(const Vector3& position);
+            AnimalObject* AddMooseToWorld(const Vector3& position);
+            RobotObject* AddRobotToWorld(const Vector3& position);
+            DroneObject* AddDroneToWorld(const Vector3& position);
 
             CollectableObject* CreateObject(int ID);
 
@@ -124,18 +130,21 @@ namespace NCL {
             Shader* specDayShader = nullptr;
             Shader* skinningPerPixelDayShader = nullptr;
             Shader* skinningBumpDayShader = nullptr;
+            Shader* skinningBumpDayShader2 = nullptr;
 
             Shader* basicNightShader = nullptr;
             Shader* bumpNightShader = nullptr;
             Shader* specNightShader = nullptr;
             Shader* skinningPerPixelNightShader = nullptr;
             Shader* skinningBumpNightShader = nullptr;
+            Shader* skinningBumpNightShader2 = nullptr;
 
             ShaderGroup* basicShader = nullptr;
             ShaderGroup* bumpShader = nullptr;
             ShaderGroup* specShader = nullptr;
             ShaderGroup* skinningPerPixelShader = nullptr;
             ShaderGroup* skinningBumpShader = nullptr;
+            ShaderGroup* skinningBumpShader2 = nullptr;
 
             //Coursework Meshes
             Mesh* charMesh = nullptr;
@@ -147,6 +156,9 @@ namespace NCL {
             Mesh* assassinMesh = nullptr;
             Mesh* girlMesh = nullptr;
             Mesh* smurfMesh = nullptr;
+            Mesh* mooseMesh = nullptr;
+            Mesh* robotMesh = nullptr;
+            Mesh* droneMesh = nullptr;
 
             OBJMesh* trainMesh = nullptr;
             OBJMesh* creeperMesh = nullptr;
@@ -158,23 +170,33 @@ namespace NCL {
             MeshMaterial* assassinMaterial = nullptr;
             MeshMaterial* girlMaterial = nullptr;
             MeshMaterial* smurfMaterial = nullptr;
+            MeshMaterial* mooseMaterial = nullptr;
+            MeshMaterial* robotMaterial = nullptr;
+            MeshMaterial* droneMaterial = nullptr;
 
             vector<GLuint> maleTextures;
             vector<GLuint> femaleTextures;
             vector<GLuint> assassinTextures;
             vector<GLuint> girlTextures;
             vector<GLuint> smurfTextures;
+            vector<GLuint> mooseTextures;
+            vector<GLuint> robotTextures;
+            vector<GLuint> droneTextures;
 
             vector<GLuint> maleBumpTextures;
             vector<GLuint> femaleBumpTextures;
             vector<GLuint> girlBumpTextures;
             vector<GLuint> smurfBumpTextures;
+            vector<GLuint> robotBumpTextures;
 
             AnimationObject* maleAnimation = nullptr;
             AnimationObject* femaleAnimation = nullptr;
             AnimationObject* assassinAnimation = nullptr;
             AnimationObject* girlAnimation = nullptr;
             AnimationObject* smurfAnimation = nullptr;
+            AnimationObject* mooseAnimation = nullptr;
+            AnimationObject* robotAnimation = nullptr;
+            AnimationObject* droneAnimation = nullptr;
 
             vector<Mesh*> meshes;
             vector<vector<GLuint>> textures;

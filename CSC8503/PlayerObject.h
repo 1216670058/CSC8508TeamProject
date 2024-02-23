@@ -21,6 +21,7 @@ namespace NCL::CSC8503 {
     public:
         PlayerObject(std::string name) {
             this->name = name;
+            typeID = 1;
         };
         ~PlayerObject() {};
 
