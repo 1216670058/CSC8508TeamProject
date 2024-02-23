@@ -1,6 +1,6 @@
 #version 400 core
 
-layout (location = 0) out vec4 fragColor;
+out vec4 fragColor;
 layout (location = 5) out vec4 BrightColor;
 
 uniform vec4 		objectColour;
@@ -34,7 +34,7 @@ void main(void)
 
 	//diffuse
 	vec3  lightDir = normalize ( lightPos - IN.worldPos );
-	float lambert  = max (dot ( lightDir , IN.normal), 0.0) * 0.9; 
+	float lambert  = max (dot ( lightDir , IN.normal), 0.0); 
 	//specular
 	vec3 viewDir = normalize ( cameraPos - IN.worldPos );
 	vec3 halfDir = normalize ( lightDir + viewDir );
@@ -45,26 +45,32 @@ void main(void)
     float dist = length(lightPos - IN.worldPos);
 	float attenuation = 1.0 - clamp ( (dist* dist)/ (lightRadius*lightRadius) , 0.0 , 1.0);
 	
-	vec4 albedo = IN.colour;
+	vec4 color = IN.colour;
 	if(hasTexture) {
-	 albedo *= texture(mainTex, IN.texCoord);
+	 color *= texture(mainTex, IN.texCoord);
 	}
 
-	albedo.rgb = pow(albedo.rgb, vec3(2.2f));
+	vec3 ambient =  color.rgb * 0.05f; //ambient
 	
-	fragColor.rgb = albedo.rgb * 0.05f; //ambient
+	vec3 lighting = vec3(0.0);
 	
-	fragColor.rgb += albedo.rgb * lightColour.rgb * lambert * shadow * attenuation; //diffuse light
+	lighting += lightColour.rgb * lambert ; //diffuse light
 	
-	fragColor.rgb += lightColour.rgb * sFactor * shadow * attenuation; //specular light
+	lighting += lightColour.rgb * sFactor ; //specular light
 	
-	fragColor.rgb = pow(fragColor.rgb, vec3(1.0/2.2f));
+	lighting*= (shadow * attenuation);
+
+	color.rgb *=(ambient+lighting);
 	
-	float brightness = dot(fragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	vec3 result = vec3(1.0) - exp(-color.rgb * 1.2 ); //hdr
+	
+	float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722)); //bloom
 	if(brightness > 1.0)
-		BrightColor = vec4(fragColor.rgb, 1.0);
+		BrightColor = vec4(color.rgb, color.a);
 	else
-		BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+		BrightColor = vec4(result, color.a);
 	
-	fragColor.a = albedo.a;
+	fragColor.rgb = pow(result, vec3(1.0/2.2f)); //gamma
+		
+	fragColor.a = color.a;
 }

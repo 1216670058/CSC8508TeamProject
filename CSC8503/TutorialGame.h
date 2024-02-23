@@ -117,7 +117,8 @@ namespace NCL {
             Mesh* sphereMesh = nullptr;
 
             Texture* basicTex = nullptr;
-            Texture* floorTex = nullptr;
+            Texture* woodTex = nullptr;
+            Texture* floorBumpTex = nullptr;
             Texture* trainTex = nullptr;
             Texture* lightTex = nullptr;
 

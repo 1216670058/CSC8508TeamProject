@@ -87,7 +87,8 @@ void TutorialGame::InitialiseAssets() {
 
     std::cout << std::endl << "--------Loading Textures--------" << std::endl;
     basicTex = renderer->LoadTexture("checkerboard.png");
-    floorTex = renderer->LoadTexture("wood.png");
+    woodTex = renderer->LoadTexture("wood.png");
+    floorBumpTex = renderer->LoadTexture("grassbump.png");
     trainTex = renderer->LoadTexture("Train.jpg");
     lightTex = renderer->LoadTexture("redstone_lamp_on.png");
 
@@ -226,7 +227,7 @@ void TutorialGame::InitMaterials() {
     for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
         const MeshMaterialEntry* matEntry =
             mooseMaterial->GetMaterialForLayer(i);
-    
+
         const string* filename = nullptr;
         matEntry->GetEntry("Diffuse", &filename);
         string path = Assets::TEXTUREDIR + *filename;
@@ -629,7 +630,11 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
         .SetScale(floorSize * 2)
         .SetPosition(position);
 
-    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, floorTex, basicShader));
+    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, woodTex, basicShader));
+    //OGLRenderer::SetTextureRepeating(dynamic_cast<OGLTexture*>(floorTex)->GetObjectID(), 1);
+    //OGLRenderer::SetTextureRepeating(dynamic_cast<OGLTexture*>(floorBumpTex)->GetObjectID(), 1);
+    //floor->GetRenderObject()->SetBumpTexture(floorBumpTex);
+    //floor->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
     floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
     floor->GetPhysicsObject()->SetInverseMass(0);
@@ -672,7 +677,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
         .SetPosition(position)
         .SetScale(dimensions * 2);
 
-    cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
+    cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, woodTex, basicShader));
     cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
     cube->GetPhysicsObject()->SetInverseMass(inverseMass);
@@ -981,7 +986,7 @@ void TutorialGame::InitGameExamples() {
     AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
     player = AddPlayerToWorld(Vector3(20, 5, 0));
-    pickaxe = AddPickaxeToWorld(Vector3(20 ,5, 20));
+    pickaxe = AddPickaxeToWorld(Vector3(20, 5, 20));
     AddTreeToWorld(Vector3(30, 3, 0));
     AddMooseToWorld(Vector3(40, 3, 0));
     AddRobotToWorld(Vector3(50, 3, 0));
