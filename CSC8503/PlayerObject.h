@@ -59,8 +59,7 @@ namespace NCL::CSC8503 {
         Vector3 GetFace() {
             return face;
         }
-        void playermovement();
-        void cuttree();
+        void PlayerMovement();
 
     protected:
         int index;
