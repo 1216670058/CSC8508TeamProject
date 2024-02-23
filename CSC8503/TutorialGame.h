@@ -71,6 +71,8 @@ namespace NCL {
             void AddSceneToWorld();
             void HoldObject();
 
+            void CutTree();
+
             GameObject* AddFloorToWorld(const Vector3& position);
             GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
             GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
@@ -127,6 +129,7 @@ namespace NCL {
             Mesh* capsuleMesh = nullptr;
             Mesh* cubeMesh = nullptr;
             Mesh* sphereMesh = nullptr;
+          
             //Coursework Meshes
             Mesh* charMesh = nullptr;
             Mesh* enemyMesh = nullptr;
@@ -154,7 +157,8 @@ namespace NCL {
             OBJMesh* creeperMesh = nullptr;
 
             Texture* basicTex = nullptr;
-            Texture* floorTex = nullptr;
+            Texture* woodTex = nullptr;
+            Texture* floorBumpTex = nullptr;
             Texture* trainTex = nullptr;
             Texture* carriageTex = nullptr;
             Texture* treeTex = nullptr;
@@ -261,7 +265,7 @@ namespace NCL {
 
             vector<Vector3> mazeNodes;
             NavigationGrid* navGrid;
-           
+
             static TutorialGame* instance;
         };
     }

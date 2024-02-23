@@ -89,9 +89,9 @@ void PlayerObject::Update(float dt) {
     //    renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
     //    index++;
     //}
-    playermovement();
+    PlayerMovement();
 }
-void PlayerObject::playermovement() {
+void PlayerObject::PlayerMovement() {
     Quaternion* qq;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
    // start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
@@ -118,10 +118,5 @@ void PlayerObject::playermovement() {
     }
     else {
         physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
-    }
-}
-void PlayerObject::cuttree() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F)) {
-        //Ray ray = CollisionDetection::BuildRayFromMouse(world->GetMainCamera());
     }
 }

@@ -15,7 +15,7 @@ Matrix4 biasMatrix = Matrix4::Translation(Vector3(0.5f, 0.5f, 0.5f)) * Matrix4::
 
 GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetWindow()), gameWorld(world) {
     std::cout << std::endl << "--------Initialising Renderer--------" << std::endl;
-
+    ui = new UI(&world);
     glEnable(GL_DEPTH_TEST);
 
     std::cout << std::endl << "--------Loading Shaders--------" << std::endl;
@@ -34,7 +34,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
     //Set up the light properties
 
     std::cout << std::endl << "--------Initialising Lights--------" << std::endl;
-    sunLight = new Light(Vector3(-200.0f, 60.0f, -200.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f), 550.0f);
+    sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(5.0f, 5.0f, 5.0f, 1.0f), 1000.0f);
     redstoneLight1 = new Light(Vector3(10, 20, 0), Vector4(1, 1, 0, 1), 50.0f);
     redstoneLight2 = new Light(Vector3(30, 20, 40), Vector4(1, 0, 0, 1), 30.0f);
     redstoneLight3 = new Light(Vector3(60, 20, 20), Vector4(0, 1, 0, 1), 40.0f);
@@ -322,6 +322,9 @@ void GameTechRenderer::RenderFrame() {
     }
 
     glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
+
+    ui->DrawUI();
+
     glDisable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -711,7 +714,7 @@ void GameTechRenderer::DrawProcess() {
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "sceneTex"), 0);
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 3; ++i) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurColourTex[1], 0);
         glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "isVertical"), 0);
         glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrColourTex : blurColourTex[0]);

@@ -135,6 +135,7 @@ void TutorialGame::UpdateGame(float dt) {
     world->UpdateWorld(dt);
     renderer->Update(dt);
     physics->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
 
     if (testStateObject) {
         //std::cout<<"debug"<<std::endl;
@@ -146,6 +147,7 @@ void TutorialGame::UpdateGame(float dt) {
 
     renderer->Render();
     Debug::UpdateRenderables(dt);
+    CutTree();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -160,6 +162,10 @@ void TutorialGame::UpdateKeys() {
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
         renderer->ToggleNight();
+    }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F4)) {
+        renderer->GetUI()->ToggleShowUIdemo();
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
@@ -286,7 +292,7 @@ void TutorialGame::InitDefaultFloor() {
 }
 
 void TutorialGame::InitGameExamples() {
-    AddPlayer0ToWorld(Vector3(0, 5, 0));
+    //AddPlayer0ToWorld(Vector3(0, 5, 0));
     //AddEnemyToWorld(Vector3(5, 5, 0));
     trainObject = AddTrainToWorld(Vector3(10, 5, 0));
     trainObject->AddCarriage();
@@ -371,7 +377,6 @@ bool TutorialGame::SelectObject() {
             RayCollision closestCollision;
             if (world->Raycast(ray, closestCollision, true)) {
                 selectionObject = (GameObject*)closestCollision.node;
-
                 selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
                 return true;
             }
@@ -398,7 +403,6 @@ bool TutorialGame::SelectObject() {
     }
     return false;
 }
-
 void TutorialGame::MoveSelectedObject() {
     // renderer -> DrawString ( " Click Force : " + std :: to_string ( forceMagnitude ) , Vector2 (10 , 20));
     Debug::Print("Click Force:" + std::to_string(forceMagnitude), Vector2(5, 90));
@@ -464,4 +468,24 @@ void TutorialGame::BridgeConstraintTest() {
 void TutorialGame::HoldObject()
 {
     object->GetTransform().SetPosition(object->PlayerFront());
+}
+void TutorialGame::CutTree()
+{
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F))
+    {
+        Debug::DrawLine(player->GetTransform().GetPosition(), player->GetTransform().GetPosition() + player->GetFace() * 5.0f, Vector4(8, 5, 0, 8));
+        Ray r = Ray(player->GetTransform().GetPosition(), player->GetFace());
+        RayCollision closestCollision;
+        if (world->Raycast(r, closestCollision, true,player)) {
+            GameObject* closest = (GameObject*)closestCollision.node;
+            if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
+                std::cout << "yes" << "\n";
+                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.01, 0.01, 0.01));
+                if (closest->GetTransform().GetScale().x < 0.1f) {
+                    AddPickaxeToWorld(closest->GetTransform().GetPosition());
+                    world->RemoveGameObject(closest, false);
+                }
+            }
+        }
+    }
 }

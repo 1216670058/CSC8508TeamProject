@@ -10,6 +10,7 @@ set(Header_Files
         "StateGameObject.h"
         "TutorialGame.h"
         "Audio.h"
+        "UI.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -22,6 +23,7 @@ set(Source_Files
         "TutorialGame.cpp"
         "Audio.cpp"
         "SetupWorld.cpp"
+        "UI.cpp"
 )
 
 set(GameObjects
@@ -57,6 +59,12 @@ set(GameObjects
         "RobotObject.cpp"
 )
 
+file(GLOB UI
+    "../Plugins/imGui/*im*"
+)
+
+source_group("UI" FILES ${UI})
+
 if (USE_VULKAN)
     list(APPEND Header_Files "GameTechVulkanRenderer.h")
     list(APPEND Source_Files "GameTechVulkanRenderer.cpp")
@@ -73,6 +81,7 @@ set(ALL_FILES
         ${Header_Files}
         ${Source_Files}
         ${GameObjects}
+	${UI}
 )
 
 if (USE_VULKAN)
