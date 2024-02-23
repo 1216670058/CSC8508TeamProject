@@ -47,7 +47,7 @@ void TutorialGame::InitialiseAssets() {
 
     std::cout << std::endl << "--------Loading Textures--------" << std::endl;
     basicTex = renderer->LoadTexture("checkerboard.png");
-    floorTex = renderer->LoadTexture("wood.png");
+    woodTex = renderer->LoadTexture("wood.png");
     trainTex = renderer->LoadTexture("Train.jpg");
     carriageTex = renderer->LoadTexture("CartEmpty_T.png");
     treeTex = renderer->LoadTexture("Tree.png");
@@ -60,6 +60,7 @@ void TutorialGame::InitialiseAssets() {
     //stoneTex = renderer->LoadTexture("Stone.png");
     //railTex = renderer->LoadTexture("Rail.png");
 
+    floorBumpTex = renderer->LoadTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
     lightBumpTex = renderer->LoadTexture("redstone_lamp_on_n.png");
     pickaxeBumpTex = renderer->LoadTexture("lowpoly_pickaxe_Normal.png");
@@ -398,7 +399,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
         .SetScale(floorSize * 2)
         .SetPosition(position);
 
-    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, floorTex, basicShader));
+    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, woodTex, basicShader));
     floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
     floor->GetPhysicsObject()->SetInverseMass(0);
