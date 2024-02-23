@@ -11,7 +11,6 @@
 #include "GameObject.h"
 #include <vector>
 #include "RenderObject.h"
-#include "TrainCarriage.h"
 
 namespace NCL::CSC8503 {
     class TrainCarriage : public GameObject {
@@ -29,5 +28,5 @@ namespace NCL::CSC8503 {
         void UpdateOrientation(Vector3 direction);
 
         std::vector< std::pair<Vector3, int> > path;
-    };;
+    };
 }

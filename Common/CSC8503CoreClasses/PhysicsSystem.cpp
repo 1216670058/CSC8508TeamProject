@@ -16,7 +16,7 @@ using namespace CSC8503;
 PhysicsSystem::PhysicsSystem(GameWorld &g) : gameWorld(g) {
     std::cout << std::endl << "--------Initialising Physics System--------" << std::endl;
 
-    applyGravity = false;
+    applyGravity = true;
     useBroadPhase = false;
     dTOffset = 0.0f;
     globalDamping = 0.995f;

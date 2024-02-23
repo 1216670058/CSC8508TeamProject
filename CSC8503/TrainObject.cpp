@@ -13,13 +13,11 @@ TrainObject::~TrainObject() {
 
 }
 
-TrainObject::TrainObject(GameWorld *w, OBJMesh *mesh, ShaderGroup *shader) {
+TrainObject::TrainObject(GameWorld *w) {
 
     path.push_back({Vector3(10, 5, 60), 4});
     path.push_back({Vector3(60, 5, 60), 1});
     world = w;
-    trainMesh = mesh;
-    basicShader = shader;
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
 }
@@ -94,6 +92,11 @@ void TrainObject::UpdatePath(std::vector<std::pair<Vector3, int>> p) {
     path = p;
 }
 
+void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader) {
+    carriageMesh = mesh;
+    carriageTex = texture;
+    basicShader = shader;
+}
 
 void TrainObject::AddCarriage() {
     Vector3 nowPos;
@@ -116,15 +119,15 @@ void TrainObject::AddCarriage() {
 //    std::cout<<nowPos<<std::endl;
 //    std::cout<<nextPos<<std::endl;
 
-    TrainCarriage *carriage = new TrainCarriage;
+    TrainCarriage* carriage = new TrainCarriage();
     carriage->path = path;
     SphereVolume *volume = new SphereVolume(0.5f);
     carriage->SetBoundingVolume((CollisionVolume *) volume);
     carriage->GetTransform()
-            .SetScale(Vector3(2, 2, 2))
+            .SetScale(Vector3(1, 1, 1))
             .SetPosition(nextPos);
 
-    carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), trainMesh, nullptr, basicShader));
+    carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
     carriage->SetPhysicsObject(new PhysicsObject(&carriage->GetTransform(), carriage->GetBoundingVolume()));
 
     carriage->GetPhysicsObject()->SetInverseMass(1.0);
