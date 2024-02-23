@@ -17,6 +17,8 @@ void TutorialGame::InitialiseAssets() {
     enemyMesh = renderer->LoadMesh("Keeper.msh");
     bonusMesh = renderer->LoadMesh("apple.msh");
     capsuleMesh = renderer->LoadMesh("capsule.msh");
+    woodTex = renderer->LoadTexture("wood.png");
+    floorBumpTex = renderer->LoadTexture("grassbump.png");
     trainMesh = renderer->LoadOBJMesh("Train.obj");
     carriageMesh = renderer->LoadMesh("Carriage.msh");
     treeMesh = renderer->LoadMesh("Tree.msh");
