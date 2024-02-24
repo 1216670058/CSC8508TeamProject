@@ -8,7 +8,7 @@ namespace NCL::CSC8503 {
 		RailObject(GameWorld* world) {
 			this->world = world;
 			triggerDelete = true;
-			typeID = 6;
+			typeID = 7;
 		}
 		~RailObject() {};
 	};

@@ -147,7 +147,6 @@ void TutorialGame::UpdateGame(float dt) {
 
     renderer->Render();
     Debug::UpdateRenderables(dt);
-    CutTree();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -307,8 +306,8 @@ void TutorialGame::InitGameExamples() {
     //AddPlankToWorld(Vector3(60, 5, 20));
     //AddStoneToWorld(Vector3(80, 5, 20));
     //AddRailToWorld(Vector3(90, 5, 20));
-    AddTreeToWorld(Vector3(20, 15, 20));
-    AddRockToWorld(Vector3(30, 5, 20));
+    AddTreeToWorld(Vector3(20, 10, 20));
+    AddRockToWorld(Vector3(30, 5, 50));
     //AddMooseToWorld(Vector3(40, 3, 0));
     //AddRobotToWorld(Vector3(50, 3, 0));
     //AddDroneToWorld(Vector3(60, 3, 0));
@@ -468,24 +467,4 @@ void TutorialGame::BridgeConstraintTest() {
 void TutorialGame::HoldObject()
 {
     object->GetTransform().SetPosition(object->PlayerFront());
-}
-void TutorialGame::CutTree()
-{
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F))
-    {
-        Debug::DrawLine(player->GetTransform().GetPosition(), player->GetTransform().GetPosition() + player->GetFace() * 5.0f, Vector4(8, 5, 0, 8));
-        Ray r = Ray(player->GetTransform().GetPosition(), player->GetFace());
-        RayCollision closestCollision;
-        if (world->Raycast(r, closestCollision, true,player)) {
-            GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
-                std::cout << "yes" << "\n";
-                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.01, 0.01, 0.01));
-                if (closest->GetTransform().GetScale().x < 0.1f) {
-                    AddPickaxeToWorld(closest->GetTransform().GetPosition());
-                    world->RemoveGameObject(closest, false);
-                }
-            }
-        }
-    }
 }

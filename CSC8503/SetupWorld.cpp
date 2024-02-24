@@ -27,7 +27,7 @@ void TutorialGame::InitialiseAssets() {
     pickaxeMesh = renderer->LoadMesh("Pickaxe.msh");
     axeMesh = renderer->LoadMesh("Axe.msh");
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
-    //plankMesh = renderer->LoadMesh("Plank.msh");
+    plankMesh = renderer->LoadMesh("Plank.msh");
     //stoneMesh = renderer->LoadMesh("Stone.msh");
     //railMesh = renderer->LoadMesh("Rail.msh");
     maleMesh = renderer->LoadMesh("Male_Guard.msh");
@@ -56,7 +56,7 @@ void TutorialGame::InitialiseAssets() {
     pickaxeTex = renderer->LoadTexture("lowpoly_pickaxe_BaseColor.png");
     axeTex = renderer->LoadTexture("Axe_albedo.jpg");
     bucketTex = renderer->LoadTexture("lambert2_Base_Color.png");
-    //plankTex = renderer->LoadTexture("Planks_Diff.png");
+    plankTex = renderer->LoadTexture("Planks_Diff.png");
     //stoneTex = renderer->LoadTexture("Stone.png");
     //railTex = renderer->LoadTexture("Rail.png");
 
@@ -66,7 +66,7 @@ void TutorialGame::InitialiseAssets() {
     pickaxeBumpTex = renderer->LoadTexture("lowpoly_pickaxe_Normal.png");
     axeBumpTex = renderer->LoadTexture("Axe_normal.png");
     bucketBumpTex = renderer->LoadTexture("lambert2_Normal_OpenGL.png");
-    //plankBumpTex = renderer->LoadTexture("Planks_Norm.png");
+    plankBumpTex = renderer->LoadTexture("Planks_Norm.png");
     //stoneBumpTex = renderer->LoadTexture("Stone_n.png");
     //railBumpTex = renderer->LoadTexture("Rail_n.png");
 
@@ -579,11 +579,11 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 
 TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
     float meshSize = 2.0f;
-    float inverseMass = 0.5f;
+    float inverseMass = 0;
 
     TreeObject* tree = new TreeObject();
     tree->Setscale(meshSize);
-    AABBVolume* volume = new AABBVolume(Vector3(0.3f, 4.0f, 0.3f) * tree->Getscale());
+    AABBVolume* volume = new AABBVolume(Vector3(1.5f, 4, 1.5f) * tree->Getscale());
     tree->SetBoundingVolume((CollisionVolume*)volume);
     tree->GetTransform()
         .SetScale(Vector3(tree->Getscale(), tree->Getscale(), tree->Getscale()))
@@ -602,7 +602,7 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
 
 RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
     float meshSize = 2.0f;
-    float inverseMass = 0.5f;
+    float inverseMass = 0;
 
     RockObject* rock = new RockObject();
     rock->Setscale(meshSize);
@@ -669,9 +669,9 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
     pickaxe->SetPhysicsObject(new PhysicsObject(&pickaxe->GetTransform(), pickaxe->GetBoundingVolume()));
     pickaxe->GetRenderObject()->SetBumpTexture(pickaxeBumpTex);
+    
     pickaxe->GetPhysicsObject()->SetGravity(false);
     pickaxe->GetPhysicsObject()->SetResolve(false);
-
     pickaxe->GetPhysicsObject()->SetInverseMass(1);
     pickaxe->GetPhysicsObject()->InitCubeInertia();
 
@@ -683,7 +683,7 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
 AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
     AxeObject* axe = new AxeObject(world, "Axe");
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.1f, 0.1f, 0.1f));
+    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
     axe->SetBoundingVolume((CollisionVolume*)volume);
 
     axe->SetPlayer(player);
@@ -695,9 +695,9 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
     axe->SetRenderObject(new RenderObject(&axe->GetTransform(), axeMesh, axeTex, bumpShader));
     axe->SetPhysicsObject(new PhysicsObject(&axe->GetTransform(), axe->GetBoundingVolume()));
     axe->GetRenderObject()->SetBumpTexture(axeBumpTex);
+    
     axe->GetPhysicsObject()->SetGravity(false);
     axe->GetPhysicsObject()->SetResolve(false);
-
     axe->GetPhysicsObject()->SetInverseMass(1);
     axe->GetPhysicsObject()->InitCubeInertia();
 
@@ -721,9 +721,9 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
     bucket->SetRenderObject(new RenderObject(&bucket->GetTransform(), bucketMesh, bucketTex, bumpShader));
     bucket->GetRenderObject()->SetBumpTexture(bucketBumpTex);
     bucket->SetPhysicsObject(new PhysicsObject(&bucket->GetTransform(), bucket->GetBoundingVolume()));
+   
     bucket->GetPhysicsObject()->SetGravity(false);
     bucket->GetPhysicsObject()->SetResolve(false);
-
     bucket->GetPhysicsObject()->SetInverseMass(1);
     bucket->GetPhysicsObject()->InitCubeInertia();
 
@@ -747,9 +747,9 @@ PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
     plank->SetRenderObject(new RenderObject(&plank->GetTransform(), plankMesh, plankTex, bumpShader));
     plank->GetRenderObject()->SetBumpTexture(plankBumpTex);
     plank->SetPhysicsObject(new PhysicsObject(&plank->GetTransform(), plank->GetBoundingVolume()));
+
     plank->GetPhysicsObject()->SetGravity(false);
     plank->GetPhysicsObject()->SetResolve(false);
-
     plank->GetPhysicsObject()->SetInverseMass(1);
     plank->GetPhysicsObject()->InitCubeInertia();
 
@@ -773,9 +773,9 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
     stone->SetRenderObject(new RenderObject(&stone->GetTransform(), stoneMesh, stoneTex, bumpShader));
     stone->GetRenderObject()->SetBumpTexture(stoneBumpTex);
     stone->SetPhysicsObject(new PhysicsObject(&stone->GetTransform(), stone->GetBoundingVolume()));
+
     stone->GetPhysicsObject()->SetGravity(false);
     stone->GetPhysicsObject()->SetResolve(false);
-
     stone->GetPhysicsObject()->SetInverseMass(1);
     stone->GetPhysicsObject()->InitCubeInertia();
 
@@ -799,9 +799,9 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position) {
     rail->SetRenderObject(new RenderObject(&rail->GetTransform(), railMesh, railTex, bumpShader));
     rail->GetRenderObject()->SetBumpTexture(railBumpTex);
     rail->SetPhysicsObject(new PhysicsObject(&rail->GetTransform(), rail->GetBoundingVolume()));
+    
     rail->GetPhysicsObject()->SetGravity(false);
     rail->GetPhysicsObject()->SetResolve(false);
-
     rail->GetPhysicsObject()->SetInverseMass(1);
     rail->GetPhysicsObject()->InitCubeInertia();
 

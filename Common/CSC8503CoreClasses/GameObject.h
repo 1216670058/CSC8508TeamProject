@@ -16,7 +16,7 @@ namespace NCL::CSC8503 {
 
     struct GridCenter {
         int x;
-        int y;
+        int z;
     };
 
     class GameObject {
@@ -120,6 +120,44 @@ namespace NCL::CSC8503 {
             return typeID;
         }
 
+        void SetSlot(int s) {
+            slot = s;
+        }
+        int GetSlot() const {
+            return slot;
+        }
+
+        void SetFlag1(int f) {
+            flag1 = f;
+        }
+        bool GetFlag1() const {
+            return flag1;
+        }
+        void SetFlag2(int f) {
+            flag2 = f;
+        }
+        bool GetFlag2() const {
+            return flag2;
+        }
+        void SetFlag3(int f) {
+            flag3 = f;
+        }
+        bool GetFlag3() const {
+            return flag3;
+        }
+        void SetFlag4(int f) {
+            flag4 = f;
+        }
+        bool GetFlag4() const {
+            return flag4;
+        }
+        void SetFlag5(int f) {
+            flag5 = f;
+        }
+        bool GetFlag5() const {
+            return flag5;
+        }
+
         double EuclideanDistance(float x1, float y1, float x2, float y2);
         Vector3 FindNearestGridCenter(const Vector3& position);
 
@@ -136,12 +174,19 @@ namespace NCL::CSC8503 {
         bool        triggerDelete;
         int			worldID;
         int         typeID;
+        int         slot = 0;
         std::string	name;
 
         int GRID_SIZE_X = 10;
-        int GRID_SIZE_Y = 10;
+        int GRID_SIZE_Z = 10;
         float GRID_CENTER_X = 5.0f;
-        float  GRID_CENTER_Y = 5.0f;
+        float  GRID_CENTER_Z = 5.0f;
+
+        bool flag1 = false;
+        bool flag2 = false;
+        bool flag3 = false;
+        bool flag4 = false;
+        bool flag5 = false;
 
         Vector3 broadphaseAABB;
     };

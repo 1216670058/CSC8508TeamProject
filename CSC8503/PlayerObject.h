@@ -25,7 +25,7 @@ namespace NCL::CSC8503 {
         };
         ~PlayerObject() {};
 
-        void OnCollisionBegin(GameObject* otherObject) override {};
+        void OnCollisionBegin(GameObject* otherObject) override;
 
         void OnCollisionEnd(GameObject* otherObject) override {};
 
@@ -53,15 +53,18 @@ namespace NCL::CSC8503 {
         void SetSpeed(float a) {
             speed = a;
         }
-        float GetSpeed() {
+        float GetSpeed() const {
             return speed;
         }
-        Vector3 GetFace() {
+        Vector3 GetFace() const {
             return face;
         }
+
         void PlayerMovement();
 
     protected:
+        void CutTree();
+
         int index;
         Vector3 face;
         float speed=20.0f;
