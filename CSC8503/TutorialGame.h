@@ -36,9 +36,17 @@ namespace NCL {
 
             virtual void UpdateGame(float dt);
 
+            GameWorld* GetWorld() const {
+                return world;
+            }
+
             static TutorialGame* GetGame() {
                 return instance;
             };
+
+            PlankObject* AddPlankToWorld(const Vector3& position);
+            StoneObject* AddStoneToWorld(const Vector3& position);
+            RailObject* AddRailToWorld(const Vector3& position);
 
         protected:
             void InitialiseAssets();
@@ -71,8 +79,6 @@ namespace NCL {
             void AddSceneToWorld();
             void HoldObject();
 
-            void CutTree();
-
             GameObject* AddFloorToWorld(const Vector3& position);
             GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
             GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
@@ -88,9 +94,6 @@ namespace NCL {
             PickaxeObject* AddPickaxeToWorld(const Vector3& position);
             AxeObject* AddAxeToWorld(const Vector3& position);
             BucketObject* AddBucketToWorld(const Vector3& position);
-            PlankObject* AddPlankToWorld(const Vector3& position);
-            StoneObject* AddStoneToWorld(const Vector3& position);
-            RailObject* AddRailToWorld(const Vector3& position);
             AnimalObject* AddMooseToWorld(const Vector3& position);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);

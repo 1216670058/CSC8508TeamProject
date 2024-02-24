@@ -234,23 +234,24 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject &a, GameObject &b, Collis
     PhysicsObject *physA = a.GetPhysicsObject();
     PhysicsObject *physB = b.GetPhysicsObject();
 
-    Transform &transformA = a.GetTransform();
-    Transform &transformB = b.GetTransform();
-
-    float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
-
-    if (totalMass == 0) {
-        return; // two static objects ??
-    }
-
-    // Separate them out using projection
-    transformA.SetPosition(transformA.GetPosition() -
-                           (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
-
-    transformB.SetPosition(transformB.GetPosition() +
-                           (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
-
     if (physA->UseResolve() && physB->UseResolve()) {
+        Transform& transformA = a.GetTransform();
+        Transform& transformB = b.GetTransform();
+
+        float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
+
+        if (totalMass == 0) {
+            return; // two static objects ??
+        }
+
+        // Separate them out using projection
+        transformA.SetPosition(transformA.GetPosition() -
+            (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
+
+        transformB.SetPosition(transformB.GetPosition() +
+            (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
+
+
         Vector3 relativeA = p.localA;
         Vector3 relativeB = p.localB;
 

@@ -22,9 +22,9 @@ void CollectableObject::Update(float dt) {
 }
 
 void CollectableObject::OnCollisionBegin(GameObject* otherObject)  {
-    if (putDown && otherObject->GetName() == "Player") {
-       // if (!player->GetPowerup())
+    if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 0) {
             putDown = false;
+            player->SetSlot(this->GetTypeID());
     }
 }
 

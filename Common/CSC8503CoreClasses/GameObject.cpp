@@ -56,22 +56,22 @@ double GameObject::EuclideanDistance(float x1, float y1, float x2, float y2) {
 
 Vector3 GameObject::FindNearestGridCenter(const Vector3& position) {
     float inputX = position.x;
-    float inputY = position.y;
+    float inputZ = position.z;
     GridCenter nearestGridCenter;
     Vector3 _nearestGridCenter;
     double minDistance = 1000;
     for (int x = 0; x < GRID_SIZE_X; ++x) {
-        for (int y = 0; y < GRID_SIZE_Y; ++y) {
-            double distance = EuclideanDistance(inputX, inputY, x * 10 + GRID_CENTER_X, y * 10 + GRID_CENTER_Y);
+        for (int z = 0; z < GRID_SIZE_Z; ++z) {
+            double distance = EuclideanDistance(inputX, inputZ, x * 10 + GRID_CENTER_X, z * 10 + GRID_CENTER_Z);
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestGridCenter.x = x * 10 + GRID_CENTER_X;
-                nearestGridCenter.y = y * 10 + GRID_CENTER_Y;
+                nearestGridCenter.z = z * 10 + GRID_CENTER_Z;
             }
         }
     }
     _nearestGridCenter.x = nearestGridCenter.x;
-    _nearestGridCenter.y = nearestGridCenter.y;
-    _nearestGridCenter.z = 5;
+    _nearestGridCenter.z = nearestGridCenter.z;
+    _nearestGridCenter.y = position.y;
     return _nearestGridCenter;
 }

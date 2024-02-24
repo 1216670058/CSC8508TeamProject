@@ -89,8 +89,19 @@ void PlayerObject::Update(float dt) {
     //    renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
     //    index++;
     //}
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::R))
+        slot = 0;
+
     PlayerMovement();
+
+    CutTree();
 }
+
+void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
+
+}
+
 void PlayerObject::PlayerMovement() {
     Quaternion* qq;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
@@ -118,5 +129,24 @@ void PlayerObject::PlayerMovement() {
     }
     else {
         physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+    }
+}
+
+void PlayerObject::CutTree() {
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 3) {
+        Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
+        Ray r = Ray(transform.GetPosition(), face);
+        RayCollision closestCollision;
+        if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
+            GameObject* closest = (GameObject*)closestCollision.node;
+            if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
+                std::cout << "yes" << "\n";
+                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.01, 0.01, 0.01));
+                if (closest->GetTransform().GetScale().x < 0.1f) {
+                    TutorialGame::GetGame()->AddPlankToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
+                    TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+                }
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace NCL::CSC8503 {
 		StoneObject(GameWorld* world) {
 			this->world = world;
 			triggerDelete = true;
-			typeID = 5;
+			typeID = 6;
 		}
 		~StoneObject() {};
 	};
