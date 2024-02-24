@@ -7,9 +7,36 @@
 #include "PositionConstraint.h"
 #include "StateGameObject.h"
 
-void TutorialGame::InitialiseAssets() {
-    std::cout << std::endl << "--------Initialising Assets--------" << std::endl;
+void TutorialGame::AssetsLoading() {
+    switch (assetsLoadedStep)
+    {
+    case 0:
+        InitMeshes();
+        ++assetsLoadedStep;
+        break;
+    case 1:
+        InitTextures();
+        ++assetsLoadedStep;
+        break;
+    case 2:
+        InitMaterials();
+        ++assetsLoadedStep;
+        break;
+    case 3:
+        InitAnimations();
+        ++assetsLoadedStep;
+        break;
+    case 4:
+        InitShaders();
+        ++assetsLoadedStep;
+        break;
+    default:
+        break;
+    }
 
+}
+
+void TutorialGame::InitMeshes() {
     std::cout << std::endl << "--------Loading Meshes--------" << std::endl;
     cubeMesh = renderer->LoadMesh("cube.msh");
     sphereMesh = renderer->LoadMesh("sphere.msh");
@@ -17,8 +44,6 @@ void TutorialGame::InitialiseAssets() {
     enemyMesh = renderer->LoadMesh("Keeper.msh");
     bonusMesh = renderer->LoadMesh("apple.msh");
     capsuleMesh = renderer->LoadMesh("capsule.msh");
-    woodTex = renderer->LoadTexture("wood.png");
-    floorBumpTex = renderer->LoadTexture("grassbump.png");
     trainMesh = renderer->LoadOBJMesh("Train.obj");
     carriageMesh = renderer->LoadMesh("Carriage.msh");
     treeMesh = renderer->LoadMesh("Tree.msh");
@@ -44,7 +69,9 @@ void TutorialGame::InitialiseAssets() {
     //meshes.push_back(assassinMesh);
     //meshes.push_back(girlMesh);
     //meshes.push_back(smurfMesh);
+}
 
+void TutorialGame::InitTextures() {
     std::cout << std::endl << "--------Loading Textures--------" << std::endl;
     basicTex = renderer->LoadTexture("checkerboard.png");
     woodTex = renderer->LoadTexture("wood.png");
@@ -71,40 +98,6 @@ void TutorialGame::InitialiseAssets() {
     //railBumpTex = renderer->LoadTexture("Rail_n.png");
 
     lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
-
-    InitMaterials();
-    InitAnimations();
-
-    std::cout << std::endl << "--------Loading Shader Groups--------" << std::endl;
-    basicDayShader = renderer->LoadShader("PerPixel.vert", "PerPixelScene.frag");
-    bumpDayShader = renderer->LoadShader("Bump.vert", "BumpScene.frag");
-    specDayShader = renderer->LoadShader("Bump.vert", "SpecScene.frag");
-    skinningPerPixelDayShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelScene.frag");
-    skinningBumpDayShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpScene.frag");
-    skinningBumpDayShader2 = renderer->LoadShader("SkinningBump.vert", "BumpScene.frag");
-
-    basicNightShader = renderer->LoadShader("PerPixel.vert", "PerPixelBuffer.frag");
-    bumpNightShader = renderer->LoadShader("Bump.vert", "BumpBuffer.frag");
-    specNightShader = renderer->LoadShader("Bump.vert", "SpecBuffer.frag");
-    skinningPerPixelNightShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelBuffer.frag");
-    skinningBumpNightShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpBuffer.frag");
-    skinningBumpNightShader2 = renderer->LoadShader("SkinningBump.vert", "BumpBuffer.frag");
-
-    basicShader = new ShaderGroup(basicDayShader, basicNightShader);
-    bumpShader = new ShaderGroup(bumpDayShader, bumpNightShader);
-    specShader = new ShaderGroup(specDayShader, specNightShader);
-    skinningPerPixelShader = new ShaderGroup(skinningPerPixelDayShader, skinningPerPixelNightShader);
-    skinningBumpShader = new ShaderGroup(skinningBumpDayShader, skinningBumpNightShader);
-    skinningBumpShader2 = new ShaderGroup(skinningBumpDayShader2, skinningBumpNightShader2);
-
-    shaders.push_back(skinningBumpShader);
-    shaders.push_back(skinningBumpShader);
-    shaders.push_back(skinningPerPixelShader);
-    shaders.push_back(skinningBumpShader);
-    shaders.push_back(skinningBumpShader);
-
-    InitCamera();
-    InitWorld();
 }
 
 void TutorialGame::InitMaterials() {
@@ -337,6 +330,36 @@ void TutorialGame::InitAnimations() {
     //animations.push_back(assassinAnimation);
     //animations.push_back(girlAnimation);
     //animations.push_back(smurfAnimation);
+}
+
+void TutorialGame::InitShaders() {
+    std::cout << std::endl << "--------Loading Shader Groups--------" << std::endl;
+    basicDayShader = renderer->LoadShader("PerPixel.vert", "PerPixelScene.frag");
+    bumpDayShader = renderer->LoadShader("Bump.vert", "BumpScene.frag");
+    specDayShader = renderer->LoadShader("Bump.vert", "SpecScene.frag");
+    skinningPerPixelDayShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelScene.frag");
+    skinningBumpDayShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpScene.frag");
+    skinningBumpDayShader2 = renderer->LoadShader("SkinningBump.vert", "BumpScene.frag");
+
+    basicNightShader = renderer->LoadShader("PerPixel.vert", "PerPixelBuffer.frag");
+    bumpNightShader = renderer->LoadShader("Bump.vert", "BumpBuffer.frag");
+    specNightShader = renderer->LoadShader("Bump.vert", "SpecBuffer.frag");
+    skinningPerPixelNightShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelBuffer.frag");
+    skinningBumpNightShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpBuffer.frag");
+    skinningBumpNightShader2 = renderer->LoadShader("SkinningBump.vert", "BumpBuffer.frag");
+
+    basicShader = new ShaderGroup(basicDayShader, basicNightShader);
+    bumpShader = new ShaderGroup(bumpDayShader, bumpNightShader);
+    specShader = new ShaderGroup(specDayShader, specNightShader);
+    skinningPerPixelShader = new ShaderGroup(skinningPerPixelDayShader, skinningPerPixelNightShader);
+    skinningBumpShader = new ShaderGroup(skinningBumpDayShader, skinningBumpNightShader);
+    skinningBumpShader2 = new ShaderGroup(skinningBumpDayShader2, skinningBumpNightShader2);
+
+    shaders.push_back(skinningBumpShader);
+    shaders.push_back(skinningBumpShader);
+    shaders.push_back(skinningPerPixelShader);
+    shaders.push_back(skinningBumpShader);
+    shaders.push_back(skinningBumpShader);
 }
 
 StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
@@ -669,7 +692,7 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
     pickaxe->SetPhysicsObject(new PhysicsObject(&pickaxe->GetTransform(), pickaxe->GetBoundingVolume()));
     pickaxe->GetRenderObject()->SetBumpTexture(pickaxeBumpTex);
-    
+
     pickaxe->GetPhysicsObject()->SetGravity(false);
     pickaxe->GetPhysicsObject()->SetResolve(false);
     pickaxe->GetPhysicsObject()->SetInverseMass(1);
@@ -695,7 +718,7 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
     axe->SetRenderObject(new RenderObject(&axe->GetTransform(), axeMesh, axeTex, bumpShader));
     axe->SetPhysicsObject(new PhysicsObject(&axe->GetTransform(), axe->GetBoundingVolume()));
     axe->GetRenderObject()->SetBumpTexture(axeBumpTex);
-    
+
     axe->GetPhysicsObject()->SetGravity(false);
     axe->GetPhysicsObject()->SetResolve(false);
     axe->GetPhysicsObject()->SetInverseMass(1);
@@ -721,7 +744,7 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
     bucket->SetRenderObject(new RenderObject(&bucket->GetTransform(), bucketMesh, bucketTex, bumpShader));
     bucket->GetRenderObject()->SetBumpTexture(bucketBumpTex);
     bucket->SetPhysicsObject(new PhysicsObject(&bucket->GetTransform(), bucket->GetBoundingVolume()));
-   
+
     bucket->GetPhysicsObject()->SetGravity(false);
     bucket->GetPhysicsObject()->SetResolve(false);
     bucket->GetPhysicsObject()->SetInverseMass(1);
@@ -799,7 +822,7 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position) {
     rail->SetRenderObject(new RenderObject(&rail->GetTransform(), railMesh, railTex, bumpShader));
     rail->GetRenderObject()->SetBumpTexture(railBumpTex);
     rail->SetPhysicsObject(new PhysicsObject(&rail->GetTransform(), rail->GetBoundingVolume()));
-    
+
     rail->GetPhysicsObject()->SetGravity(false);
     rail->GetPhysicsObject()->SetResolve(false);
     rail->GetPhysicsObject()->SetInverseMass(1);

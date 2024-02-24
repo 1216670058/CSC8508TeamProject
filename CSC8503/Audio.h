@@ -13,21 +13,21 @@
 
 using namespace irrklang;
 using namespace NCL;
+using namespace CSC8503;
 
 class Audio
 {
 public:
     Audio(GameWorld* world);
     ~Audio();
-    void UpdateKeys();
+    void Update();
 
 private:
     GameWorld* world;
     //Audio
     ISoundEngine* soundEngine = nullptr;
 
-    ISoundSource* bgmsource = nullptr;
-    ISound* bgm = nullptr;
+    ISoundSource* menubgmsource = nullptr;
+    ISound* menubgm = nullptr;
 
-    bool playBGM = true;
 };
