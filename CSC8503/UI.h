@@ -9,18 +9,34 @@
 #include "Assets.h"
 #include "GameWorld.h"
 
-using namespace NCL;
+namespace NCL {
+    namespace CSC8503 {
+        enum UItype
+        {
 
-class UI
-{
-public:
-    UI(GameWorld* world);
-    ~UI();
-    void Update(float dt);
-    void DrawUI();
-    void ToggleShowUIdemo() { showUIdemo = !showUIdemo; };
+        };
 
-protected:
-    GameWorld* world;
-    bool showUIdemo = true;
-};
+        class UI
+        {
+        public:
+            UI(GameWorld* world);
+            ~UI();
+            void Update(float dt);
+            void DrawUI();
+            void ToggleShowUIdemo() { showUIdemo = !showUIdemo; };
+            void DrawLoading(float dt);
+            void DrawMenu(float dt);
+
+            void SetLoadingStep(int step) { loadingstep = step; };
+        protected:
+            GameWorld* world;
+
+            ImFont* titlefont;
+            ImFont* normalfont;
+
+            int loadingstep;
+
+            bool showUIdemo = true;
+        };
+    }
+}

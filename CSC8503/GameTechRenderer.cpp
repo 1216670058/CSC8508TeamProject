@@ -16,16 +16,15 @@ Matrix4 biasMatrix = Matrix4::Translation(Vector3(0.5f, 0.5f, 0.5f)) * Matrix4::
 GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetWindow()), gameWorld(world) {
     std::cout << std::endl << "--------Initialising Renderer--------" << std::endl;
     ui = new UI(&world);
-    glEnable(GL_DEPTH_TEST);
 
     std::cout << std::endl << "--------Loading Shaders--------" << std::endl;
-    debugShader = new OGLShader("debug.vert", "debug.frag");
-    shadowShader = new OGLShader("shadow.vert", "shadow.frag");
-    skinningShadowShader = new OGLShader("SkinningShadow.vert", "shadow.frag");
-    pointLightShader = new OGLShader("PointLight.vert", "PointLight.frag");
-    processShader = new OGLShader("process.vert", "process.frag");
-    processCombineShader = new OGLShader("processCombine.vert", "processCombine.frag");
-    combineShader = new OGLShader("combine.vert", "combine.frag");
+    debugShader = (OGLShader*)LoadShader("debug.vert", "debug.frag");
+    shadowShader = (OGLShader*)LoadShader("shadow.vert", "shadow.frag");
+    skinningShadowShader = (OGLShader*)LoadShader("SkinningShadow.vert", "shadow.frag");
+    pointLightShader = (OGLShader*)LoadShader("PointLight.vert", "PointLight.frag");
+    processShader = (OGLShader*)LoadShader("process.vert", "process.frag");
+    processCombineShader = (OGLShader*)LoadShader("processCombine.vert", "processCombine.frag");
+    combineShader = (OGLShader*)LoadShader("combine.vert", "combine.frag");
 
     InitBuffers();
 
@@ -61,8 +60,27 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 }
 
 GameTechRenderer::~GameTechRenderer() {
-    glDeleteTextures(1, &shadowTex);
+    delete ui;
+
+    glDeleteTextures(1, &skyboxBufferTex);
+    glDeleteTextures(1, &worldDepthTex);
+    glDeleteTextures(1, &worldColourTex);
+    glDeleteTextures(1, &worldNormalTex);
+    glDeleteTextures(1, &worldSpecTex);
+    glDeleteTextures(1, &worldEmisTex);
+    glDeleteTextures(1, &worldShadowTex);
+    glDeleteTextures(1, &lightDiffuseTex);
+    glDeleteTextures(1, &lightSpecularTex);
+    glDeleteTextures(1, &combinedTex);
+    glDeleteTextures(1, &hdrColourTex);
+    glDeleteTextures(2, blurColourTex);
+
+    glDeleteFramebuffers(1, &worldFBO);
+    glDeleteFramebuffers(1, &lightFBO);
     glDeleteFramebuffers(1, &shadowFBO);
+    glDeleteFramebuffers(1, &skyboxFBO);
+    glDeleteFramebuffers(1, &combinedFBO);
+    glDeleteFramebuffers(1, &processFBO);
 }
 
 void GameTechRenderer::InitBuffers() {

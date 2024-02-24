@@ -13,7 +13,7 @@ Audio::Audio(GameWorld* world)
     {
         printf("Could not startup soundEngine\n");
     }
-    bgmsource = soundEngine->addSoundSourceFromFile((Assets::SOUNDSDIR + "getout.ogg").c_str());
+    menubgmsource = soundEngine->addSoundSourceFromFile((Assets::SOUNDSDIR + "getout.ogg").c_str());
 }
 
 Audio::~Audio()
@@ -21,33 +21,32 @@ Audio::~Audio()
     soundEngine->drop();
 }
 
-void Audio::UpdateKeys()
+void Audio::Update()
 {
-    if (playBGM && bgm == nullptr) {
-        bgm = soundEngine->play3D(bgmsource, vec3df(1, 0, 1), true, false, true);
-        bgm->setMinDistance(3.0f);
-    }
+    //Vector3 cp = world->GetMainCamera().GetPosition();
+    //vec3df position(cp.x, cp.y, cp.z);  // position of the listener
+    //Vector3 forward = Matrix4::Rotation(world->GetMainCamera().GetYaw(),
+    //    Vector3(0, 1, 0)) * Matrix4::Rotation(world->GetMainCamera().GetPitch(), Vector3(1, 0, 0)) * Vector3(0, 0, -1);
+    //vec3df lookDirection(-forward.x, forward.y, -forward.z);  // the direction the listener looks into
 
-    //paused bgm
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::NUMPAD9)) {
-        playBGM = !playBGM;
-    }
-    if (playBGM)
+    switch (world->GetGameState())
     {
-        bgm->setIsPaused(false);
+    case GameState::LOADING:
+        if (menubgm == nullptr) {
+            menubgm = soundEngine->play2D(menubgmsource, true, false, true, false);
+            menubgm->setVolume(0.05f);
+        }
+        break;
+    case GameState::PLAYING:
+        if (menubgm != nullptr) {
+            soundEngine->stopAllSoundsOfSoundSource(menubgmsource);
+            soundEngine->removeSoundSource(menubgmsource);
+        }
+        //bgm = soundEngine->play3D(bgmsource, vec3df(1, 0, 1), true, false, true);
+        //soundEngine->setListenerPosition(position, lookDirection);
+        break;
+    default:
+        break;
     }
-    else if (!playBGM) {
-        bgm->setIsPaused(true);
-    }
-
-    Vector3 cp = world->GetMainCamera().GetPosition();
-    //cout << cp << endl;
-    vec3df position(cp.x, cp.y, cp.z);  // position of the listener
-    Vector3 forward = Matrix4::Rotation(world->GetMainCamera().GetYaw(),
-        Vector3(0, 1, 0)) * Matrix4::Rotation(world->GetMainCamera().GetPitch(), Vector3(1, 0, 0)) * Vector3(0, 0, -1);
-    //cout << forward << endl;
-    vec3df lookDirection(-forward.x, forward.y, -forward.z);  // the direction the listener looks into
-
-    soundEngine->setListenerPosition(position, lookDirection);
 
 }

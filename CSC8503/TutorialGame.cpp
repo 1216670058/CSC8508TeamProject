@@ -43,7 +43,7 @@ TutorialGame::TutorialGame() : controller(*Window::GetWindow()->GetKeyboard(), *
     controller.MapAxis(3, "XLook");
     controller.MapAxis(4, "YLook");
 
-    InitialiseAssets();
+    world->SetGameState(GameState::LOADING);
 
     instance = this;
 }
@@ -73,6 +73,39 @@ TutorialGame::~TutorialGame() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
+    switch (world->GetGameState())
+    {
+    case LOADING:
+        UpdateLoading(dt);
+        break;
+    case PLAYING:
+        UpdatePlaying(dt);
+        break;
+    case PAUSED:
+        UpdatePaused(dt);
+        break;
+    case MENU:
+        UpdateMenu(dt);
+        break;
+    default:
+        break;
+    }
+
+}
+
+void TutorialGame::UpdateLoading(float dt)
+{
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->GetUI()->SetLoadingStep(assetsLoadedStep);
+    renderer->Render();
+    if (assetsLoadedStep == 5) world->SetGameState(CSC8503::GameState::MENU);
+    AssetsLoading();
+}
+
+void TutorialGame::UpdatePlaying(float dt)
+{
     if (!inSelectionMode) {
         world->GetMainCamera().UpdateCamera(dt);
     }
@@ -95,7 +128,7 @@ void TutorialGame::UpdateGame(float dt) {
     }
 
     UpdateKeys();
-    audio->UpdateKeys();
+    audio->Update();
 
     if (useGravity) {
         Debug::Print("(G)ravity on", Vector2(5, 95), Debug::RED);
@@ -134,8 +167,8 @@ void TutorialGame::UpdateGame(float dt) {
 
     world->UpdateWorld(dt);
     renderer->Update(dt);
-    physics->Update(dt);
     renderer->GetUI()->Update(dt); //UI
+    physics->Update(dt);
 
     if (testStateObject) {
         //std::cout<<"debug"<<std::endl;
@@ -147,6 +180,18 @@ void TutorialGame::UpdateGame(float dt) {
 
     renderer->Render();
     Debug::UpdateRenderables(dt);
+}
+
+void TutorialGame::UpdatePaused(float dt)
+{
+
+}
+
+void TutorialGame::UpdateMenu(float dt)
+{
+    InitCamera();
+    InitWorld();
+    world->SetGameState(CSC8503::GameState::PLAYING);
 }
 
 void TutorialGame::UpdateKeys() {
@@ -192,9 +237,6 @@ void TutorialGame::UpdateKeys() {
     if (lockedObject) {
         LockedObjectMovement();
     }
-    else {
-        DebugObjectMovement();
-    }
 }
 
 void TutorialGame::LockedObjectMovement() {
@@ -222,44 +264,6 @@ void TutorialGame::LockedObjectMovement() {
 
     if (Window::GetKeyboard()->KeyDown(KeyCodes::NEXT)) {
         selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-    }
-}
-
-void TutorialGame::DebugObjectMovement() {
-    //If we've selected an object, we can manipulate it with some key presses
-    if (inSelectionMode && selectionObject) {
-        //Twist the selected object!
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::LEFT)) {
-            selectionObject->GetPhysicsObject()->AddTorque(Vector3(-10, 0, 0));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::RIGHT)) {
-            selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::NUM7)) {
-            selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, 10, 0));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::NUM8)) {
-            selectionObject->GetPhysicsObject()->AddTorque(Vector3(0, -10, 0));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::RIGHT)) {
-            selectionObject->GetPhysicsObject()->AddTorque(Vector3(10, 0, 0));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::UP)) {
-            selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -10));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::DOWN)) {
-            selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 10));
-        }
-
-        if (Window::GetKeyboard()->KeyDown(KeyCodes::NUM5)) {
-            selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
-        }
     }
 }
 
@@ -300,7 +304,7 @@ void TutorialGame::InitGameExamples() {
     AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
     player = AddPlayerToWorld(Vector3(20, 5, 0));
-    pickaxe = AddPickaxeToWorld(Vector3(40 ,5, 20));
+    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 20));
     axe = AddAxeToWorld(Vector3(50, 5, 20));
     bucket = AddBucketToWorld(Vector3(60, 5, 20));
     //AddPlankToWorld(Vector3(60, 5, 20));
@@ -311,43 +315,6 @@ void TutorialGame::InitGameExamples() {
     //AddMooseToWorld(Vector3(40, 3, 0));
     //AddRobotToWorld(Vector3(50, 3, 0));
     //AddDroneToWorld(Vector3(60, 3, 0));
-}
-
-void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
-    for (int x = 0; x < numCols; ++x) {
-        for (int z = 0; z < numRows; ++z) {
-            Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-            AddSphereToWorld(position, radius, 1.0f);
-        }
-    }
-    AddFloorToWorld(Vector3(0, -2, 0));
-}
-
-void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing) {
-    float sphereRadius = 1.0f;
-    Vector3 cubeDims = Vector3(1, 1, 1);
-
-    for (int x = 0; x < numCols; ++x) {
-        for (int z = 0; z < numRows; ++z) {
-            Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-
-            if (rand() % 2) {
-                AddCubeToWorld(position, cubeDims);
-            }
-            else {
-                AddSphereToWorld(position, sphereRadius);
-            }
-        }
-    }
-}
-
-void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims) {
-    for (int x = 1; x < numCols + 1; ++x) {
-        for (int z = 1; z < numRows + 1; ++z) {
-            Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-            AddCubeToWorld(position, cubeDims, 1.0f);
-        }
-    }
 }
 
 bool TutorialGame::SelectObject() {

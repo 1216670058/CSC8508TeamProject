@@ -49,14 +49,23 @@ namespace NCL {
             RailObject* AddRailToWorld(const Vector3& position);
 
         protected:
-            void InitialiseAssets();
-
+            void InitMeshes();
+            void InitTextures();
             void InitMaterials();
             void InitAnimations();
+            void InitShaders();
+            void AssetsLoading();
+            int assetsLoadedStep = 0;
+
             void InitCamera();
+            void InitWorld();
+
             void UpdateKeys();
 
-            void InitWorld();
+            void UpdateLoading(float dt);
+            void UpdatePlaying(float dt);
+            void UpdatePaused(float dt);
+            void UpdateMenu(float dt);
 
             /*
             These are some of the world/object creation functions I created when testing the functionality
@@ -65,15 +74,10 @@ namespace NCL {
             */
             void InitGameExamples();
 
-            void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
-            void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
-            void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
-
             void InitDefaultFloor();
             //int SelectRailDir(Vector3 lastRailPosition,Vector3 RailPosition);
             bool SelectObject();
             void MoveSelectedObject();
-            void DebugObjectMovement();
             void LockedObjectMovement();
 
             void AddSceneToWorld();
@@ -132,7 +136,7 @@ namespace NCL {
             Mesh* capsuleMesh = nullptr;
             Mesh* cubeMesh = nullptr;
             Mesh* sphereMesh = nullptr;
-          
+
             //Coursework Meshes
             Mesh* charMesh = nullptr;
             Mesh* enemyMesh = nullptr;
@@ -218,6 +222,8 @@ namespace NCL {
             AnimationObject* robotAnimation = nullptr;
             AnimationObject* droneAnimation = nullptr;
 
+
+
             Shader* basicDayShader = nullptr;
             Shader* bumpDayShader = nullptr;
             Shader* specDayShader = nullptr;
@@ -271,6 +277,28 @@ namespace NCL {
 
             static TutorialGame* instance;
         };
+
+        /* struct AssetsInfo
+         {
+             AssetsInfo(AssetsType t, string n, string p) {
+                 type = t;
+                 objectname = n;
+                 filepath = p;
+             }
+             AssetsType type;
+             string objectname;
+             string filepath;
+         };
+
+         enum AssetsType
+         {
+             MESH,
+             ObjMESH,
+             TEXTURE,
+             MATERIAL,
+             ANIMATION,
+             SHADER
+         };*/
     }
 }
 
