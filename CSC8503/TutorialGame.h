@@ -48,6 +48,9 @@ namespace NCL {
             StoneObject* AddStoneToWorld(const Vector3& position);
             RailObject* AddRailToWorld(const Vector3& position);
 
+            void InitGameWorld() { InitCamera(); InitWorld(); }
+            bool IsExitGame() { return isExit; }
+
         protected:
             void InitMeshes();
             void InitTextures();
@@ -276,6 +279,8 @@ namespace NCL {
             NavigationGrid* navGrid;
 
             static TutorialGame* instance;
+
+            bool isExit = false;
         };
 
         /* struct AssetsInfo

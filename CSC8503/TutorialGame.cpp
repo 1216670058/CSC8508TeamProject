@@ -87,6 +87,9 @@ void TutorialGame::UpdateGame(float dt) {
     case MENU:
         UpdateMenu(dt);
         break;
+    case EXIT:
+        isExit = true;
+        break;
     default:
         break;
     }
@@ -189,9 +192,13 @@ void TutorialGame::UpdatePaused(float dt)
 
 void TutorialGame::UpdateMenu(float dt)
 {
-    InitCamera();
-    InitWorld();
-    world->SetGameState(CSC8503::GameState::PLAYING);
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
+
+    //InitCamera();
+    //InitWorld();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -206,10 +213,6 @@ void TutorialGame::UpdateKeys() {
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
         renderer->ToggleNight();
-    }
-
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F4)) {
-        renderer->GetUI()->ToggleShowUIdemo();
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {

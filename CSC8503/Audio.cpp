@@ -32,6 +32,7 @@ void Audio::Update()
     switch (world->GetGameState())
     {
     case GameState::LOADING:
+    case GameState::MENU:
         if (menubgm == nullptr) {
             menubgm = soundEngine->play2D(menubgmsource, true, false, true, false);
             menubgm->setVolume(0.05f);
