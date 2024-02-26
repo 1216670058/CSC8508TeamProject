@@ -187,7 +187,10 @@ void TutorialGame::UpdatePlaying(float dt)
 
 void TutorialGame::UpdatePaused(float dt)
 {
-
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
 }
 
 void TutorialGame::UpdateMenu(float dt)
@@ -197,8 +200,6 @@ void TutorialGame::UpdateMenu(float dt)
     renderer->GetUI()->Update(dt); //UI
     renderer->Render();
 
-    //InitCamera();
-    //InitWorld();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -213,6 +214,10 @@ void TutorialGame::UpdateKeys() {
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
         renderer->ToggleNight();
+    }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
+        world->SetGameState(GameState::PAUSED);
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {

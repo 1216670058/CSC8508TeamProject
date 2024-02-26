@@ -46,6 +46,9 @@ void Audio::Update()
         //bgm = soundEngine->play3D(bgmsource, vec3df(1, 0, 1), true, false, true);
         //soundEngine->setListenerPosition(position, lookDirection);
         break;
+    case GameState::PAUSED:
+        soundEngine->setAllSoundsPaused();
+        break;
     default:
         break;
     }

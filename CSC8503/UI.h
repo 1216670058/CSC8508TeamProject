@@ -26,6 +26,7 @@ namespace NCL {
             void DrawUI();
             void DrawLoading(float dt);
             void DrawMenu(float dt);
+            void DrawPausedMenu(float dt);
 
             void SetLoadingStep(int step) { loadingstep = step; };
         protected:
