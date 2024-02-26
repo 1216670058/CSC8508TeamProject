@@ -99,6 +99,9 @@ void UI::Update(float dt)
     case CSC8503::GameState::PLAYING:
 
         break;
+    case CSC8503::GameState::PAUSED:
+        DrawPausedMenu(dt);
+        break;
     default:
 
         break;
@@ -174,34 +177,81 @@ void UI::DrawMenu(float dt)
 
     ImGui::PushFont(normalfont);
     //Draw menu begin
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - 150, main_viewport->GetCenter().y + 50), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(300, 100), ImGuiCond_Always);
-    ImGui::BeginChild("Start Menu", ImVec2(300, 175), false, ImGuiWindowFlags_NoSavedSettings);
+    ImVec2 menuSize(300, 100);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - menuSize.x / 2, main_viewport->GetCenter().y + menuSize.y / 2), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
+    ImGui::BeginChild("Main Menu", ImVec2(300, 175), false, ImGuiWindowFlags_NoSavedSettings);
     float contentWidth = ImGui::GetWindowContentRegionWidth();
 
     //set Singleplayer
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 0, 1));
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
-    if (ImGui::Button("Singleplayer", ImVec2(contentWidth, 50))) {
+    if (ImGui::Button("Single Player", ImVec2(contentWidth, 50))) {
         TutorialGame::GetGame()->InitGameWorld();
         world->SetGameState(GameState::PLAYING);
         Window::GetWindow()->ShowOSPointer(false);
     }
 
     //set Multiplayer
-    if (ImGui::Button("Multiplayer", ImVec2(contentWidth, 50))) {
+    if (ImGui::Button("Multi Player", ImVec2(contentWidth, 50))) {
 
     }
 
     //set Exit Game
-    if (ImGui::Button("Exit Game", ImVec2(contentWidth, 50))) {
+    if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
     }
     ImGui::PopStyleColor(3);
-
     ImGui::PopFont();
+    ImGui::EndChild();
 
+    ImGui::End();
+}
+
+void UI::DrawPausedMenu(float dt)
+{
+    Window::GetWindow()->ShowOSPointer(true);
+    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
+    if (!ImGui::Begin("Background", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::End();
+        return;
+    }
+    //ImGui::ShowDemoWindow();
+
+    ImGui::PushFont(normalfont);
+    //Draw menu begin
+    ImVec2 menuSize(300, 100);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - menuSize.x / 2, main_viewport->GetCenter().y - menuSize.y / 2), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
+    ImGui::BeginChild("Paused Menu", ImVec2(300, 175), false, ImGuiWindowFlags_NoSavedSettings);
+    float contentWidth = ImGui::GetWindowContentRegionWidth();
+
+    //set Singleplayer
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 0, 1));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
+    if (ImGui::Button("Resume Game", ImVec2(contentWidth, 50))) {
+        world->SetGameState(GameState::PLAYING);
+        Window::GetWindow()->ShowOSPointer(false);
+    }
+
+    //set Multiplayer
+    if (ImGui::Button("Main Menu", ImVec2(contentWidth, 50))) {
+        world->SetGameState(GameState::MENU);
+        world->ClearAndErase();
+        world->GetMainCamera().InitCam();
+    }
+
+    //set Exit Game
+    if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
+        world->SetGameState(GameState::EXIT);
+    }
+    ImGui::PopStyleColor(3);
+    ImGui::PopFont();
     ImGui::EndChild();
 
     ImGui::End();
