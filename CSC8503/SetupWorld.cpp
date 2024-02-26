@@ -527,16 +527,16 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(world);
 
-    SphereVolume* volume = new SphereVolume(0.5f);
+    AABBVolume* volume = new AABBVolume(Vector3(2,2,2));
     train->SetBoundingVolume((CollisionVolume*)volume);
     train->GetTransform()
-        .SetScale(Vector3(2, 2, 2))
+        .SetScale(Vector3(4, 4, 4))
         .SetPosition(position);
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
 
-    train->GetPhysicsObject()->SetInverseMass(1.0f);
+    train->GetPhysicsObject()->SetInverseMass(0);
     train->GetPhysicsObject()->InitSphereInertia();
     train->UploadAssets(carriageMesh, carriageTex, basicShader);
 
@@ -680,14 +680,14 @@ CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)
 PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     PickaxeObject* pickaxe = new PickaxeObject(world, "Pickaxe");
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(1.5f, 1.5f, 1.5f));
     pickaxe->SetBoundingVolume((CollisionVolume*)volume);
 
     pickaxe->SetPlayer(player);
 
     pickaxe->GetTransform()
         .SetPosition(pickaxe->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(3, 3, 3));
 
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
     pickaxe->SetPhysicsObject(new PhysicsObject(&pickaxe->GetTransform(), pickaxe->GetBoundingVolume()));

@@ -297,7 +297,7 @@ void TutorialGame::InitDefaultFloor() {
 void TutorialGame::InitGameExamples() {
     //AddPlayer0ToWorld(Vector3(0, 5, 0));
     //AddEnemyToWorld(Vector3(5, 5, 0));
-    trainObject = AddTrainToWorld(Vector3(10, 5, 0));
+    trainObject = AddTrainToWorld(Vector3(10, 3, 0));
     trainObject->AddCarriage();
     trainObject->AddCarriage();
     AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));

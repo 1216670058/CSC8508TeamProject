@@ -15,8 +15,8 @@ TrainObject::~TrainObject() {
 
 TrainObject::TrainObject(GameWorld *w) {
 
-    path.push_back({Vector3(10, 5, 60), 4});
-    path.push_back({Vector3(60, 5, 60), 1});
+    path.push_back({Vector3(10, 3, 60), 4});
+    path.push_back({Vector3(60, 3, 60), 1});
     world = w;
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
@@ -62,30 +62,21 @@ void TrainObject::Update(float dt) {
     auto it = path.begin();
     auto itt = it->first;
     int flag = it->second;
-    if (flag <= 1) {
-        Vector3 newDirection(0.0f, 0.0f, 1.0f);
-        Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(0.0f, 0.0f, 1.0f);
-        Quaternion rotation = RotateBetweenVectors(currentDirection, newDirection);
-        this->GetTransform().SetOrientation(rotation);
 
-    } else {
-        Vector3 newDirection(1.0f, 0.0f, 0.0f);
-        Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(1.0f, 0.0f, 0.0f);
-        Quaternion rotation = RotateBetweenVectors(currentDirection, newDirection);
-        this->GetTransform().SetOrientation(rotation);
-
-    }
     Vector3 target = itt;
     Vector3 dir = (target - this->GetTransform().GetPosition());
     dir = Vector3(dir.x, 0, dir.z);
-    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 1000.0f * dt);
-    float mm = (this->GetTransform().GetPosition() - target).Length();
+    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 100.0f * dt);
 
-    if (mm < 0.5) {
+    std::cout<< " this position :"<<this->GetTransform().GetPosition()<<std::endl;
+    float mm = (this->GetTransform().GetPosition() - target).Length();
+    std::cout<< " mm  :"<<mm<<std::endl;
+    if (mm < 0.5f) {
         path.erase(it);
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
+    UpdateOrientation(dir);
 }
 
 void TrainObject::UpdatePath(std::vector<std::pair<Vector3, int>> p) {
@@ -121,7 +112,7 @@ void TrainObject::AddCarriage() {
 
     TrainCarriage* carriage = new TrainCarriage();
     carriage->path = path;
-    SphereVolume *volume = new SphereVolume(0.5f);
+    AABBVolume *volume = new AABBVolume(Vector3(0.5f,0.5f,0.5f));
     carriage->SetBoundingVolume((CollisionVolume *) volume);
     carriage->GetTransform()
             .SetScale(Vector3(1, 1, 1))
@@ -130,7 +121,7 @@ void TrainObject::AddCarriage() {
     carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
     carriage->SetPhysicsObject(new PhysicsObject(&carriage->GetTransform(), carriage->GetBoundingVolume()));
 
-    carriage->GetPhysicsObject()->SetInverseMass(1.0);
+    carriage->GetPhysicsObject()->SetInverseMass(0);
     carriage->GetPhysicsObject()->InitSphereInertia();
 
     trainCarriage[++trainIndex] = *carriage;

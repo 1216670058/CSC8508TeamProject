@@ -51,23 +51,25 @@ void TrainCarriage::Update(float dt) {
     auto it = path.begin();
     auto itt = it->first;
     int flag = it->second;
-    if (flag <= 1) {
-        Vector3 newDirection(0.0f, 0.0f, 1.0f);
-        Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(0.0f, 0.0f, 1.0f);
-        Quaternion rotation = RotateBetweenVectors2(currentDirection, newDirection);
-        this->GetTransform().SetOrientation(rotation);
-
-    } else {
-        Vector3 newDirection(1.0f, 0.0f, 0.0f);
-        Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(0.0f, 0.0f, 1.0f);
-        Quaternion rotation = RotateBetweenVectors2(currentDirection, newDirection);
-        this->GetTransform().SetOrientation(rotation);
-
-    }
+   // if (flag <= 1) {
+   //     Vector3 newDirection(0.0f, 0.0f, 1.0f);
+   //     Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(0.0f, 0.0f, 1.0f);
+   //     Quaternion rotation = RotateBetweenVectors2(currentDirection, newDirection);
+   //     this->GetTransform().SetOrientation(rotation);
+//
+   // } else {
+   //     Vector3 newDirection(1.0f, 0.0f, 0.0f);
+   //     Vector3 currentDirection = this->GetTransform().GetMatrix() * Vector3(0.0f, 0.0f, 1.0f);
+   //     Quaternion rotation = RotateBetweenVectors2(currentDirection, newDirection);
+   //     this->GetTransform().SetOrientation(rotation);
+//
+   // }
     Vector3 target = itt;
     Vector3 dir = (target - this->GetTransform().GetPosition());
     dir = Vector3(dir.x, 0, dir.z);
-    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 1000.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 100.0f * dt);
+    UpdateOrientation(dir);
+
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5) {
         path.erase(it);
