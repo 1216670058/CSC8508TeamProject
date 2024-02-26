@@ -53,7 +53,7 @@ void TutorialGame::InitMeshes() {
     axeMesh = renderer->LoadMesh("Axe.msh");
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
     plankMesh = renderer->LoadMesh("Plank.msh");
-    //stoneMesh = renderer->LoadMesh("Stone.msh");
+    stoneMesh = renderer->LoadMesh("Stone.msh");
     //railMesh = renderer->LoadMesh("Rail.msh");
     maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
@@ -84,7 +84,7 @@ void TutorialGame::InitTextures() {
     axeTex = renderer->LoadTexture("Axe_albedo.jpg");
     bucketTex = renderer->LoadTexture("lambert2_Base_Color.png");
     plankTex = renderer->LoadTexture("Planks_Diff.png");
-    //stoneTex = renderer->LoadTexture("Stone.png");
+    stoneTex = renderer->LoadTexture("Stone.png");
     //railTex = renderer->LoadTexture("Rail.png");
 
     floorBumpTex = renderer->LoadTexture("grassbump.png");;
@@ -94,7 +94,7 @@ void TutorialGame::InitTextures() {
     axeBumpTex = renderer->LoadTexture("Axe_normal.png");
     bucketBumpTex = renderer->LoadTexture("lambert2_Normal_OpenGL.png");
     plankBumpTex = renderer->LoadTexture("Planks_Norm.png");
-    //stoneBumpTex = renderer->LoadTexture("Stone_n.png");
+    stoneBumpTex = renderer->LoadTexture("Stone_n.png");
     //railBumpTex = renderer->LoadTexture("Rail_n.png");
 
     lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
@@ -624,12 +624,12 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
 }
 
 RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
-    float meshSize = 2.0f;
+    float meshSize = 1.5f;
     float inverseMass = 0;
 
     RockObject* rock = new RockObject();
     rock->Setscale(meshSize);
-    AABBVolume* volume = new AABBVolume(Vector3(0.3f, 0.9f, 0.3f) * rock->Getscale());
+    AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1) * rock->Getscale());
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(rock->Getscale(), rock->Getscale(), rock->Getscale()))
@@ -680,14 +680,14 @@ CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)
 PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     PickaxeObject* pickaxe = new PickaxeObject(world, "Pickaxe");
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     pickaxe->SetBoundingVolume((CollisionVolume*)volume);
 
     pickaxe->SetPlayer(player);
 
     pickaxe->GetTransform()
         .SetPosition(pickaxe->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(4, 4, 4));
 
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
     pickaxe->SetPhysicsObject(new PhysicsObject(&pickaxe->GetTransform(), pickaxe->GetBoundingVolume()));
@@ -713,7 +713,7 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
 
     axe->GetTransform()
         .SetPosition(axe->FindNearestGridCenter(position))
-        .SetScale(Vector3(0.2f, 0.2f, 0.2f));
+        .SetScale(Vector3(1, 1, 1));
 
     axe->SetRenderObject(new RenderObject(&axe->GetTransform(), axeMesh, axeTex, bumpShader));
     axe->SetPhysicsObject(new PhysicsObject(&axe->GetTransform(), axe->GetBoundingVolume()));
@@ -732,14 +732,14 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
 BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
     BucketObject* bucket = new BucketObject(world, "Bucket");
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     bucket->SetBoundingVolume((CollisionVolume*)volume);
 
     bucket->SetPlayer(player);
 
     bucket->GetTransform()
         .SetPosition(bucket->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(4, 4, 4));
 
     bucket->SetRenderObject(new RenderObject(&bucket->GetTransform(), bucketMesh, bucketTex, bumpShader));
     bucket->GetRenderObject()->SetBumpTexture(bucketBumpTex);
