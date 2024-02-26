@@ -8,6 +8,9 @@ https://research.ncl.ac.uk/game/
 */
 #pragma once
 
+#include <map>
+#include <string>
+
 class Controller	{
 public:
 	Controller() {

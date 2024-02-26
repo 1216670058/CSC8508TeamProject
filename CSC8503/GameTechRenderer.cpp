@@ -25,10 +25,15 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
     processShader = (OGLShader*)LoadShader("process.vert", "process.frag");
     processCombineShader = (OGLShader*)LoadShader("processCombine.vert", "processCombine.frag");
     combineShader = (OGLShader*)LoadShader("combine.vert", "combine.frag");
+    rainShader = (OGLShader*)LoadGeoShader("rainVertex.vert", "rainFragment.frag", "rainGeometry.geom");
 
     InitBuffers();
 
     isNight = false;
+    rainEnabled = true;
+    dayTime = 0.0f;
+    raindrops.resize(1000);
+    InitializeRaindrops();
 
     //Set up the light properties
 
@@ -90,6 +95,9 @@ void GameTechRenderer::InitBuffers() {
     glGenFramebuffers(1, &skyboxFBO);
     glGenFramebuffers(1, &combinedFBO);
     glGenFramebuffers(1, &processFBO);
+
+    glGenVertexArrays(1, &rainVAO);
+    glGenBuffers(1, &rainVBO);
 
     GLenum buffers[6] = {
         GL_COLOR_ATTACHMENT0 ,
@@ -187,6 +195,15 @@ void GameTechRenderer::InitBuffers() {
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    //Rain VAO
+    glBindVertexArray(rainVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rainVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Raindrop) * raindrops.size(), nullptr, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Raindrop), (void*)offsetof(Raindrop, position));
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     //Process FBO
     glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -283,13 +300,22 @@ void GameTechRenderer::LoadSkybox() {
     skyboxMesh->SetVertexIndices({ 0,1,2,2,3,0 });
     skyboxMesh->UploadToGPU();
 
-    std::string name[6] = {
+    std::string day[6] = {
         "../Assets/Textures/Cubemap/skyrender0004.png",
         "../Assets/Textures/Cubemap/skyrender0001.png",
         "../Assets/Textures/Cubemap/skyrender0003.png",
         "../Assets/Textures/Cubemap/skyrender0006.png",
         "../Assets/Textures/Cubemap/skyrender0002.png",
         "../Assets/Textures/Cubemap/skyrender0005.png"
+    };
+    
+    std::string night[6] = {
+        "../Assets/Textures/Cubemap/nightrender0004.png",
+        "../Assets/Textures/Cubemap/nightrender0001.png",
+        "../Assets/Textures/Cubemap/nightrender0003.png",
+        "../Assets/Textures/Cubemap/nightrender0006.png",
+        "../Assets/Textures/Cubemap/nightrender0002.png",
+        "../Assets/Textures/Cubemap/nightrender0005.png"
     };
 
     GLuint axis[6] = {
@@ -304,7 +330,7 @@ void GameTechRenderer::LoadSkybox() {
     int iWidth, iHeight;
 
     for (int i = 0; i < 6; ++i) {
-        unsigned char* image = SOIL_load_image(name[i].c_str(),
+        unsigned char* image = SOIL_load_image(night[i].c_str(),
             &iWidth, &iHeight, 0, SOIL_LOAD_RGB);
         glTexImage2D(axis[i], 0, GL_RGB, iWidth, iHeight,
             0, GL_RGB, GL_UNSIGNED_BYTE, image);
@@ -318,6 +344,25 @@ void GameTechRenderer::LoadSkybox() {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    glGenTextures(1, &skyboxNightTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxNightTex);
+
+    for (int i = 0; i < 6; ++i) {
+        unsigned char* image = SOIL_load_image(day[i].c_str(),
+            &iWidth, &iHeight, 0, SOIL_LOAD_RGB);
+        glTexImage2D(axis[i], 0, GL_RGB, iWidth, iHeight,
+            0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        SOIL_free_image_data(image);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,
+        GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,
+        GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 1);
 }
 
 void GameTechRenderer::RenderFrame() {
@@ -329,6 +374,7 @@ void GameTechRenderer::RenderFrame() {
     RenderShadowMap();
     RenderSkybox();
     RenderCamera();
+    DrawRain();
     if (isNight) {
         DrawLightBuffer();
         CombineBuffers();
@@ -488,8 +534,13 @@ void GameTechRenderer::RenderSkybox() {
     glDisable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
 
+
     Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
     Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
+
+    viewMatrix.SetPositionVector(Vector3(0, 0, 0));
+    Matrix4 rotationMatrix = Matrix4::Rotation(dayTime * 0.1f, Vector3(0, 1, 0)); 
+    viewMatrix = viewMatrix * rotationMatrix;
 
     BindShader(*skyboxShader);
 
@@ -500,9 +551,17 @@ void GameTechRenderer::RenderSkybox() {
     glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
     glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-    glUniform1i(texLocation, 6);
-    glActiveTexture(GL_TEXTURE6);
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), dayTime);
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"), 0.5);
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+    glUniform1i(glGetUniformLocation(skyboxShader->GetProgramID(), "cubeTex"), 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxNightTex);
+    glUniform1i(glGetUniformLocation(skyboxShader->GetProgramID(), "nightCubeTex"), 1);
+
 
     Draw(skyboxMesh, false);
 
@@ -511,6 +570,29 @@ void GameTechRenderer::RenderSkybox() {
     glEnable(GL_DEPTH_TEST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+
+float RandomLifetime() {
+    const float minLifetime = 20.0f;
+    const float maxLifetime = 1000.0f;
+
+    float randomFraction = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    return minLifetime + randomFraction * (maxLifetime - minLifetime);
+}
+
+void GameTechRenderer::InitializeRaindrops() {
+    for (auto& drop : raindrops) {
+        Vector3 cameraPos = gameWorld.GetMainCamera().GetPosition();
+
+        float x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) - 0.5f;
+        float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) - 0.5f;
+
+        drop.position = Vector3(cameraPos.x + x * RAIN_AREA_SIZE, RAIN_HEIGHT, cameraPos.z + z * RAIN_AREA_SIZE);
+        drop.velocity = Vector3(0.0f, -40.0f, 0.0f);
+        drop.lifetime = 0.0f;
+    }
+};
 
 void GameTechRenderer::RenderCamera() {
     glBindFramebuffer(GL_FRAMEBUFFER, worldFBO);
@@ -702,6 +784,43 @@ void GameTechRenderer::DrawPointLights() {
 
     SetShaderLight(*redstoneLight3);
     Draw(sphere);
+}
+
+void GameTechRenderer::DrawRain() {
+    if (rainEnabled == true) {
+        BindShader(*rainShader); // Ensure your shader is bound correctly
+
+        // Update camera and projection matrices
+        Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
+        Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
+
+        // Pass these matrices to the shader
+        glUniformMatrix4fv(glGetUniformLocation(rainShader->GetProgramID(), "view"), 1, false, (float*)&viewMatrix);
+        glUniformMatrix4fv(glGetUniformLocation(rainShader->GetProgramID(), "projection"), 1, false, (float*)&projMatrix);
+
+        // Assuming model matrix represents transformations for your raindrops
+        Matrix4 modelMatrix = Matrix4(); // Identity matrix, modify as needed
+        glUniformMatrix4fv(glGetUniformLocation(rainShader->GetProgramID(), "model"), 1, false, (float*)&modelMatrix);
+
+        // Update the raindrop data
+        glBindBuffer(GL_ARRAY_BUFFER, rainVBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Raindrop) * raindrops.size(), &raindrops[0]);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindVertexArray(rainVAO);
+        glPointSize(500.0f); // Adjust point size as needed
+
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw the raindrops
+        glDrawArrays(GL_POINTS, 0, raindrops.size());
+
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+        glBindVertexArray(0);
+    }
 }
 
 void GameTechRenderer::SetShaderLight(const Light& l) {
@@ -951,6 +1070,10 @@ Texture* GameTechRenderer::LoadTexture(const std::string& name) {
 
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {
     return new OGLShader(vertex, fragment);
+}
+
+Shader* GameTechRenderer::LoadGeoShader(const std::string& vertex, const std::string& fragment, const std::string& geometry) {
+    return new OGLShader(vertex, fragment, geometry);
 }
 
 void GameTechRenderer::SetDebugStringBufferSizes(size_t newVertCount) {

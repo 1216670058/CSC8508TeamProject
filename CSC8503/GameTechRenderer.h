@@ -4,6 +4,7 @@
 #include "OGLTexture.h"
 #include "OGLMesh.h"
 #include "Light.h"
+#include "RainDrop.h"
 
 #include "GameWorld.h"
 #include "UI.h"
@@ -25,6 +26,7 @@ namespace NCL {
             OBJMesh* LoadOBJMesh(const std::string& name);
             Texture* LoadTexture(const std::string& name);
             Shader* LoadShader(const std::string& vertex, const std::string& fragment);
+            Shader* LoadGeoShader(const std::string& vertex, const std::string& fragment, const std::string& geometry);
             void       ToggleNight();
             UI* GetUI() { return ui; };
 
@@ -54,6 +56,9 @@ namespace NCL {
             void DrawLightBuffer();
             void SetShaderLight(const Light& l);
             void DrawPointLights();
+
+            void DrawRain();
+            void InitializeRaindrops();
 
             void DrawProcess();
             void ProcessCombine();
@@ -102,6 +107,7 @@ namespace NCL {
             OGLShader* skyboxShader;
             OGLMesh* skyboxMesh;
             GLuint		skyboxTex;
+            GLuint		skyboxNightTex;
             GLuint		skyboxBufferTex;
             GLuint      skyboxFBO;
 
@@ -126,6 +132,7 @@ namespace NCL {
 
             OGLShader* combineShader;
 
+            OGLShader* rainShader;
             //Debug data storage things
             vector<Vector3> debugLineData;
 
@@ -143,7 +150,20 @@ namespace NCL {
             GLuint textTexVBO;
             size_t textCount;
 
+            GLuint rainVAO;
+            GLuint rainVBO;
+
             bool   isNight;
+            bool rainEnabled;
+
+            float dayTime;
+            float rainTime;
+
+            vector<Raindrop> raindrops;
+
+            const float RAIN_HEIGHT = 3000.0f;
+            const float RAIN_AREA_SIZE = 8000.0f;
+            const float RAIN_DROP_SIZE = 8000.0f;
         };
     }
 }

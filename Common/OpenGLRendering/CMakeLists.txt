@@ -9,7 +9,7 @@ set(Header_Files
     "OGLRenderer.h"
     "OGLMesh.h"
     "OGLComputeShader.h"
-    
+    "RainDrop.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -19,6 +19,7 @@ set(Source_Files
     "OGLRenderer.cpp"
     "OGLMesh.cpp"
     "OGLComputeShader.cpp"
+    "RainDrop.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})
 
