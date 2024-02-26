@@ -11,6 +11,7 @@
 
 namespace NCL {
     namespace CSC8503 {
+
         enum UItype
         {
 
@@ -23,7 +24,6 @@ namespace NCL {
             ~UI();
             void Update(float dt);
             void DrawUI();
-            void ToggleShowUIdemo() { showUIdemo = !showUIdemo; };
             void DrawLoading(float dt);
             void DrawMenu(float dt);
 
@@ -36,7 +36,6 @@ namespace NCL {
 
             int loadingstep;
 
-            bool showUIdemo = true;
         };
     }
 }

@@ -18,7 +18,8 @@ namespace NCL {
             LOADING,
             PLAYING,
             PAUSED,
-            MENU
+            MENU,
+            EXIT
         };
 
         class GameWorld {
