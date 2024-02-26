@@ -64,6 +64,11 @@ namespace NCL::CSC8503 {
 
     protected:
         void CutTree();
+        void DigRock();
+
+        bool doing = false;
+        bool cutting = false;
+        bool digging = false;
 
         int index;
         Vector3 face;
