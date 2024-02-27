@@ -60,11 +60,19 @@ namespace NCL::CSC8503 {
             return face;
         }
 
+        MaterialCarriage* GetCarriage() const {
+            return carriage;
+        }
+        void SetCarriage(MaterialCarriage* c) {
+            carriage = c;
+        }
+
         void PlayerMovement();
 
     protected:
         void CutTree();
         void DigRock();
+        void LoadMaterial();
 
         bool doing = false;
         bool cutting = false;
@@ -72,11 +80,12 @@ namespace NCL::CSC8503 {
 
         int index;
         Vector3 face;
-        float speed=20.0f;
+        float speed = 20.0f;
         vector<Mesh*> meshes;
         vector<vector<GLuint>> textures;
         vector<vector<GLuint>> bumpTextures;
         vector<AnimationObject*> animations;
         vector<ShaderGroup*> shaders;
+        MaterialCarriage* carriage;
     };
 }

@@ -30,7 +30,7 @@ namespace NCL::CSC8503 {
 
         void UpdatePath(std::vector<std::pair<Vector3, int>> p);
 
-        void AddCarriage();
+        void AddCarriage(int id);
 
         void AddConstraint(GameObject* a, GameObject* b);
 
