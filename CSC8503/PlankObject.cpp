@@ -34,7 +34,7 @@ void PlankObject::Update(float dt) {
             else {
                 if (player->GetSlotNum() > 0 && player->GetSlot() == 5) {
                     carriage = player->GetCarriage();
-                    if (carriage->GetPlankVector().size() <= 10) {
+                    if (carriage->GetPlankVector().size() < 10) {
                         carriage->AddPlank(this);
                         loading = false;
                         inCarriage = true;

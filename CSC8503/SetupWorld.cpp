@@ -54,7 +54,7 @@ void TutorialGame::InitMeshes() {
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
     plankMesh = renderer->LoadMesh("Plank.msh");
     stoneMesh = renderer->LoadMesh("Stone.msh");
-    //railMesh = renderer->LoadMesh("Rail.msh");
+    railMesh = renderer->LoadMesh("Rail.msh");
     maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     //assassinMesh = renderer->LoadMesh("Assassin.msh");
@@ -85,7 +85,7 @@ void TutorialGame::InitTextures() {
     bucketTex = renderer->LoadTexture("lambert2_Base_Color.png");
     plankTex = renderer->LoadTexture("Planks_Diff.png");
     stoneTex = renderer->LoadTexture("Stone.png");
-    //railTex = renderer->LoadTexture("Rail.png");
+    railTex = renderer->LoadTexture("Rail.png");
 
     floorBumpTex = renderer->LoadTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
@@ -95,7 +95,7 @@ void TutorialGame::InitTextures() {
     bucketBumpTex = renderer->LoadTexture("lambert2_Normal_OpenGL.png");
     plankBumpTex = renderer->LoadTexture("Planks_Norm.png");
     stoneBumpTex = renderer->LoadTexture("Stone_n.png");
-    //railBumpTex = renderer->LoadTexture("Rail_n.png");
+    railBumpTex = renderer->LoadTexture("Rail_n.png");
 
     lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
 }

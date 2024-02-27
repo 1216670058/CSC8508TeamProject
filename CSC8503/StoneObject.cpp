@@ -34,7 +34,7 @@ void StoneObject::Update(float dt) {
             else {
                 if (player->GetSlotNum() > 0 && player->GetSlot() == 6) {
                     carriage = player->GetCarriage();                   
-                    if (carriage->GetStoneVector().size() <= 10) {
+                    if (carriage->GetStoneVector().size() < 10) {
                         carriage->AddStone(this);
                         loading = false;
                         inCarriage = true;

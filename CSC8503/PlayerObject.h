@@ -80,7 +80,7 @@ namespace NCL::CSC8503 {
 
         int index;
         Vector3 face;
-        float speed = 20.0f;
+        float speed = 15.0f;
         vector<Mesh*> meshes;
         vector<vector<GLuint>> textures;
         vector<vector<GLuint>> bumpTextures;
