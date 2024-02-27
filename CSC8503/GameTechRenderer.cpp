@@ -33,7 +33,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
     //Set up the light properties
 
     std::cout << std::endl << "--------Initialising Lights--------" << std::endl;
-    sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(5.0f, 5.0f, 5.0f, 1.0f), 1000.0f);
+    sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(2.0f, 2.0f, 2.0f, 1.0f), 1000.0f);
     redstoneLight1 = new Light(Vector3(10, 20, 0), Vector4(1, 1, 0, 1), 50.0f);
     redstoneLight2 = new Light(Vector3(30, 20, 40), Vector4(1, 0, 0, 1), 30.0f);
     redstoneLight3 = new Light(Vector3(60, 20, 20), Vector4(0, 1, 0, 1), 40.0f);

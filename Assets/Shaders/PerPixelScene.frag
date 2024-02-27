@@ -50,7 +50,7 @@ void main(void)
 	 color *= texture(mainTex, IN.texCoord);
 	}
 
-	vec3 ambient =  color.rgb * 0.05f; //ambient
+	vec3 ambient =  color.rgb * 0.025f; //ambient
 	
 	vec3 lighting = vec3(0.0);
 	
@@ -62,7 +62,7 @@ void main(void)
 
 	color.rgb *=(ambient+lighting);
 	
-	vec3 result = vec3(1.0) - exp(-color.rgb * 1.2 ); //hdr
+	vec3 result = vec3(1.0) - exp(-color.rgb * 1.05 ); //hdr
 	
 	float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722)); //bloom
 	if(brightness > 1.0)
