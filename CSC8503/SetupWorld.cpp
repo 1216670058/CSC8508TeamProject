@@ -390,11 +390,11 @@ void TutorialGame::AddSceneToWorld()
     int nodeSize;
     int gridWidth;
     int gridHeight;
-    std::ifstream infile(Assets::DATADIR + "TestGrid1.txt");
+    std::ifstream infile(Assets::DATADIR + "map.txt");
     infile >> nodeSize;
     infile >> gridWidth;
     infile >> gridHeight;
-    navGrid = new NavigationGrid("TestGrid1.txt");
+    navGrid = new NavigationGrid("map.txt");
 
     GridNode* nodes = new GridNode[gridWidth * gridHeight];
     for (int y = 0; y < gridHeight; ++y) {
@@ -405,8 +405,11 @@ void TutorialGame::AddSceneToWorld()
             infile >> type;
             n.type = type;
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
-            if (type == 120)scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));
-
+            Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
+            if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));
+            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, +2.5f, 0)));
+            if (type == '3')scene.emplace_back(AddRockToWorld(n.position + Vector3(0, -2.5f, 0)));
+            if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize/2 , 0));
         }
     }
     return;
@@ -415,7 +418,7 @@ void TutorialGame::AddSceneToWorld()
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
     GameObject* floor = new GameObject("Floor");
 
-    Vector3 floorSize = Vector3(200, 2, 200);
+    Vector3 floorSize = Vector3(160, 2, 100);
     AABBVolume* volume = new AABBVolume(floorSize);
     floor->SetBoundingVolume((CollisionVolume*)volume);
     floor->GetTransform()
@@ -574,12 +577,12 @@ GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position, const 
 
 PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
     player = new PlayerObject("Player");
-    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     player->SetBoundingVolume((CollisionVolume*)volume);
 
     player->GetTransform()
         .SetPosition(position)
-        .SetScale(Vector3(3, 3, 3));
+        .SetScale(Vector3(6, 6, 6));
 
     player->SetRenderObject(new RenderObject(&player->GetTransform(), maleMesh, nullptr, skinningBumpShader, 3));
     player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
@@ -603,7 +606,7 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 }
 
 TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
-    float meshSize = 2.0f;
+    float meshSize = 2.5f;
     float inverseMass = 0;
 
     TreeObject* tree = new TreeObject();
@@ -627,12 +630,12 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
 }
 
 RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
-    float meshSize = 1.5f;
+    float meshSize = 2.5f;
     float inverseMass = 0;
 
     RockObject* rock = new RockObject();
     rock->Setscale(meshSize);
-    AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1) * rock->Getscale());
+    AABBVolume* volume = new AABBVolume(Vector3(2, 1, 2) * rock->Getscale());
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(rock->Getscale(), rock->Getscale(), rock->Getscale()))

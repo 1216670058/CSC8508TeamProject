@@ -278,9 +278,9 @@ void TutorialGame::LockedObjectMovement() {
 void TutorialGame::InitCamera() {
     world->GetMainCamera().SetNearPlane(0.1f);
     world->GetMainCamera().SetFarPlane(500.0f);
-    world->GetMainCamera().SetPitch(-15.0f);
-    world->GetMainCamera().SetYaw(315.0f);
-    world->GetMainCamera().SetPosition(Vector3(-60, 40, 60));
+    world->GetMainCamera().SetPitch(-45.0f);
+    world->GetMainCamera().SetYaw(0.0f);
+    world->GetMainCamera().SetPosition(Vector3(80, 100, 220));
     lockedObject = nullptr;
 }
 
@@ -297,7 +297,7 @@ void TutorialGame::InitWorld() {
 }
 
 void TutorialGame::InitDefaultFloor() {
-    AddFloorToWorld(Vector3(0, 0, 0));
+    AddFloorToWorld(Vector3(155, 0, 95));
 }
 
 void TutorialGame::InitGameExamples() {
@@ -311,28 +311,23 @@ void TutorialGame::InitGameExamples() {
     //AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));
     //AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     //AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
-    player = AddPlayerToWorld(Vector3(20, 5, 0));
-    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 20));
-    axe = AddAxeToWorld(Vector3(50, 5, 20));
-    bucket = AddBucketToWorld(Vector3(60, 5, 20));
+    player = AddPlayerToWorld(Vector3(20, 0, 100));
+    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90));
+    axe = AddAxeToWorld(Vector3(40, 5, 100));
+    bucket = AddBucketToWorld(Vector3(40, 5, 110));
     //AddPlankToWorld(Vector3(60, 5, 20));
     //AddStoneToWorld(Vector3(80, 5, 20));
     //AddRailToWorld(Vector3(90, 5, 20));
-    AddTreeToWorld(Vector3(20, 5, 50));
-    AddTreeToWorld(Vector3(30, 5, 50));
-    AddTreeToWorld(Vector3(40, 5, 50));
-    AddTreeToWorld(Vector3(50, 5, 50));
-    AddTreeToWorld(Vector3(60, 5, 50));
-    AddTreeToWorld(Vector3(70, 5, 50));
-    AddRockToWorld(Vector3(20, 5, 40));
-    AddRockToWorld(Vector3(30, 5, 40));
-    AddRockToWorld(Vector3(40, 5, 40));
-    AddRockToWorld(Vector3(50, 5, 40));
-    AddRockToWorld(Vector3(60, 5, 40));
-    AddRockToWorld(Vector3(70, 5, 40));
+    //AddTreeToWorld(Vector3(20, 10, 50));
+    //AddTreeToWorld(Vector3(30, 10, 50));
+    //AddTreeToWorld(Vector3(40, 10, 50));
+    //AddRockToWorld(Vector3(20, 5, 40));
+    //AddRockToWorld(Vector3(30, 5, 40));
+    //AddRockToWorld(Vector3(40, 5, 40));
     //AddMooseToWorld(Vector3(40, 3, 0));
     //AddRobotToWorld(Vector3(50, 3, 0));
     //AddDroneToWorld(Vector3(60, 3, 0));
+    AddSceneToWorld();
 }
 
 bool TutorialGame::SelectObject() {
