@@ -127,10 +127,10 @@ void PlayerObject::PlayerMovement() {
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
    // start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
     if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::UP)) {
-        face = Vector3(1, 0, 0);
+        face = Vector3(0, 0, -1);
         //physicsObject->SetLinearVelocity(Vector3(physicsObject->GetLinearVelocity().x, 0, 0));
         physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
     }
     else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::LEFT)) {
         face = Vector3(-1, 0, 0);
@@ -152,6 +152,7 @@ void PlayerObject::PlayerMovement() {
     else {
         physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
     }
+    //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 }
 
 void PlayerObject::CutTree() {
@@ -165,7 +166,7 @@ void PlayerObject::CutTree() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
                 std::cout << "yes" << "\n";
-                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.01, 0.01, 0.01));
+                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
                     TutorialGame::GetGame()->AddPlankToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
                     TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
@@ -186,7 +187,7 @@ void PlayerObject::DigRock() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10010 && closestCollision.rayDistance < 5.0f) {
                 std::cout << "yes" << "\n";
-                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.01, 0.01, 0.01));
+                closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
                     TutorialGame::GetGame()->AddStoneToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
                     TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);

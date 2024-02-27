@@ -48,23 +48,23 @@ void TutorialGame::InitMeshes() {
     carriageMesh = renderer->LoadMesh("Carriage.msh");
     treeMesh = renderer->LoadMesh("Tree.msh");
     rockMesh = renderer->LoadMesh("Rock.msh");
-    creeperMesh = renderer->LoadOBJMesh("Creeper.obj");
+    //creeperMesh = renderer->LoadOBJMesh("Creeper.obj");
     pickaxeMesh = renderer->LoadMesh("Pickaxe.msh");
     axeMesh = renderer->LoadMesh("Axe.msh");
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
     plankMesh = renderer->LoadMesh("Plank.msh");
     stoneMesh = renderer->LoadMesh("Stone.msh");
     railMesh = renderer->LoadMesh("Rail.msh");
-    maleMesh = renderer->LoadMesh("Male_Guard.msh");
+    //maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
-    //assassinMesh = renderer->LoadMesh("Assassin.msh");
+    assassinMesh = renderer->LoadMesh("Assassin.msh");
     //girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
-    mooseMesh = renderer->LoadMesh("Moose.msh");
-    robotMesh = renderer->LoadMesh("Robot.msh");
-    droneMesh = renderer->LoadMesh("Drone.msh");
+    //mooseMesh = renderer->LoadMesh("Moose.msh");
+    //robotMesh = renderer->LoadMesh("Robot.msh");
+    //droneMesh = renderer->LoadMesh("Drone.msh");
 
-    meshes.push_back(maleMesh);
+    //meshes.push_back(maleMesh);
     //meshes.push_back(femaleMesh);
     //meshes.push_back(assassinMesh);
     //meshes.push_back(girlMesh);
@@ -79,7 +79,7 @@ void TutorialGame::InitTextures() {
     carriageTex = renderer->LoadTexture("CartEmpty_T.png");
     treeTex = renderer->LoadTexture("Tree.png");
     rockTex = renderer->LoadTexture("Rock.png");
-    lightTex = renderer->LoadTexture("redstone_lamp_on.png");
+    //lightTex = renderer->LoadTexture("redstone_lamp_on.png");
     pickaxeTex = renderer->LoadTexture("lowpoly_pickaxe_BaseColor.png");
     axeTex = renderer->LoadTexture("Axe_albedo.jpg");
     bucketTex = renderer->LoadTexture("lambert2_Base_Color.png");
@@ -87,9 +87,9 @@ void TutorialGame::InitTextures() {
     stoneTex = renderer->LoadTexture("Stone.png");
     railTex = renderer->LoadTexture("Rail.png");
 
-    floorBumpTex = renderer->LoadTexture("grassbump.png");;
+    //floorBumpTex = renderer->LoadTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
-    lightBumpTex = renderer->LoadTexture("redstone_lamp_on_n.png");
+    //lightBumpTex = renderer->LoadTexture("redstone_lamp_on_n.png");
     pickaxeBumpTex = renderer->LoadTexture("lowpoly_pickaxe_Normal.png");
     axeBumpTex = renderer->LoadTexture("Axe_normal.png");
     bucketBumpTex = renderer->LoadTexture("lambert2_Normal_OpenGL.png");
@@ -97,29 +97,29 @@ void TutorialGame::InitTextures() {
     stoneBumpTex = renderer->LoadTexture("Stone_n.png");
     railBumpTex = renderer->LoadTexture("Rail_n.png");
 
-    lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
+    //lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
 }
 
 void TutorialGame::InitMaterials() {
     std::cout << std::endl << "--------Loading Materials--------" << std::endl;
-    maleMaterial = new MeshMaterial("Male_Guard.mat");
-    for (int i = 0; i < maleMesh->GetSubMeshCount(); ++i) {
-        const MeshMaterialEntry* matEntry =
-            maleMaterial->GetMaterialForLayer(i);
-
-        const string* filename = nullptr;
-        matEntry->GetEntry("Diffuse", &filename);
-        string path = Assets::TEXTUREDIR + *filename;
-        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-        maleTextures.emplace_back(texID);
-
-        matEntry->GetEntry("Bump", &filename);
-        string path2 = Assets::TEXTUREDIR + *filename;
-        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-        maleBumpTextures.emplace_back(texID2);
-    }
+    //maleMaterial = new MeshMaterial("Male_Guard.mat");
+    //for (int i = 0; i < maleMesh->GetSubMeshCount(); ++i) {
+    //    const MeshMaterialEntry* matEntry =
+    //        maleMaterial->GetMaterialForLayer(i);
+    //
+    //    const string* filename = nullptr;
+    //    matEntry->GetEntry("Diffuse", &filename);
+    //    string path = Assets::TEXTUREDIR + *filename;
+    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+    //    maleTextures.emplace_back(texID);
+    //
+    //    matEntry->GetEntry("Bump", &filename);
+    //    string path2 = Assets::TEXTUREDIR + *filename;
+    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+    //    maleBumpTextures.emplace_back(texID2);
+    //}
 
     //femaleMaterial = new MeshMaterial("Female_Guard.mat");
     //for (int i = 0; i < femaleMesh->GetSubMeshCount(); ++i) {
@@ -140,18 +140,18 @@ void TutorialGame::InitMaterials() {
     //    femaleBumpTextures.emplace_back(texID2);
     //}
     //
-    //assassinMaterial = new MeshMaterial("Assassin.mat");
-    //for (int i = 0; i < assassinMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        assassinMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    assassinTextures.emplace_back(texID);
-    //}
+    assassinMaterial = new MeshMaterial("Assassin.mat");
+    for (int i = 0; i < assassinMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            assassinMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        assassinTextures.emplace_back(texID);
+    }
     //vector<GLuint> assassinBumpTextures;
     //
     //girlMaterial = new MeshMaterial("Girl.mat");
@@ -237,13 +237,13 @@ void TutorialGame::InitMaterials() {
     //    droneTextures.emplace_back(texID);
     //}
 
-    textures.push_back(maleTextures);
+    //textures.push_back(maleTextures);
     //textures.push_back(femaleTextures);
     //textures.push_back(assassinTextures);
     //textures.push_back(girlTextures);
     //textures.push_back(smurfTextures);
 
-    bumpTextures.push_back(maleBumpTextures);
+    //bumpTextures.push_back(maleBumpTextures);
     //bumpTextures.push_back(femaleBumpTextures);
     //bumpTextures.push_back(assassinBumpTextures);
     //bumpTextures.push_back(girlBumpTextures);
@@ -252,16 +252,16 @@ void TutorialGame::InitMaterials() {
 
 void TutorialGame::InitAnimations() {
     std::cout << std::endl << "--------Loading Animations--------" << std::endl;
-    maleAnimation = new AnimationObject();
-    maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
-    maleAnimation->SetAnim2(new MeshAnimation("StepForward1.anm"));
-    maleAnimation->SetAnim3(new MeshAnimation("StepLeft1.anm"));
-    maleAnimation->SetAnim4(new MeshAnimation("StepRight1.anm"));
-    maleAnimation->SetAnim5(new MeshAnimation("StepBack1.anm"));
-    maleAnimation->SetAnim6(new MeshAnimation("Angry1.anm"));
-    maleAnimation->SetAnim7(new MeshAnimation("Happy1.anm"));
-    maleAnimation->SetAnim8(new MeshAnimation("Cheer1.anm"));
-    maleAnimation->SetActiveAnim(maleAnimation->GetAnim1());
+    //maleAnimation = new AnimationObject();
+    //maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
+    //maleAnimation->SetAnim2(new MeshAnimation("StepForward1.anm"));
+    //maleAnimation->SetAnim3(new MeshAnimation("StepLeft1.anm"));
+    //maleAnimation->SetAnim4(new MeshAnimation("StepRight1.anm"));
+    //maleAnimation->SetAnim5(new MeshAnimation("StepBack1.anm"));
+    //maleAnimation->SetAnim6(new MeshAnimation("Angry1.anm"));
+    //maleAnimation->SetAnim7(new MeshAnimation("Happy1.anm"));
+    //maleAnimation->SetAnim8(new MeshAnimation("Cheer1.anm"));
+    //maleAnimation->SetActiveAnim(maleAnimation->GetAnim1());
 
     //femaleAnimation = new AnimationObject();
     //femaleAnimation->SetAnim1(new MeshAnimation("Idle2.anm"));
@@ -274,14 +274,14 @@ void TutorialGame::InitAnimations() {
     //femaleAnimation->SetAnim8(new MeshAnimation("Cheer2.anm"));
     //femaleAnimation->SetActiveAnim(femaleAnimation->GetAnim1());
     //
-    //assassinAnimation = new AnimationObject();
-    //assassinAnimation->SetAnim1(new MeshAnimation("Assassin.anm"));
-    //assassinAnimation->SetAnim2(new MeshAnimation("Assassin.anm"));
-    //assassinAnimation->SetAnim3(new MeshAnimation("Assassin.anm"));
-    //assassinAnimation->SetAnim4(new MeshAnimation("Assassin.anm"));
-    //assassinAnimation->SetAnim5(new MeshAnimation("Assassin.anm"));
-    //assassinAnimation->SetActiveAnim(assassinAnimation->GetAnim1());
-    //assassinAnimation->SetIdle(false);
+    assassinAnimation = new AnimationObject();
+    assassinAnimation->SetAnim1(new MeshAnimation("Assassin.anm"));
+    assassinAnimation->SetAnim2(new MeshAnimation("Assassin.anm"));
+    assassinAnimation->SetAnim3(new MeshAnimation("Assassin.anm"));
+    assassinAnimation->SetAnim4(new MeshAnimation("Assassin.anm"));
+    assassinAnimation->SetAnim5(new MeshAnimation("Assassin.anm"));
+    assassinAnimation->SetActiveAnim(assassinAnimation->GetAnim1());
+    assassinAnimation->SetIdle(false);
     //
     //girlAnimation = new AnimationObject();
     //girlAnimation->SetAnim1(new MeshAnimation("Girl.anm"));
@@ -325,7 +325,7 @@ void TutorialGame::InitAnimations() {
     //droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
     //droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
 
-    animations.push_back(maleAnimation);
+    //animations.push_back(maleAnimation);
     //animations.push_back(femaleAnimation);
     //animations.push_back(assassinAnimation);
     //animations.push_back(girlAnimation);
@@ -530,10 +530,10 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(world);
 
-    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
+    AABBVolume* volume = new AABBVolume(Vector3(4, 4, 4));
     train->SetBoundingVolume((CollisionVolume*)volume);
     train->GetTransform()
-        .SetScale(Vector3(6, 6, 6))
+        .SetScale(Vector3(8, 8, 8))
         .SetPosition(position);
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
@@ -584,17 +584,17 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
         .SetPosition(position)
         .SetScale(Vector3(6, 6, 6));
 
-    player->SetRenderObject(new RenderObject(&player->GetTransform(), maleMesh, nullptr, skinningBumpShader, 3));
+    player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
     player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-    player->GetRenderObject()->SetAnimationObject(maleAnimation);
-    player->GetRenderObject()->SetTextures(maleTextures);
-    player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
+    player->GetRenderObject()->SetAnimationObject(assassinAnimation);
+    player->GetRenderObject()->SetTextures(assassinTextures);
+    //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
 
-    player->SetPlayerMeshes(meshes);
-    player->SetPlayerTextures(textures);
-    player->SetPlayerBumpTextures(bumpTextures);
-    player->SetPlayerAnimations(animations);
-    player->SetPlayerShaders(shaders);
+    //player->SetPlayerMeshes(meshes);
+    //player->SetPlayerTextures(textures);
+    //player->SetPlayerBumpTextures(bumpTextures);
+    //player->SetPlayerAnimations(animations);
+    //player->SetPlayerShaders(shaders);
 
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
@@ -765,14 +765,14 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
 PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
     PlankObject* plank = new PlankObject(world);
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     plank->SetBoundingVolume((CollisionVolume*)volume);
 
     plank->SetPlayer(player);
 
     plank->GetTransform()
         .SetPosition(plank->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(4, 4, 4));
 
     plank->SetRenderObject(new RenderObject(&plank->GetTransform(), plankMesh, plankTex, bumpShader));
     plank->GetRenderObject()->SetBumpTexture(plankBumpTex);
@@ -791,14 +791,14 @@ PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
 StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
     StoneObject* stone = new StoneObject(world);
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    SphereVolume* volume = new SphereVolume(2);
     stone->SetBoundingVolume((CollisionVolume*)volume);
 
     stone->SetPlayer(player);
 
     stone->GetTransform()
         .SetPosition(stone->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(4, 4, 4));
 
     stone->SetRenderObject(new RenderObject(&stone->GetTransform(), stoneMesh, stoneTex, bumpShader));
     stone->GetRenderObject()->SetBumpTexture(stoneBumpTex);
@@ -817,14 +817,14 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
 RailObject* TutorialGame::AddRailToWorld(const Vector3& position) {
     RailObject* rail = new RailObject(world);
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     rail->SetBoundingVolume((CollisionVolume*)volume);
 
     rail->SetPlayer(player);
 
     rail->GetTransform()
         .SetPosition(rail->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
+        .SetScale(Vector3(4, 4, 4));
 
     rail->SetRenderObject(new RenderObject(&rail->GetTransform(), railMesh, railTex, bumpShader));
     rail->GetRenderObject()->SetBumpTexture(railBumpTex);

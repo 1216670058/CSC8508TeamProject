@@ -9,9 +9,7 @@ void CollectableObject::Update(float dt) {
     }
     else {
         Vector3 playerPosition = player->GetTransform().GetPosition();
-        if (num == 1) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 5, playerPosition.z));
-        if (num == 2) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 6, playerPosition.z));
-        if (num == 3) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 7, playerPosition.z));
+        transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 8, playerPosition.z));
         transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
     }
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::R)) {
@@ -19,7 +17,7 @@ void CollectableObject::Update(float dt) {
             putDown = true;
             num = 1;
             Vector3 position = transform.GetPosition();
-            transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) + player->GetFace()*5.0f));
+            transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace()*5.0f));
         }
     }
 }
