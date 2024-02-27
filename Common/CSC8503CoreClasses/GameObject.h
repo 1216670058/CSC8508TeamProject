@@ -185,8 +185,8 @@ namespace NCL::CSC8503 {
         int         slotNum = 0;
         std::string	name;
 
-        int GRID_SIZE_X = 10;
-        int GRID_SIZE_Z = 10;
+        int GRID_SIZE_X = 32;
+        int GRID_SIZE_Z = 20;
         float GRID_CENTER_X = 5.0f;
         float  GRID_CENTER_Z = 5.0f;
 

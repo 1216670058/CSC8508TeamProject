@@ -55,7 +55,7 @@ double GameObject::EuclideanDistance(float x1, float y1, float x2, float y2) {
 }
 
 Vector3 GameObject::FindNearestGridCenter(const Vector3& position) {
-    float inputX = position.x;
+    /*float inputX = position.x;
     float inputZ = position.z;
     GridCenter nearestGridCenter;
     Vector3 _nearestGridCenter;
@@ -73,5 +73,6 @@ Vector3 GameObject::FindNearestGridCenter(const Vector3& position) {
     _nearestGridCenter.x = nearestGridCenter.x;
     _nearestGridCenter.z = nearestGridCenter.z;
     _nearestGridCenter.y = position.y;
-    return _nearestGridCenter;
+    return _nearestGridCenter;*/
+    return position;
 }
