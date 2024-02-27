@@ -128,24 +128,24 @@ void PlayerObject::PlayerMovement() {
    // start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
     if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::UP)) {
 
-        face = Vector3(1, 0, 0);
-        physicsObject->AddForceAtPosition(face*speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
-    }
-    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::LEFT)) {
         face = Vector3(0, 0, -1);
-        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        physicsObject->AddForceAtPosition(face*speed, transform.GetPosition());
         transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
     }
-    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::DOWN)) {
+    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::LEFT)) {
         face = Vector3(-1, 0, 0);
         physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
         transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
     }
-    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::RIGHT)) {
+    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::DOWN)) {
         face = Vector3(0, 0, 1);
         physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
         transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
+    }
+    else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::RIGHT)) {
+        face = Vector3(1, 0, 0);
+        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
     }
     else {
         physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
