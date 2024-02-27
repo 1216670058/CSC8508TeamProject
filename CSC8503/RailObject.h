@@ -11,5 +11,35 @@ namespace NCL::CSC8503 {
 			typeID = 7;
 		}
 		~RailObject() {};
+
+		void SetCarriage(ProduceCarriage* c) {
+			carriage = c;
+		}
+
+		void SetInCarriage(bool i) {
+			inCarriage = i;
+		}
+
+		void SetHeight(float h) {
+			height = h;
+		}
+
+		int GetNum() const {
+			return num;
+		}
+		void SetNum(int n) {
+			num = n;
+		}
+
+		void OnCollisionBegin(GameObject* otherObject) override;
+
+		void Update(float dt) override;
+
+	protected:
+		bool inCarriage = true;
+		float height;
+		int num = 1;
+
+		ProduceCarriage* carriage = nullptr;
 	};
 }

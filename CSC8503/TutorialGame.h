@@ -264,7 +264,9 @@ namespace NCL {
             GameObject* character = nullptr;
             GameObject* objClosest = nullptr;
 
-            TrainObject* trainObject = nullptr;
+            TrainObject* train = nullptr;
+            MaterialCarriage* carriage1 = nullptr;
+            ProduceCarriage* carriage2 = nullptr;
 
             PlayerObject* player = nullptr;
 

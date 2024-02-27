@@ -30,6 +30,10 @@ namespace NCL::CSC8503 {
             this->player = player;
         }
 
+        void SetPutDown(bool p) {
+            putDown = p;
+        }
+
         Vector3 PlayerFront();
 
     protected:

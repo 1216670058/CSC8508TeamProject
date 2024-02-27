@@ -16,6 +16,10 @@ namespace NCL::CSC8503 {
 
 		void Update(float dt) override;
 
+		void SetHeight(float h) {
+			height = h;
+		}
+
 	protected:
 		bool inCarriage = false;
 		bool loading = false;

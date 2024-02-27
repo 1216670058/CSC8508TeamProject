@@ -69,7 +69,7 @@ void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader
     basicShader = shader;
 }
 
-void TrainObject::AddCarriage(int id) {
+TrainCarriage* TrainObject::AddCarriage(int id) {
     Vector3 nowPos;
     if (trainIndex == 0)
         nowPos = GetTransform().GetPosition();
@@ -90,7 +90,7 @@ void TrainObject::AddCarriage(int id) {
     }
 
     if (id == 21) {
-        MaterialCarriage* carriage = new MaterialCarriage();
+        MaterialCarriage* carriage = new MaterialCarriage(world);
         carriage->path = path;
         AABBVolume* volume = new AABBVolume(Vector3(1.2f, 1.2f, 1.2f));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
@@ -109,6 +109,33 @@ void TrainObject::AddCarriage(int id) {
 
         trainCarriage[++trainIndex] = *carriage;
         world->AddGameObject(carriage);
+
+        return carriage;
+    }
+    if (id == 22) {
+        ProduceCarriage* carriage = new ProduceCarriage(world);
+        carriage->path = path;
+        AABBVolume* volume = new AABBVolume(Vector3(1.2f, 1.2f, 1.2f));
+        carriage->SetBoundingVolume((CollisionVolume*)volume);
+        carriage->GetTransform()
+            .SetScale(Vector3(2, 2, 2))
+            .SetPosition(nextPos);
+
+        carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
+        carriage->SetPhysicsObject(new PhysicsObject(&carriage->GetTransform(), carriage->GetBoundingVolume()));
+
+        carriage->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+
+        carriage->GetPhysicsObject()->SetInverseMass(0);
+        carriage->GetPhysicsObject()->InitSphereInertia();
+        carriage->GetPhysicsObject()->SetChannel(1);
+
+        carriage->SetTypeID(id);
+
+        trainCarriage[++trainIndex] = *carriage;
+        world->AddGameObject(carriage);
+
+        return carriage;
     }
 }
 

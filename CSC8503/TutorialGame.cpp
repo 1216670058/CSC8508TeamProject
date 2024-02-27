@@ -177,8 +177,8 @@ void TutorialGame::UpdatePlaying(float dt)
         //std::cout<<"debug"<<std::endl;
         testStateObject->Update(dt);
     }
-    if (trainObject) {
-        trainObject->Update(dt);
+    if (train) {
+        train->Update(dt);
     }
 
     renderer->Render();
@@ -303,9 +303,11 @@ void TutorialGame::InitDefaultFloor() {
 void TutorialGame::InitGameExamples() {
     //AddPlayer0ToWorld(Vector3(0, 5, 0));
     //AddEnemyToWorld(Vector3(5, 5, 0));
-    trainObject = AddTrainToWorld(Vector3(10, 3, 0));
-    trainObject->AddCarriage(21);
-    trainObject->AddCarriage(21);
+    train = AddTrainToWorld(Vector3(10, 3, 0));
+    carriage1 = (MaterialCarriage*)(train->AddCarriage(21));
+    carriage2 = (ProduceCarriage*)(train->AddCarriage(22));
+    carriage1->SetProduceCarriage(carriage2);
+    carriage2->SetMaterialCarriage(carriage1);
     //AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));
     //AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     //AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
