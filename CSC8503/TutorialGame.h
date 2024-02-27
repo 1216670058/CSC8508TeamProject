@@ -82,6 +82,7 @@ namespace NCL {
             bool SelectObject();
             void MoveSelectedObject();
             void LockedObjectMovement();
+            void CameraUpdate();
 
             void AddSceneToWorld();
             void HoldObject();
@@ -131,6 +132,7 @@ namespace NCL {
 
             bool useGravity;
             bool inSelectionMode;
+            int cameraMode = 1;
 
             float		forceMagnitude;
 

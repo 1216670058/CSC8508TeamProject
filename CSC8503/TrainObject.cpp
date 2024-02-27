@@ -15,8 +15,8 @@ TrainObject::~TrainObject() {
 
 TrainObject::TrainObject(GameWorld *w) {
 
-    path.push_back({Vector3(10, 3, 60), 4});
-    path.push_back({Vector3(60, 3, 60), 1});
+    path.push_back({Vector3(300, 5, 100), 4});
+    path.push_back({Vector3(300, 5, 0), 1});
     world = w;
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
@@ -48,14 +48,17 @@ void TrainObject::Update(float dt) {
     Vector3 target = itt;
     Vector3 dir = (target - this->GetTransform().GetPosition());
     dir = Vector3(dir.x, 0, dir.z);
-    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 100.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 10.0f * dt);
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5f) {
+        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
         path.erase(it);
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
+    //std::cout << "Dir: " << dir.x << " " << dir.y << " " << dir.z << std::endl;
     UpdateOrientation(dir);
 }
 
@@ -79,23 +82,23 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
     Vector3 nextPos;
 
 
-    if (path.front().second <= 1) { //车头方向为上下 ，添加的车厢竖值放置
+    if (path.front().second <= 1) { 
         nextPos = nowPos;
-        nextPos.x -= 5;
+        nextPos.z -= 8;
     }
     else {
         nextPos = nowPos;
-        nextPos.z -= 5;
+        nextPos.x -= 8;
 
     }
 
     if (id == 21) {
         MaterialCarriage* carriage = new MaterialCarriage(world);
         carriage->path = path;
-        AABBVolume* volume = new AABBVolume(Vector3(1.2f, 1.2f, 1.2f));
+        AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
         carriage->GetTransform()
-            .SetScale(Vector3(2, 2, 2))
+            .SetScale(Vector3(3, 3, 3))
             .SetPosition(nextPos);
 
         carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
@@ -115,10 +118,10 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
     if (id == 22) {
         ProduceCarriage* carriage = new ProduceCarriage(world);
         carriage->path = path;
-        AABBVolume* volume = new AABBVolume(Vector3(1.2f, 1.2f, 1.2f));
+        AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
         carriage->GetTransform()
-            .SetScale(Vector3(2, 2, 2))
+            .SetScale(Vector3(3, 3, 3))
             .SetPosition(nextPos);
 
         carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));

@@ -8,11 +8,17 @@ void PlankObject::OnCollisionBegin(GameObject* otherObject) {
         putDown = false;
         player->SetSlot(this->GetTypeID());
         player->SetSlotNum(player->GetSlotNum() + 1);
+        AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
+        SetBoundingVolume((CollisionVolume*)volume);
+        transform.SetScale(Vector3(2, 2, 2));
     }
     else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 5 && otherObject->GetSlotNum() < 3) {
         putDown = false;
         num = player->GetSlotNum() + 1;
         player->SetSlotNum(player->GetSlotNum() + 1);
+        AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
+        SetBoundingVolume((CollisionVolume*)volume);
+        transform.SetScale(Vector3(2, 2, 2));
     }
 }
 
@@ -24,9 +30,9 @@ void PlankObject::Update(float dt) {
         if (!inCarriage) {
             if (!loading) {
                 Vector3 playerPosition = player->GetTransform().GetPosition();
-                if (num == 1) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 5, playerPosition.z));
-                if (num == 2) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 6, playerPosition.z));
-                if (num == 3) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 7, playerPosition.z));
+                if (num == 1) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 10, playerPosition.z));
+                if (num == 2) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 11, playerPosition.z));
+                if (num == 3) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 12, playerPosition.z));
                 transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
                 physicsObject->ClearForces();
                 if (player->GetCarriage()) loading = true;
@@ -73,7 +79,10 @@ void PlankObject::Update(float dt) {
                 putDown = true;
                 num = 1;
                 Vector3 position = transform.GetPosition();
-                transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) + player->GetFace() * 5.0f));
+                transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
+                AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
+                SetBoundingVolume((CollisionVolume*)volume);
+                transform.SetScale(Vector3(4, 4, 4));
             }
         }
     }

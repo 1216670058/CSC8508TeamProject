@@ -45,11 +45,13 @@ void TrainCarriage::Update(float dt) {
     Vector3 target = itt;
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 100.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5) {
+        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
         path.erase(it);
     }
 }
@@ -63,11 +65,14 @@ void MaterialCarriage::Update(float dt) {
     Vector3 target = itt;
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 100.0f * dt);
+    //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5) {
+        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
         path.erase(it);
     }
 
@@ -147,11 +152,13 @@ void ProduceCarriage::Update(float dt) {
     Vector3 target = itt;
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 100.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5) {
+        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
         path.erase(it);
     }
 
@@ -169,7 +176,7 @@ void ProduceCarriage::Update(float dt) {
             finish = true;
             RailObject* rail = TutorialGame::GetGame()->AddRailToWorld(transform.GetPosition());
             rail->SetCarriage(this);
-            rail->SetHeight(transform.GetPosition().y + 2 + rails.size());
+            rail->SetHeight(transform.GetPosition().y + 3 + rails.size());
             rails.push_back(rail);
         }
     }

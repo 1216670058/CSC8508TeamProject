@@ -110,7 +110,12 @@ void TutorialGame::UpdateLoading(float dt)
 void TutorialGame::UpdatePlaying(float dt)
 {
     if (!inSelectionMode) {
-        world->GetMainCamera().UpdateCamera(dt);
+        if (cameraMode == 1) {
+            CameraUpdate();
+        }
+        else {
+            world->GetMainCamera().UpdateCamera(dt);
+        }
     }
     if (lockedObject != nullptr) {
         Vector3 objPos = lockedObject->GetTransform().GetPosition();
@@ -275,6 +280,16 @@ void TutorialGame::LockedObjectMovement() {
     }
 }
 
+void TutorialGame::CameraUpdate() {
+    Vector3 objPos = player->GetTransform().GetPosition();
+    Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 150, objPos.z + 135);
+    if (camPos.z > 270) camPos.z = 270;
+
+    world->GetMainCamera().SetPosition(camPos);
+    world->GetMainCamera().SetPitch(-45);
+    world->GetMainCamera().SetYaw(0);
+}
+
 void TutorialGame::InitCamera() {
     world->GetMainCamera().SetNearPlane(0.1f);
     world->GetMainCamera().SetFarPlane(500.0f);
@@ -303,7 +318,7 @@ void TutorialGame::InitDefaultFloor() {
 void TutorialGame::InitGameExamples() {
     //AddPlayer0ToWorld(Vector3(0, 5, 0));
     //AddEnemyToWorld(Vector3(5, 5, 0));
-    train = AddTrainToWorld(Vector3(10, 3, 0));
+    train = AddTrainToWorld(Vector3(70, 5, 100));
     carriage1 = (MaterialCarriage*)(train->AddCarriage(21));
     carriage2 = (ProduceCarriage*)(train->AddCarriage(22));
     carriage1->SetProduceCarriage(carriage2);
