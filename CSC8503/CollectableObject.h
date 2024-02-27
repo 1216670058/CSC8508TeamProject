@@ -34,6 +34,7 @@ namespace NCL::CSC8503 {
 
     protected:
         bool putDown;
+        int num = 1;
         PlayerObject* player;
         GameWorld* world;
 

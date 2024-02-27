@@ -214,9 +214,12 @@ void PhysicsSystem::BasicCollisionDetection() {
             }
             CollisionDetection::CollisionInfo info;
             if (CollisionDetection::ObjectIntersection(*i, *j, info)) {
-                std::cout << " Collision between " << (*i)->GetName()
-                          << " and " << (*j)->GetName() << std::endl;
-                ImpulseResolveCollision(*info.a, *info.b, info.point);
+                //std::cout << " Collision between " << (*i)->GetName()
+                          //<< " and " << (*j)->GetName() << std::endl;
+                if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
+                    ProjectionResolveCollision(*info.a, *info.b, info.point);
+                if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
+                    ImpulseResolveCollision(*info.a, *info.b, info.point);
                 info.framesLeft = numCollisionFrames;
                 allCollisions.insert(info);
             }
@@ -288,6 +291,29 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject &a, GameObject &b, Collis
         physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
 
         physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
+    }
+}
+
+void PhysicsSystem::ProjectionResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const {
+    PhysicsObject* physA = a.GetPhysicsObject();
+    PhysicsObject* physB = b.GetPhysicsObject();
+
+    if (physA->UseResolve() && physB->UseResolve()) {
+
+        Transform& transformA = a.GetTransform();
+        Transform& transformB = b.GetTransform();
+
+        float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
+
+        if (totalMass == 0) {
+            return;
+        }
+
+        transformA.SetPosition(transformA.GetPosition() -
+            (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
+
+        transformB.SetPosition(transformB.GetPosition() +
+            (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
     }
 }
 

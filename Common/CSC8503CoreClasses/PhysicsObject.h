@@ -56,6 +56,13 @@ namespace NCL {
 				angularVelocity = v;
 			}
 
+			int GetChannel() const {
+				return channel;
+			}
+			void SetChannel(int c) {
+				channel = c;
+			}
+
 			bool UseGravity() const {
 				return gravity;
 			}
@@ -97,6 +104,7 @@ namespace NCL {
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
 
+			int channel;
 			bool gravity;
 			bool resolve;
 		};

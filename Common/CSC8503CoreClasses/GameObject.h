@@ -127,6 +127,13 @@ namespace NCL::CSC8503 {
             return slot;
         }
 
+        void SetSlotNum(int n) {
+            slotNum = n;
+        }
+        int GetSlotNum() const {
+            return slotNum;
+        }
+
         void SetFlag1(int f) {
             flag1 = f;
         }
@@ -175,6 +182,7 @@ namespace NCL::CSC8503 {
         int			worldID;
         int         typeID;
         int         slot = 0;
+        int         slotNum = 0;
         std::string	name;
 
         int GRID_SIZE_X = 10;

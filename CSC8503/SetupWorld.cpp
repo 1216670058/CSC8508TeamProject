@@ -527,17 +527,19 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(world);
 
-    SphereVolume* volume = new SphereVolume(0.5f);
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     train->SetBoundingVolume((CollisionVolume*)volume);
     train->GetTransform()
-        .SetScale(Vector3(2, 2, 2))
+        .SetScale(Vector3(6, 6, 6))
         .SetPosition(position);
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
 
-    train->GetPhysicsObject()->SetInverseMass(1.0f);
+    train->GetPhysicsObject()->SetInverseMass(0);
     train->GetPhysicsObject()->InitSphereInertia();
+    train->GetPhysicsObject()->SetChannel(1);
+
     train->UploadAssets(carriageMesh, carriageTex, basicShader);
 
     world->AddGameObject(train);
@@ -617,6 +619,7 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
 
     tree->GetPhysicsObject()->SetInverseMass(inverseMass);
     tree->GetPhysicsObject()->InitSphereInertia();
+    tree->GetPhysicsObject()->SetChannel(1);
 
     world->AddGameObject(tree);
 
@@ -641,6 +644,7 @@ RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
 
     rock->GetPhysicsObject()->SetInverseMass(inverseMass);
     rock->GetPhysicsObject()->InitSphereInertia();
+    rock->GetPhysicsObject()->SetChannel(1);
 
     world->AddGameObject(rock);
 

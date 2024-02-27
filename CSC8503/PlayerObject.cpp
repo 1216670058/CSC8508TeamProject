@@ -102,8 +102,10 @@ void PlayerObject::Update(float dt) {
     //    index++;
     //}
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::R))
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::R)) {
         slot = 0;
+        slotNum = 0;
+    }
 
     PlayerMovement();
     
@@ -113,6 +115,7 @@ void PlayerObject::Update(float dt) {
 
     CutTree();
     DigRock();
+    LoadMaterial();
 }
 
 void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
@@ -185,6 +188,23 @@ void PlayerObject::DigRock() {
                 if (closest->GetTransform().GetScale().x < 0.1f) {
                     TutorialGame::GetGame()->AddStoneToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
                     TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+                }
+            }
+        }
+    }
+}
+
+void PlayerObject::LoadMaterial() {
+    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::Y)) {
+        if (slot == 5 || slot == 6) {
+            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
+            Ray r = Ray(transform.GetPosition(), face);
+            RayCollision closestCollision;
+            if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
+                GameObject* closest = (GameObject*)closestCollision.node;
+                if (closest->GetTypeID() == 21 && closestCollision.rayDistance < 5.0f) {
+                    std::cout << "yes" << "\n";
+                    carriage = (MaterialCarriage*)closest;
                 }
             }
         }
