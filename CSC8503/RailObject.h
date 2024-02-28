@@ -9,6 +9,7 @@ namespace NCL::CSC8503 {
 			this->world = world;
 			triggerDelete = true;
 			typeID = 7;
+			name = "Rail";
 		}
 		~RailObject() {};
 

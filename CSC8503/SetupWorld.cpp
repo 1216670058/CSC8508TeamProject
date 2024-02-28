@@ -407,7 +407,7 @@ void TutorialGame::AddSceneToWorld()
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));
-            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, +2.5f, 0)));
+            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, 2.5f, 0)));
             if (type == '3')scene.emplace_back(AddRockToWorld(n.position + Vector3(0, -2.5f, 0)));
             if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize/2 , 0));
         }

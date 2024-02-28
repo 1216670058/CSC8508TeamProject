@@ -44,7 +44,7 @@ void StoneObject::Update(float dt) {
                         carriage->AddStone(this);
                         loading = false;
                         inCarriage = true;
-                        height = carriage->GetTransform().GetPosition().y + 2 + carriage->GetStoneVector().size();
+                        height = carriage->GetTransform().GetPosition().y + 4 + carriage->GetStoneVector().size();
                         SphereVolume* volume = new SphereVolume(1);
                         SetBoundingVolume((CollisionVolume*)volume);
                         transform.SetScale(Vector3(2, 2, 2));

@@ -10,6 +10,7 @@ class RockObject : public GameObject {
 public:
     RockObject() {
         typeID = 10010;
+        name = "Rock";
     };
     ~RockObject() {};
 

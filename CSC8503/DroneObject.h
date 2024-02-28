@@ -20,6 +20,7 @@ namespace NCL::CSC8503 {
 	public:
 		DroneObject() {
 			typeID = 12;
+			name = "Drone";
 		}
 		~DroneObject() {};
 

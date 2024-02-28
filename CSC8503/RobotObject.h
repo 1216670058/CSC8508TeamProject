@@ -20,6 +20,7 @@ namespace NCL::CSC8503 {
 	public:
 		RobotObject() {
 			typeID = 11;
+			name = "Robot";
 		}
 		~RobotObject() {};
 
