@@ -41,7 +41,8 @@ void Audio::Update()
     case GameState::PLAYING:
         if (menubgm != nullptr) {
             soundEngine->stopAllSoundsOfSoundSource(menubgmsource);
-            soundEngine->removeSoundSource(menubgmsource);
+            menubgm->drop();
+            menubgm = nullptr;
         }
         //bgm = soundEngine->play3D(bgmsource, vec3df(1, 0, 1), true, false, true);
         //soundEngine->setListenerPosition(position, lookDirection);
