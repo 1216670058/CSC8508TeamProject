@@ -75,8 +75,8 @@ namespace NCL {
 
             PerspectiveCamera mainCamera;
 
-            bool shuffleConstraints;
-            bool shuffleObjects;
+            bool shuffleConstraints = true;
+            bool shuffleObjects = true;
             int		worldIDCounter;
             int		worldStateCounter;
 
