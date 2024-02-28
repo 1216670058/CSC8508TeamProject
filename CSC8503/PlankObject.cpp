@@ -44,7 +44,7 @@ void PlankObject::Update(float dt) {
                         carriage->AddPlank(this);
                         loading = false;
                         inCarriage = true;
-                        height = carriage->GetTransform().GetPosition().y + 2 + carriage->GetPlankVector().size();
+                        height = carriage->GetTransform().GetPosition().y + 4 + carriage->GetPlankVector().size();
                     }
                     player->SetSlotNum(player->GetSlotNum() - 1);
                     if (player->GetSlotNum() == 0) {

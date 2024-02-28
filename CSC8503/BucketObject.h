@@ -10,6 +10,7 @@ namespace NCL::CSC8503 {
 			this->world = world;
 			triggerDelete = true;
 			typeID = 4;
+			name = "Bucket";
 		}
 		~BucketObject() {};
 	};

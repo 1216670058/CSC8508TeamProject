@@ -326,7 +326,7 @@ void TutorialGame::InitGameExamples() {
     //AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));
     //AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     //AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
-    player = AddPlayerToWorld(Vector3(20, 0, 100));
+    player = AddPlayerToWorld(Vector3(20, 5, 100));
     pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90));
     axe = AddAxeToWorld(Vector3(40, 5, 100));
     bucket = AddBucketToWorld(Vector3(40, 5, 110));
