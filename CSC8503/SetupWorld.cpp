@@ -814,9 +814,13 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
     return stone;
 }
 
-RailObject* TutorialGame::AddRailToWorld(const Vector3& position) {
+RailObject* TutorialGame::AddRailToWorld(const Vector3& position) 
+{
     RailObject* rail = new RailObject(world);
 
+    Path.push_back(std::make_pair(position, rail->GetRailDirection(position)));
+
+    train->UpdatePath(Path);
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     rail->SetBoundingVolume((CollisionVolume*)volume);
 

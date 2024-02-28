@@ -112,6 +112,8 @@ namespace NCL {
             StateGameObject* AddStateObjectToWorld(const Vector3& position);
             StateGameObject* testStateObject = nullptr;
 
+            vector<std::pair<Vector3, int>> Path;//Ìú¹ìÂ·¾¶
+
             void BridgeConstraintTest();
 
 #ifdef USEVULKAN

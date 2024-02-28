@@ -59,3 +59,42 @@ void RailObject::Update(float dt) {
         }
     }
 }
+
+//1 ×ó,2 ÓÒ,3 Ç°,4 ºó
+
+int GetDirection(Vector3 point1, Vector3 point2)
+{
+    float deltaX = point2.x - point1.x;
+    float deltaY = point2.y - point1.y;
+
+    if (std::abs(deltaX) > std::abs(deltaY)) {
+        if (deltaX > 0)
+            return 2;
+        else
+            return 1;
+    }
+    else {
+        if (deltaY > 0)
+            return 3;
+        else
+            return 4;
+    }
+}
+int GetRailDirection(const Vector3& position)
+{
+
+    static std::vector<Vector3> values;
+
+    values.push_back(position);
+
+    if (values.size() == 2)
+    {
+        return GetDirection(values[0], values[1]);
+    }
+    else if (values.size() == 3)
+    {
+        values.erase(values.begin());
+        return GetDirection(values[0], values[1]);
+    }
+
+}
