@@ -80,7 +80,7 @@ int GetDirection(Vector3 point1, Vector3 point2)
             return 4;
     }
 }
-int GetRailDirection(const Vector3& position)
+int RailObject::GetRailDirection(const Vector3& position)
 {
 
     static std::vector<Vector3> values;

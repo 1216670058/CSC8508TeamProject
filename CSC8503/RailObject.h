@@ -35,7 +35,7 @@ namespace NCL::CSC8503 {
 
 		void Update(float dt) override;
 
-		int GetDirection(Vector3 point1, Vector3 point2);
+		//int GetDirection(Vector3 point1, Vector3 point2);
 
 		int GetRailDirection(const Vector3& position);
 	protected:
