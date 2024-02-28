@@ -281,12 +281,12 @@ void TutorialGame::LockedObjectMovement() {
 }
 
 void TutorialGame::CameraUpdate() {
-    Vector3 objPos = player->GetTransform().GetPosition();
-    Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 150, objPos.z + 135);
+    Vector3 objPos = train->GetTransform().GetPosition();
+    Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 130, objPos.z + 135);
     if (camPos.z > 270) camPos.z = 270;
 
     world->GetMainCamera().SetPosition(camPos);
-    world->GetMainCamera().SetPitch(-45);
+    world->GetMainCamera().SetPitch(-50);
     world->GetMainCamera().SetYaw(0);
 }
 

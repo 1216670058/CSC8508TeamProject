@@ -530,10 +530,10 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(world);
 
-    AABBVolume* volume = new AABBVolume(Vector3(4, 4, 4));
+    AABBVolume* volume = new AABBVolume(Vector3(5, 5, 5));
     train->SetBoundingVolume((CollisionVolume*)volume);
     train->GetTransform()
-        .SetScale(Vector3(8, 8, 8))
+        .SetScale(Vector3(10, 10, 10))
         .SetPosition(position);
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
@@ -818,9 +818,9 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
 {
     RailObject* rail = new RailObject(world);
 
-    Path.push_back(std::make_pair(position, rail->GetRailDirection(position)));
+    //Path.push_back(std::make_pair(position, rail->GetRailDirection(position)));
 
-    train->UpdatePath(Path);
+    //train->UpdatePath(Path);
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     rail->SetBoundingVolume((CollisionVolume*)volume);
 
