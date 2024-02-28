@@ -144,7 +144,7 @@ void TutorialGame::InitMaterials() {
     for (int i = 0; i < assassinMesh->GetSubMeshCount(); ++i) {
         const MeshMaterialEntry* matEntry =
             assassinMaterial->GetMaterialForLayer(i);
-    
+
         const string* filename = nullptr;
         matEntry->GetEntry("Diffuse", &filename);
         string path = Assets::TEXTUREDIR + *filename;
@@ -407,9 +407,9 @@ void TutorialGame::AddSceneToWorld()
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));
-            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, +2.5f, 0)));
+            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, 2.5f, 0)));
             if (type == '3')scene.emplace_back(AddRockToWorld(n.position + Vector3(0, -2.5f, 0)));
-            if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize/2 , 0));
+            if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize / 2, 0));
         }
     }
     return;
@@ -814,7 +814,7 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
     return stone;
 }
 
-RailObject* TutorialGame::AddRailToWorld(const Vector3& position) 
+RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
 {
     RailObject* rail = new RailObject(world);
 

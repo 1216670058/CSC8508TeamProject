@@ -16,7 +16,7 @@ using namespace CSC8503;
 PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g) {
     std::cout << std::endl << "--------Initialising Physics System--------" << std::endl;
 
-    applyGravity = true;
+    applyGravity = false;
     useBroadPhase = true;
     dTOffset = 0.0f;
     globalDamping = 0.995f;
@@ -77,19 +77,19 @@ void PhysicsSystem::Update(float dt) {
 
     dTOffset += dt; //We accumulate time delta here - there might be remainders from previous frame!
 
-    if (useBroadPhase) {
-        UpdateObjectAABBs();
-    }
+    GameTimer t;
+    t.GetTimeDeltaSeconds();
+
+    UpdateObjectAABBs();
+
     int iteratorCount = 0;
     while (dTOffset > realDT) {
         IntegrateAccel(realDT); //Update accelerations from external forces
-        if (useBroadPhase) {
-            BroadPhase();
-            NarrowPhase();
-        }
-        else {
-            BasicCollisionDetection();
-        }
+
+        BroadPhase();
+        NarrowPhase();
+
+        //BasicCollisionDetection();
 
         //This is our simple iterative solver -
         //we just run things multiple times, slowly moving things forward
@@ -108,7 +108,6 @@ void PhysicsSystem::Update(float dt) {
 
     UpdateCollisionList(); //Remove any old collisions
 
-    GameTimer t;
     t.Tick();
     float updateTime = t.GetTimeDeltaSeconds();
 
@@ -117,7 +116,7 @@ void PhysicsSystem::Update(float dt) {
         realHZ /= 2;
         realDT *= 2;
         //std::cout << "Dropping iteration count due to long physics time...(now " << realHZ << ")\n";
-    } 
+    }
     else if (dt * 2 < realDT) { //we have plenty of room to increase iteration count!
         int temp = realHZ;
         realHZ *= 2;
@@ -205,7 +204,7 @@ void PhysicsSystem::BasicCollisionDetection() {
             CollisionDetection::CollisionInfo info;
             if (CollisionDetection::ObjectIntersection(*i, *j, info)) {
                 //std::cout << " Collision between " << (*i)->GetName()
-                          //<< " and " << (*j)->GetName() << std::endl;
+                //          << " and " << (*j)->GetName() << std::endl;
                 if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
                     ProjectionResolveCollision(*info.a, *info.b, info.point);
                 if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
@@ -317,7 +316,7 @@ compare the collisions that we absolutely need to.
 */
 void PhysicsSystem::BroadPhase() {
     broadphaseCollisions.clear();
-    QuadTree<GameObject*> tree(Vector2(1024, 1024), 6, 5);
+    OcTree<GameObject*> tree(Vector3(1024, 1024, 1024), 6, 5);
 
     std::vector<GameObject*>::const_iterator first;
     std::vector<GameObject*>::const_iterator last;
@@ -332,12 +331,10 @@ void PhysicsSystem::BroadPhase() {
     }
 
     tree.OperateOnContents(
-        [&](std::vector<QuadTreeEntry<GameObject*>>& data) {
+        [&](std::list<OcTreeEntry<GameObject*>>& data) {
             CollisionDetection::CollisionInfo info;
             for (auto i = data.begin(); i != data.end(); ++i) {
                 for (auto j = std::next(i); j != data.end(); ++j) {
-                    // is this pair of items already in the collision set -
-                    // if the same pair is in another quadtree node together etc
                     info.a = std::min((*i).object, (*j).object);
                     info.b = std::max((*i).object, (*j).object);
                     broadphaseCollisions.insert(info);
@@ -358,7 +355,13 @@ void PhysicsSystem::NarrowPhase() {
         CollisionDetection::CollisionInfo info = *i;
         if (CollisionDetection::ObjectIntersection(info.a, info.b, info)) {
             info.framesLeft = numCollisionFrames;
-            ImpulseResolveCollision(*info.a, *info.b, info.point);
+            /*std::cout << " Collision between " << info.a->GetName()
+                << " and " << info.b->GetName() << std::endl;*/
+                //if (info.a->GetName() == "Tree" && info.b->GetName() == "Tree") std::cout << "Rock" << std::endl;
+            if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
+                ImpulseResolveCollision(*info.a, *info.b, info.point);
+            else if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
+                ProjectionResolveCollision(*info.a, *info.b, info.point);
             allCollisions.insert(info); // insert into our main set
         }
     }

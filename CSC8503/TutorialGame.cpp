@@ -117,7 +117,8 @@ void TutorialGame::UpdatePlaying(float dt)
             world->GetMainCamera().UpdateCamera(dt);
         }
     }
-    if (lockedObject != nullptr) {
+
+    /*if (lockedObject != nullptr) {
         Vector3 objPos = lockedObject->GetTransform().GetPosition();
         Vector3 camPos = objPos + lockedOffset;
 
@@ -135,18 +136,13 @@ void TutorialGame::UpdatePlaying(float dt)
         world->GetMainCamera().SetYaw(0);
     }
 
-    UpdateKeys();
-    audio->Update();
-
     if (useGravity) {
         Debug::Print("(G)ravity on", Vector2(5, 95), Debug::RED);
     }
     else {
         Debug::Print("(G)ravity off", Vector2(5, 95), Debug::RED);
     }
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(100, 0, 0), Debug::RED);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 100, 0), Debug::GREEN);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 0, 100), Debug::BLUE);
+
     RayCollision closestCollision;
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::K) && selectionObject) {
         Vector3 rayPos;
@@ -167,12 +163,16 @@ void TutorialGame::UpdatePlaying(float dt)
             objClosest->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
         }
     }
-
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(100, 0, 0), Debug::RED);
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 100, 0), Debug::GREEN);
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 0, 100), Debug::BLUE);
     Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
 
     SelectObject();
-    MoveSelectedObject();
+    MoveSelectedObject();*/
 
+    UpdateKeys();
+    audio->Update();
     world->UpdateWorld(dt);
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
@@ -187,7 +187,7 @@ void TutorialGame::UpdatePlaying(float dt)
     }
 
     renderer->Render();
-    Debug::UpdateRenderables(dt);
+    //Debug::UpdateRenderables(dt);
 }
 
 void TutorialGame::UpdatePaused(float dt)
@@ -326,7 +326,7 @@ void TutorialGame::InitGameExamples() {
     //AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));
     //AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
     //AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
-    player = AddPlayerToWorld(Vector3(20, 0, 100));
+    player = AddPlayerToWorld(Vector3(20, 5, 100));
     pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90));
     axe = AddAxeToWorld(Vector3(40, 5, 100));
     bucket = AddBucketToWorld(Vector3(40, 5, 110));

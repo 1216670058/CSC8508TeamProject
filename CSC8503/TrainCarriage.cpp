@@ -94,14 +94,14 @@ void MaterialCarriage::UpdateMaterial() {
     planks.erase(planks.begin());
     if (!planks.empty()) {
         for (size_t i = 0; i < planks.size(); ++i) {
-            planks[i]->SetHeight(transform.GetPosition().y + 2 + i);
+            planks[i]->SetHeight(transform.GetPosition().y + 4 + i);
         }
     }
     world->RemoveGameObject(stones[0]);
     stones.erase(stones.begin());
     if (!stones.empty()) {
         for (size_t i = 0; i < stones.size(); ++i) {
-            stones[i]->SetHeight(transform.GetPosition().y + 2 + i);
+            stones[i]->SetHeight(transform.GetPosition().y + 4 + i);
         }
     }
 }
@@ -120,7 +120,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                         otherObject->SetSlotNum(otherObject->GetSlotNum() + 1);                      
                         rails.erase(rails.begin());
                         for (size_t i = 0; i < rails.size(); ++i) {
-                            rails[i]->SetHeight(transform.GetPosition().y + 2 + i);
+                            rails[i]->SetHeight(transform.GetPosition().y + 4 + i);
                         }
                     }
                 }
@@ -134,7 +134,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                         otherObject->SetSlotNum(otherObject->GetSlotNum() + 1);
                         rails.erase(rails.begin());
                         for (size_t i = 0; i < rails.size(); ++i) {
-                            rails[i]->SetHeight(transform.GetPosition().y + 2 + i);
+                            rails[i]->SetHeight(transform.GetPosition().y + 4 + i);
                         }
                     }
                 }
@@ -176,7 +176,7 @@ void ProduceCarriage::Update(float dt) {
             finish = true;
             RailObject* rail = TutorialGame::GetGame()->AddRailToWorld(transform.GetPosition());
             rail->SetCarriage(this);
-            rail->SetHeight(transform.GetPosition().y + 3 + rails.size());
+            rail->SetHeight(transform.GetPosition().y + 4 + rails.size());
             rails.push_back(rail);
         }
     }

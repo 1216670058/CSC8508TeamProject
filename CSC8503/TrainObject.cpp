@@ -20,6 +20,7 @@ TrainObject::TrainObject(GameWorld *w) {
     world = w;
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
+    name = "Train";
 }
 
 void TrainObject::OnCollisionBegin(GameObject *otherObject) {

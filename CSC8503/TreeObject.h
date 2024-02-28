@@ -10,6 +10,7 @@ class TreeObject : public GameObject {
 public:
     TreeObject() {
         typeID = 10086;
+        name = "Tree";
     };
     ~TreeObject() {};
 
