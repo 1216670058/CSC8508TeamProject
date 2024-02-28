@@ -84,11 +84,11 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
 
     if (path.front().second <= 1) { 
         nextPos = nowPos;
-        nextPos.z -= 8;
+        nextPos.z -= 10;
     }
     else {
         nextPos = nowPos;
-        nextPos.x -= 8;
+        nextPos.x -= 10;
 
     }
 
@@ -98,7 +98,7 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
         carriage->GetTransform()
-            .SetScale(Vector3(3, 3, 3))
+            .SetScale(Vector3(4, 4, 4))
             .SetPosition(nextPos);
 
         carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
@@ -121,7 +121,7 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
         carriage->GetTransform()
-            .SetScale(Vector3(3, 3, 3))
+            .SetScale(Vector3(4, 4, 4))
             .SetPosition(nextPos);
 
         carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
