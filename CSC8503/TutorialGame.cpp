@@ -116,7 +116,8 @@ void TutorialGame::UpdatePlaying(float dt)
             world->GetMainCamera().UpdateCamera(dt);
         }
     }
-    if (lockedObject != nullptr) {
+
+    /*if (lockedObject != nullptr) {
         Vector3 objPos = lockedObject->GetTransform().GetPosition();
         Vector3 camPos = objPos + lockedOffset;
 
@@ -134,18 +135,13 @@ void TutorialGame::UpdatePlaying(float dt)
         world->GetMainCamera().SetYaw(0);
     }
 
-    UpdateKeys();
-    audio->Update();
-
     if (useGravity) {
         Debug::Print("(G)ravity on", Vector2(5, 95), Debug::RED);
     }
     else {
         Debug::Print("(G)ravity off", Vector2(5, 95), Debug::RED);
     }
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(100, 0, 0), Debug::RED);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 100, 0), Debug::GREEN);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 0, 100), Debug::BLUE);
+
     RayCollision closestCollision;
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::K) && selectionObject) {
         Vector3 rayPos;
@@ -166,19 +162,23 @@ void TutorialGame::UpdatePlaying(float dt)
             objClosest->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
         }
     }
-
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(100, 0, 0), Debug::RED);
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 100, 0), Debug::GREEN);
+    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 0, 100), Debug::BLUE);
     Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
 
     SelectObject();
-    MoveSelectedObject();
+    MoveSelectedObject();*/
 
+    UpdateKeys();
+    audio->Update();
     world->UpdateWorld(dt);
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     physics->Update(dt);
 
     renderer->Render();
-    Debug::UpdateRenderables(dt);
+    //Debug::UpdateRenderables(dt);
 }
 
 void TutorialGame::UpdatePaused(float dt)

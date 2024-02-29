@@ -80,19 +80,16 @@ void PhysicsSystem::Update(float dt) {
     GameTimer t;
     t.GetTimeDeltaSeconds();
 
-    if (useBroadPhase) {
-        UpdateObjectAABBs();
-    }
+    UpdateObjectAABBs();
+
     int iteratorCount = 0;
     while (dTOffset > realDT) {
         IntegrateAccel(realDT); //Update accelerations from external forces
-        if (useBroadPhase) {
-            BroadPhase();
-            NarrowPhase();
-        }
-        else {
-            BasicCollisionDetection();
-        }
+
+        BroadPhase();
+        NarrowPhase();
+
+        //BasicCollisionDetection();
 
         //This is our simple iterative solver -
         //we just run things multiple times, slowly moving things forward
@@ -119,7 +116,7 @@ void PhysicsSystem::Update(float dt) {
         realHZ /= 2;
         realDT *= 2;
         //std::cout << "Dropping iteration count due to long physics time...(now " << realHZ << ")\n";
-    } 
+    }
     else if (dt * 2 < realDT) { //we have plenty of room to increase iteration count!
         int temp = realHZ;
         realHZ *= 2;
@@ -358,13 +355,10 @@ void PhysicsSystem::NarrowPhase() {
         CollisionDetection::CollisionInfo info = *i;
         if (CollisionDetection::ObjectIntersection(info.a, info.b, info)) {
             info.framesLeft = numCollisionFrames;
-            //std::cout << " Collision between " << info.a->GetName()
-            //              << " and " << info.b->GetName() << std::endl;
-            //if (info.a->GetName() == "Tree" && info.b->GetName() == "Tree") std::cout << "Rock" << std::endl;
-            if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
-                ProjectionResolveCollision(*info.a, *info.b, info.point);
             if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
                 ImpulseResolveCollision(*info.a, *info.b, info.point);
+            else if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
+                ProjectionResolveCollision(*info.a, *info.b, info.point);
             allCollisions.insert(info); // insert into our main set
         }
     }
