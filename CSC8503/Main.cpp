@@ -31,58 +31,58 @@
 using namespace NCL;
 using namespace CSC8503;
 
-class TestPacketReceiver : public PacketReceiver {
-public:
-    TestPacketReceiver(std::string name) {
-        this->name = name;
-    }
-
-    void ReceivePacket(int type, GamePacket* payload, int source) {
-        if (type == String_Message) {
-            StringPacket* realPacket = (StringPacket*)payload;
-            std::string msg = realPacket->GetStringFromData();
-            std::cout << name << " received message: " << msg << std::endl;
-        }
-    }
-
-protected:
-    std::string name;
-};
-
-void TestNetworking() {
-
-    NetworkBase::Initialise();
-
-    TestPacketReceiver serverReceiver("Server");
-    TestPacketReceiver clientReceiver("Client");
-
-    int port = NetworkBase::GetDefaultPort();
-    //std::cout<<"port:"<<port<<std::endl;
-    //port = 1235;
-    GameServer* server = new GameServer(port, 3);
-    GameClient* client = new GameClient();
-
-    server->RegisterPacketHandler(String_Message, &serverReceiver);
-    client->RegisterPacketHandler(String_Message, &clientReceiver);
-
-    bool canConnect = client->Connect(127, 0, 0, 1, port);
-
-    for (int i = 0; i < 100; ++i) {
-        GamePacket* msgFromServer = new StringPacket(" Server says hello ! " + std::to_string(i));
-        GamePacket* msgFromClient = new StringPacket(" Client says hello ! " + std::to_string(i));
-        server->SendGlobalPacket(*msgFromServer);
-
-
-        client->SendPacket(*msgFromClient);
-
-        server->UpdateServer();
-        client->UpdateClient();
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    NetworkBase::Destroy();
-}
+//class TestPacketReceiver : public PacketReceiver {
+//public:
+//    TestPacketReceiver(std::string name) {
+//        this->name = name;
+//    }
+//
+//    void ReceivePacket(int type, GamePacket* payload, int source) {
+//        if (type == String_Message) {
+//            StringPacket* realPacket = (StringPacket*)payload;
+//            std::string msg = realPacket->GetStringFromData();
+//            std::cout << name << " received message: " << msg << std::endl;
+//        }
+//    }
+//
+//protected:
+//    std::string name;
+//};
+//
+//void TestNetworking() {
+//
+//    NetworkBase::Initialise();
+//
+//    TestPacketReceiver serverReceiver("Server");
+//    TestPacketReceiver clientReceiver("Client");
+//
+//    int port = NetworkBase::GetDefaultPort();
+//    //std::cout<<"port:"<<port<<std::endl;
+//    //port = 1235;
+//    GameServer* server = new GameServer(port, 3);
+//    GameClient* client = new GameClient();
+//
+//    server->RegisterPacketHandler(String_Message, &serverReceiver);
+//    client->RegisterPacketHandler(String_Message, &clientReceiver);
+//
+//    bool canConnect = client->Connect(127, 0, 0, 1, port);
+//
+//    for (int i = 0; i < 100; ++i) {
+//        GamePacket* msgFromServer = new StringPacket(" Server says hello ! " + std::to_string(i));
+//        GamePacket* msgFromClient = new StringPacket(" Client says hello ! " + std::to_string(i));
+//        server->SendGlobalPacket(*msgFromServer);
+//
+//
+//        client->SendPacket(*msgFromClient);
+//
+//        server->UpdateServer();
+//        client->UpdateClient();
+//
+//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+//    }
+//
+//    NetworkBase::Destroy();
+//}
 
 
 /*
@@ -98,17 +98,15 @@ hide or show the
 
 */
 int main() {
-
-
    // TestNetworking();
-    Window* w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
+    Window* w = Window::CreateGameWindow("Train Bob", 1280, 720);
     if (!w->HasInitialised()) {
         return -1;
     }
 
     w->ShowOSPointer(false);
     w->LockMouseToWindow(true);
-    TutorialGame* g = new TutorialGame();
+    NetworkedGame* g = new NetworkedGame();
     w->GetTimer().GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
     while (!g->IsExitGame() && w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyCodes::END)) {
         float dt = w->GetTimer().GetTimeDeltaSeconds();
@@ -128,7 +126,7 @@ int main() {
             w->SetWindowPosition(0, 0);
         }
 
-        w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+        w->SetTitle("Train Bob   " + std::to_string(1000.0f * dt));
 
         g->UpdateGame(dt);
     }

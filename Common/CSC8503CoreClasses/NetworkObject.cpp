@@ -37,21 +37,22 @@ bool NetworkObject::ReadDeltaPacket(DeltaPacket &p) {
         return false; // can’t delta this frame
     }
     UpdateStateHistory(p.fullID);
+    if (p.objectID == object.GetNetworkObject()->GetNetworkID()) {
+        Vector3 fullPos = lastFullState.position;
+        Quaternion fullOrientation = lastFullState.orientation;
 
-    Vector3 fullPos = lastFullState.position;
-    Quaternion fullOrientation = lastFullState.orientation;
+        fullPos.x += p.pos[0];
+        fullPos.y += p.pos[1];
+        fullPos.z += p.pos[2];
 
-    fullPos.x += p.pos[0];
-    fullPos.y += p.pos[1];
-    fullPos.z += p.pos[2];
+        fullOrientation.x += ((float)p.orientation[0]) / 127.0f;
+        fullOrientation.y += ((float)p.orientation[1]) / 127.0f;
+        fullOrientation.z += ((float)p.orientation[2]) / 127.0f;
+        fullOrientation.w += ((float)p.orientation[3]) / 127.0f;
 
-    fullOrientation.x += ((float)p.orientation[0]) / 127.0f;
-    fullOrientation.y += ((float)p.orientation[1]) / 127.0f;
-    fullOrientation.z += ((float)p.orientation[2]) / 127.0f;
-    fullOrientation.w += ((float)p.orientation[3]) / 127.0f;
-
-    object.GetTransform().SetPosition(fullPos);
-    object.GetTransform().SetOrientation(fullOrientation);
+        object.GetTransform().SetPosition(fullPos);
+        object.GetTransform().SetOrientation(fullOrientation);
+    }
     return true;
 }
 
@@ -61,9 +62,10 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
         return false; // received an 'old' packet, ignore!
     }
     lastFullState = p.fullState;
-
-    object.GetTransform().SetPosition(lastFullState.position);
-    object.GetTransform().SetOrientation(lastFullState.orientation);
+    if (p.objectID == object.GetNetworkObject()->GetNetworkID()) {
+        object.GetTransform().SetPosition(lastFullState.position);
+        object.GetTransform().SetOrientation(lastFullState.orientation);
+    }
 
     stateHistory.emplace_back(lastFullState);
 

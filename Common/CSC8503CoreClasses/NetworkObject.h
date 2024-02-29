@@ -49,6 +49,14 @@ namespace NCL::CSC8503 {
 
 		void UpdateStateHistory(int minID);
 
+		int GetNetworkID() const {
+			return networkID;
+		}
+
+		GameObject& GetGameObject() const {
+			return object;
+		}
+
 	protected:
 
 		NetworkState& GetLatestNetworkState();
