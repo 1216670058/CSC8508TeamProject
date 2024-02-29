@@ -65,28 +65,29 @@ void GameWorld::OperateOnContents(GameObjectFunc f) {
     }
 }
 
-void GameWorld::UpdateWorld(float dt) {
-    auto rng = std::default_random_engine{};
+void GameWorld::UpdateWorld(float dt, std::string omit) {
+	auto rng = std::default_random_engine{};
 
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine e(seed);
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine e(seed);
 
-    if (shuffleObjects) {
-        std::shuffle(gameObjects.begin(), gameObjects.end(), e);
-    }
+	if (shuffleObjects) {
+		std::shuffle(gameObjects.begin(), gameObjects.end(), e);
+	}
 
-    if (shuffleConstraints) {
-        std::shuffle(constraints.begin(), constraints.end(), e);
-    }
+	if (shuffleConstraints) {
+		std::shuffle(constraints.begin(), constraints.end(), e);
+	}
 
-    for (auto& i : gameObjects) {
-        if (i->IsActive()) {
-            i->Update(dt);
-        }
-        else {
-            RemoveGameObject(i, false);
-        }
-    }
+	for (auto& i : gameObjects) {
+		if (i->IsActive()) {
+			if (i->GetName() != omit)
+				i->Update(dt);
+		}
+		else {
+			RemoveGameObject(i, false);
+		}
+	}
 }
 
 bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObject, GameObject* ignoreThis) const {

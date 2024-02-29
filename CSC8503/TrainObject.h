@@ -30,7 +30,7 @@ namespace NCL::CSC8503 {
 
         void UpdatePath(std::vector<std::pair<Vector3, int>> p);
 
-        TrainCarriage* AddCarriage(int id);
+        TrainCarriage* AddCarriage(int id, bool spawn = true);
 
         void AddConstraint(GameObject* a, GameObject* b);
 

@@ -73,7 +73,7 @@ void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader
     basicShader = shader;
 }
 
-TrainCarriage* TrainObject::AddCarriage(int id) {
+TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     Vector3 nowPos;
     if (trainIndex == 0)
         nowPos = GetTransform().GetPosition();
@@ -98,6 +98,9 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
         carriage->path = path;
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
+
+        carriage->SetSpawned(spawn);
+
         carriage->GetTransform()
             .SetScale(Vector3(4, 4, 4))
             .SetPosition(nextPos);
@@ -121,6 +124,9 @@ TrainCarriage* TrainObject::AddCarriage(int id) {
         carriage->path = path;
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
+
+        carriage->SetSpawned(spawn);
+
         carriage->GetTransform()
             .SetScale(Vector3(4, 4, 4))
             .SetPosition(nextPos);

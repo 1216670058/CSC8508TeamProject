@@ -355,9 +355,6 @@ void PhysicsSystem::NarrowPhase() {
         CollisionDetection::CollisionInfo info = *i;
         if (CollisionDetection::ObjectIntersection(info.a, info.b, info)) {
             info.framesLeft = numCollisionFrames;
-            /*std::cout << " Collision between " << info.a->GetName()
-                << " and " << info.b->GetName() << std::endl;*/
-                //if (info.a->GetName() == "Tree" && info.b->GetName() == "Tree") std::cout << "Rock" << std::endl;
             if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
                 ImpulseResolveCollision(*info.a, *info.b, info.point);
             else if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)

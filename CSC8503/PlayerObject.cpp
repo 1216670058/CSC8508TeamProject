@@ -84,7 +84,10 @@ void PlayerObject::Update(float dt) {
     
     if (renderObject->GetAnimationObject()->GetActiveAnim() != renderObject->GetAnimationObject()->GetAnim1() ||
         renderObject->GetAnimationObject()->HasIdle()) {
-        renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
+        //if (!TutorialGame::GetGame()->IsNetworked())
+            renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
+        //else
+            //renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - (dt / 4));
         while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
             renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
                 renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameCount());

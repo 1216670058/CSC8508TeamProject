@@ -18,8 +18,11 @@ namespace NCL {
         enum GameState {
             LOADING,
             PLAYING,
+            SERVERPLAYING,
+            CLIENTPLAYING,
             PAUSED,
             MENU,
+            CHOOSESERVER,
             EXIT
         };
 
@@ -51,7 +54,7 @@ namespace NCL {
 
             bool Raycast(Ray& r, RayCollision& closestCollision, bool closestObject = false, GameObject* ignore = nullptr) const;
 
-            virtual void UpdateWorld(float dt);
+            virtual void UpdateWorld(float dt, std::string omit = "000");
 
             void OperateOnContents(GameObjectFunc f);
 

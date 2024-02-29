@@ -2,6 +2,7 @@
 #include "GameWorld.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
+#include "NetworkObject.h"
 #include "TextureLoader.h"
 
 #include "PositionConstraint.h"
@@ -527,14 +528,22 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
     return character;
 }
 
-TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
+TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) {
     TrainObject* train = new TrainObject(world);
 
     AABBVolume* volume = new AABBVolume(Vector3(5, 5, 5));
     train->SetBoundingVolume((CollisionVolume*)volume);
-    train->GetTransform()
+
+    train->SetSpawned(spawn);
+
+    if (spawn)
+        train->GetTransform()
         .SetScale(Vector3(10, 10, 10))
         .SetPosition(position);
+    else
+        train->GetTransform()
+        .SetScale(Vector3(10, 10, 10))
+        .SetPosition(Vector3(100, -1000, 0));
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
@@ -575,13 +584,20 @@ GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position, const 
     return cube;
 }
 
-PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
-    player = new PlayerObject("Player");
+PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::string name, int num, bool spawn) {
+    PlayerObject* player = new PlayerObject(name);
     AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     player->SetBoundingVolume((CollisionVolume*)volume);
 
-    player->GetTransform()
+    player->SetSpawned(spawn);
+
+    if (spawn)
+        player->GetTransform()
         .SetPosition(position)
+        .SetScale(Vector3(6, 6, 6));
+    else
+        player->GetTransform()
+        .SetPosition(Vector3(400 + (num - 1) * 100, -1000, 0))
         .SetScale(Vector3(6, 6, 6));
 
     player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
@@ -599,6 +615,8 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
     player->GetPhysicsObject()->InitCubeInertia();
+
+    player->SetNetworkObject(new NetworkObject(*player, num));
 
     world->AddGameObject(player);
 
@@ -684,7 +702,7 @@ CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)
     return groundObject;
 }
 
-PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
+PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spawn) {
     PickaxeObject* pickaxe = new PickaxeObject(world, "Pickaxe");
 
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
@@ -692,8 +710,15 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
 
     pickaxe->SetPlayer(player);
 
-    pickaxe->GetTransform()
+    pickaxe->SetSpawned(spawn);
+
+    if (spawn)
+        pickaxe->GetTransform()
         .SetPosition(pickaxe->FindNearestGridCenter(position))
+        .SetScale(Vector3(4, 4, 4));
+    else
+        pickaxe->GetTransform()
+        .SetPosition(Vector3(0, -1000, 0))
         .SetScale(Vector3(4, 4, 4));
 
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
@@ -710,7 +735,7 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     return pickaxe;
 }
 
-AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
+AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
     AxeObject* axe = new AxeObject(world, "Axe");
 
     AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
@@ -718,8 +743,15 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
 
     axe->SetPlayer(player);
 
-    axe->GetTransform()
+    axe->SetSpawned(spawn);
+
+    if (spawn)
+        axe->GetTransform()
         .SetPosition(axe->FindNearestGridCenter(position))
+        .SetScale(Vector3(1, 1, 1));
+    else
+        axe->GetTransform()
+        .SetPosition(Vector3(200, -1000, 0))
         .SetScale(Vector3(1, 1, 1));
 
     axe->SetRenderObject(new RenderObject(&axe->GetTransform(), axeMesh, axeTex, bumpShader));
@@ -736,7 +768,7 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
     return axe;
 }
 
-BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
+BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position, bool spawn) {
     BucketObject* bucket = new BucketObject(world, "Bucket");
 
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
@@ -744,8 +776,15 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
 
     bucket->SetPlayer(player);
 
-    bucket->GetTransform()
+    bucket->SetSpawned(spawn);
+
+    if (spawn)
+        bucket->GetTransform()
         .SetPosition(bucket->FindNearestGridCenter(position))
+        .SetScale(Vector3(4, 4, 4));
+    else
+        bucket->GetTransform()
+        .SetPosition(Vector3(300, -1000, 0))
         .SetScale(Vector3(4, 4, 4));
 
     bucket->SetRenderObject(new RenderObject(&bucket->GetTransform(), bucketMesh, bucketTex, bumpShader));

@@ -73,27 +73,26 @@ TutorialGame::~TutorialGame() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
-    switch (world->GetGameState())
-    {
-    case LOADING:
-        UpdateLoading(dt);
-        break;
-    case PLAYING:
-        UpdatePlaying(dt);
-        break;
-    case PAUSED:
-        UpdatePaused(dt);
-        break;
-    case MENU:
-        UpdateMenu(dt);
-        break;
-    case EXIT:
-        isExit = true;
-        break;
-    default:
-        break;
-    }
-
+    //switch (world->GetGameState())
+    //{
+    //case LOADING:
+    //    UpdateLoading(dt);
+    //    break;
+    //case PLAYING:
+    //    UpdatePlaying(dt);
+    //    break;
+    //case PAUSED:
+    //    UpdatePaused(dt);
+    //    break;
+    //case MENU:
+    //    UpdateMenu(dt);
+    //    break;
+    //case EXIT:
+    //    isExit = true;
+    //    break;
+    //default:
+    //    break;
+    //}
 }
 
 void TutorialGame::UpdateLoading(float dt)
@@ -177,14 +176,6 @@ void TutorialGame::UpdatePlaying(float dt)
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     physics->Update(dt);
-
-    if (testStateObject) {
-        //std::cout<<"debug"<<std::endl;
-        testStateObject->Update(dt);
-    }
-    if (train) {
-        train->Update(dt);
-    }
 
     renderer->Render();
     //Debug::UpdateRenderables(dt);
@@ -281,13 +272,15 @@ void TutorialGame::LockedObjectMovement() {
 }
 
 void TutorialGame::CameraUpdate() {
-    Vector3 objPos = train->GetTransform().GetPosition();
-    Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 130, objPos.z + 135);
-    if (camPos.z > 270) camPos.z = 270;
+    if (train->IsSpawned()) {
+        Vector3 objPos = train->GetTransform().GetPosition();
+        Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 130, objPos.z + 135);
+        if (camPos.z > 270) camPos.z = 270;
 
-    world->GetMainCamera().SetPosition(camPos);
-    world->GetMainCamera().SetPitch(-50);
-    world->GetMainCamera().SetYaw(0);
+        world->GetMainCamera().SetPosition(camPos);
+        world->GetMainCamera().SetPitch(-50);
+        world->GetMainCamera().SetYaw(0);
+    }
 }
 
 void TutorialGame::InitCamera() {
@@ -299,14 +292,14 @@ void TutorialGame::InitCamera() {
     lockedObject = nullptr;
 }
 
-void TutorialGame::InitWorld() {
+void TutorialGame::InitWorld(bool networked) {
     std::cout << std::endl << "--------Initialising Game Objects--------" << std::endl;
     world->ClearAndErase();
     physics->Clear();
 
     //InitMixedGridWorld(15, 15, 3.5f, 3.5f);
     //AddSceneToWorld();
-    InitGameExamples();
+    InitGameExamples(networked);
     InitDefaultFloor();
 
 }
@@ -315,33 +308,21 @@ void TutorialGame::InitDefaultFloor() {
     AddFloorToWorld(Vector3(155, 0, 95));
 }
 
-void TutorialGame::InitGameExamples() {
-    //AddPlayer0ToWorld(Vector3(0, 5, 0));
-    //AddEnemyToWorld(Vector3(5, 5, 0));
-    train = AddTrainToWorld(Vector3(70, 5, 100));
-    carriage1 = (MaterialCarriage*)(train->AddCarriage(21));
-    carriage2 = (ProduceCarriage*)(train->AddCarriage(22));
+void TutorialGame::InitGameExamples(bool networked) {
+    train = AddTrainToWorld(Vector3(70, 5, 100), !networked);
+    carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
+    carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
     carriage1->SetProduceCarriage(carriage2);
     carriage2->SetMaterialCarriage(carriage1);
-    //AddTestingLightToWorld(Vector3(10, 20, 0), Vector4(1, 1, 1, 0.7));
-    //AddTestingLightToWorld(Vector3(30, 20, 40), Vector4(1, 0, 0, 0.7));
-    //AddTestingLightToWorld(Vector3(60, 20, 20), Vector4(0, 1, 0, 0.7));
-    player = AddPlayerToWorld(Vector3(20, 5, 100));
-    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90));
-    axe = AddAxeToWorld(Vector3(40, 5, 100));
-    bucket = AddBucketToWorld(Vector3(40, 5, 110));
-    //AddPlankToWorld(Vector3(60, 5, 20));
-    //AddStoneToWorld(Vector3(80, 5, 20));
-    //AddRailToWorld(Vector3(90, 5, 20));
-    //AddTreeToWorld(Vector3(20, 10, 50));
-    //AddTreeToWorld(Vector3(30, 10, 50));
-    //AddTreeToWorld(Vector3(40, 10, 50));
-    //AddRockToWorld(Vector3(20, 5, 40));
-    //AddRockToWorld(Vector3(30, 5, 40));
-    //AddRockToWorld(Vector3(40, 5, 40));
-    //AddMooseToWorld(Vector3(40, 3, 0));
-    //AddRobotToWorld(Vector3(50, 3, 0));
-    //AddDroneToWorld(Vector3(60, 3, 0));
+    player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
+    if (networked) {
+        player2 = AddPlayerToWorld(Vector3(20, 5, 110), "Player2", 2, false);
+        player3 = AddPlayerToWorld(Vector3(20, 5, 120), "Player3", 3, false);
+        player4 = AddPlayerToWorld(Vector3(20, 5, 130), "Player4", 4, false);
+    }
+    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90), !networked);
+    axe = AddAxeToWorld(Vector3(40, 5, 100), !networked);
+    bucket = AddBucketToWorld(Vector3(40, 5, 110), !networked);
     AddSceneToWorld();
 }
 

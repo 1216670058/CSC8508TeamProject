@@ -18,6 +18,8 @@ namespace NCL {
 
 			void UpdateGame(float dt) override;
 
+			void UpdateNetworkedPlaying(float dt);
+
 			void SpawnPlayer();
 
 			void StartLevel();
@@ -26,12 +28,19 @@ namespace NCL {
 
 			void OnPlayerCollision(NetworkPlayer* a, NetworkPlayer* b);
 
+			static NetworkedGame* GetNetworkedGame() {
+				return networkInstance;
+			};
+
 		protected:
 			void UpdateAsServer(float dt);
 			void UpdateAsClient(float dt);
 
 			void BroadcastSnapshot(bool deltaFrame);
+			void ClientSend(bool deltaFrame);
 			void UpdateMinimumState();
+
+			void UpdateChooseServer(float dt);
 			std::map<int, int> stateIDs;
 
 			GameServer* thisServer;
@@ -43,6 +52,8 @@ namespace NCL {
 
 			std::map<int, GameObject*> serverPlayers;
 			GameObject* localPlayer;
+
+			static NetworkedGame* networkInstance;
 		};
 	}
 }

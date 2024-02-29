@@ -64,6 +64,13 @@ namespace NCL::CSC8503 {
             isActive = active;
         }
 
+        bool IsSpawned() const {
+            return spawned;
+        }
+        void SetSpawned(bool s) {
+            spawned = s;
+        }
+
         Transform& GetTransform() {
             return transform;
         }
@@ -86,6 +93,10 @@ namespace NCL::CSC8503 {
 
         void SetPhysicsObject(PhysicsObject* newObject) {
             physicsObject = newObject;
+        }
+
+        void SetNetworkObject(NetworkObject* newObject) {
+            networkObject = newObject;
         }
 
         const std::string& GetName() const {
@@ -179,6 +190,7 @@ namespace NCL::CSC8503 {
 
         bool		isActive;
         bool        triggerDelete;
+        bool        spawned = true;
         int			worldID;
         int         typeID;
         int         slot = 0;
