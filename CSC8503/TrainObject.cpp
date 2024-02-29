@@ -4,7 +4,7 @@
 using namespace NCL::CSC8503;
 
 TrainObject::TrainObject() {
-    path.push_back({Vector3(10, 5, 60), 4});
+    path.push_back({ Vector3(10, 5, 60), 4 });
 
     // path.push_back({Vector3(60, 0, 60), 1});
 }
@@ -13,21 +13,21 @@ TrainObject::~TrainObject() {
 
 }
 
-TrainObject::TrainObject(GameWorld *w) {
+TrainObject::TrainObject(GameWorld* w) {
 
-    path.push_back({Vector3(300, 5, 100), 4});
-    path.push_back({Vector3(300, 5, 0), 1});
+    path.push_back({ Vector3(300, 5, 100), 4 });
+    path.push_back({ Vector3(300, 5, 0), 1 });
     world = w;
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
     name = "Train";
 }
 
-void TrainObject::OnCollisionBegin(GameObject *otherObject) {
+void TrainObject::OnCollisionBegin(GameObject* otherObject) {
 
 }
 
-void TrainObject::OnCollisionEnd(GameObject *otherObject) {
+void TrainObject::OnCollisionEnd(GameObject* otherObject) {
 
 }
 
@@ -49,7 +49,9 @@ void TrainObject::Update(float dt) {
     Vector3 target = itt;
     Vector3 dir = (target - this->GetTransform().GetPosition());
     dir = Vector3(dir.x, 0, dir.z);
-    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * 10.0f * dt);
+    force = 100.0f;
+    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * force * dt);
+    //std::cout << GetPhysicsObject()->GetInverseMass() << std::endl;
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5f) {
@@ -83,7 +85,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     Vector3 nextPos;
 
 
-    if (path.front().second <= 1) { 
+    if (path.front().second <= 1) {
         nextPos = nowPos;
         nextPos.z -= 10;
     }
@@ -149,8 +151,8 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     }
 }
 
-void TrainObject::AddConstraint(GameObject *a, GameObject *b) {
+void TrainObject::AddConstraint(GameObject* a, GameObject* b) {
     float maxDistance = 10.0f;
-    PositionConstraint *constraint = new PositionConstraint(a, b, maxDistance);
+    PositionConstraint* constraint = new PositionConstraint(a, b, maxDistance);
     world->AddConstraint(constraint);
 }

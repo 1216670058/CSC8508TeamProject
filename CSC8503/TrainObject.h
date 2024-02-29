@@ -38,6 +38,9 @@ namespace NCL::CSC8503 {
 
         void UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader);
 
+        float GetSpeed() { return speed; };
+        float GetForce() { return force; };
+
     protected:
         //0  1  2 3 up down left right
         std::vector< std::pair<Vector3, int> > path;
@@ -47,6 +50,8 @@ namespace NCL::CSC8503 {
         Mesh* carriageMesh = nullptr;
         Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
+        float speed = 0.0f;
+        float force;
     };
 }
 

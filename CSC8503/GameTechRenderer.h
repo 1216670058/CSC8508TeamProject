@@ -55,7 +55,7 @@ namespace NCL {
             void SetShaderLight(const Light& l);
             void DrawPointLights();
 
-            void DrawProcess();
+            void DrawProcess(int count);
             void ProcessCombine();
 
             void CombineBuffers();
@@ -95,6 +95,7 @@ namespace NCL {
             //Process Buffer
             GLuint processFBO;
             GLuint hdrColourTex;
+            GLuint pausedScreenTex;
             GLuint blurColourTex[2];
 
             //Skybox Buffer

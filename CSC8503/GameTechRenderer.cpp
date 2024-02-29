@@ -50,8 +50,8 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
     Debug::CreateDebugFont("PressStart2P.fnt", *LoadTexture("PressStart2P.png"));
 
-    SetDebugStringBufferSizes(10000);
-    SetDebugLineBufferSizes(1000);
+    /*SetDebugStringBufferSizes(10000);
+    SetDebugLineBufferSizes(1000);*/
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -112,6 +112,7 @@ void GameTechRenderer::InitBuffers() {
     GenerateScreenTexture(lightDiffuseTex);
     GenerateScreenTexture(lightSpecularTex);
     GenerateScreenTexture(hdrColourTex);
+    GenerateScreenTexture(pausedScreenTex);
     for (int i = 0; i < 2; ++i) {
         GenerateScreenTexture(blurColourTex[i]);
     }
@@ -335,13 +336,13 @@ void GameTechRenderer::RenderFrame() {
     }
     else
     {
-        DrawProcess();
+        DrawProcess(0);
         ProcessCombine();
     }
+    ui->DrawUI();
 
     glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
-    ui->DrawUI();
 
     /*glDisable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
@@ -718,10 +719,15 @@ void GameTechRenderer::SetShaderLight(const Light& l) {
         "lightRadius"), l.GetRadius());
 }
 
-void GameTechRenderer::DrawProcess() {
-    glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurColourTex[1], 0);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+void GameTechRenderer::DrawProcess(int count) {
+    int PPcount = 3;
+    if (count == 0) {
+        glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurColourTex[1], 0);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        PPcount = 3;
+    }
+    else if (count == 1) PPcount = 15;
 
     bool first_iteration = true;
     glDisable(GL_DEPTH_TEST);
@@ -732,10 +738,10 @@ void GameTechRenderer::DrawProcess() {
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "sceneTex"), 0);
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < PPcount; ++i) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurColourTex[1], 0);
         glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "isVertical"), 0);
-        glBindTexture(GL_TEXTURE_2D, first_iteration ? hdrColourTex : blurColourTex[0]);
+        glBindTexture(GL_TEXTURE_2D, first_iteration ? (count == 0 ? hdrColourTex : pausedScreenTex) : blurColourTex[0]);
         DrawBoundMesh();
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurColourTex[0], 0);
@@ -746,16 +752,25 @@ void GameTechRenderer::DrawProcess() {
         if (first_iteration)
             first_iteration = false;
     }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glEnable(GL_DEPTH_TEST);
 }
 
 void GameTechRenderer::ProcessCombine() {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (gameWorld.GetGameState() != GameState::PAUSED) {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    else if (gameWorld.GetGameState() == GameState::PAUSED)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pausedScreenTex, 0);
+    }
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     BindShader(*processCombineShader);
 
+    glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "count"), 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, worldColourTex);
     glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "diffuseTex"), 0);
@@ -767,6 +782,18 @@ void GameTechRenderer::ProcessCombine() {
     SetShaderLight(*sunLight);
 
     Draw(quad, false);
+
+    if (gameWorld.GetGameState() == GameState::PAUSED) {
+        DrawProcess(1);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        BindShader(*processCombineShader);
+        glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "count"), 1);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, blurColourTex[0]);
+        glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "diffuseTex"), 0);
+        Draw(quad, false);
+    }
 
 }
 
