@@ -9,6 +9,7 @@
 #include "Debug.h"
 #include "Window.h"
 #include <functional>
+#include "math.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -422,8 +423,9 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
     std::vector<GameObject*>::const_iterator first;
     std::vector<GameObject*>::const_iterator last;
     gameWorld.GetObjectIterators(first, last);
-    float frameLinearDamping = 1.0f - (2.28f * dt);
-    //float frameLinearDamping = 0.5f;
+    //float frameLinearDamping = 1.0f - (2.28f * dt);
+    //std::cout << frameLinearDamping << std::endl;
+    float frameLinearDamping;
     for (auto i = first; i != last; ++i) {
         PhysicsObject* object = (*i)->GetPhysicsObject();
         if (object == nullptr) {
@@ -436,6 +438,7 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
         position += linearVel * dt;
         transform.SetPosition(position);
         // Linear Damping
+        frameLinearDamping = (*i)->GetPhysicsObject()->GetRealDamping();
         linearVel = linearVel * frameLinearDamping;
         object->SetLinearVelocity(linearVel);
 
