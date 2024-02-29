@@ -67,7 +67,7 @@ namespace NCL::CSC8503 {
             carriage = c;
         }
 
-        void PlayerMovement();
+        void PlayerMovement(float dt);
 
     protected:
         void CutTree();
@@ -80,7 +80,7 @@ namespace NCL::CSC8503 {
 
         int index;
         Vector3 face;
-        float speed = 15.0f;
+        float speed = 50.0f;
         vector<Mesh*> meshes;
         vector<vector<GLuint>> textures;
         vector<vector<GLuint>> bumpTextures;
