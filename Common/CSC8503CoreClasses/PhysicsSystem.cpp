@@ -397,7 +397,6 @@ void PhysicsSystem::IntegrateAccel(float dt) {
         linearVel += accel * dt; // integrate accel !
         object->SetLinearVelocity(linearVel);
 
-
         // Angular stuff
         Vector3 torque = object->GetTorque();
         Vector3 angVel = object->GetAngularVelocity();
