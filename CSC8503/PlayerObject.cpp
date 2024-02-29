@@ -152,15 +152,14 @@ void PlayerObject::PlayerMovement(float dt) {
         physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
         transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
     }
-    else {
-       // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
-    }
-    a += dt;
-    if (a >= 1.0f) {
-        std::cout << "The force is: " << physicsObject->GetLinearVelocity().x << " " << physicsObject->GetLinearVelocity().y << " " << physicsObject->GetLinearVelocity().z << std::endl;
-        a = 0;
-    }
-    
+    //else {
+    //   // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+    //}
+    //a += dt;
+    //if (a >= 1.0f) {
+    //    std::cout << "The force is: " << physicsObject->GetLinearVelocity().x << " " << physicsObject->GetLinearVelocity().y << " " << physicsObject->GetLinearVelocity().z << std::endl;
+    //    a = 0;
+    //}
     //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 }
 
