@@ -449,10 +449,11 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 
     sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
     sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
-
+   
     sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
     sphere->GetPhysicsObject()->InitSphereInertia();
-
+    sphere->GetRenderObject()->SetColour(Vector4((float)153/(float)255, 1, 1, 1));
+    sphere->SetTypeID(10000);
     world->AddGameObject(sphere);
 
     return sphere;
@@ -473,7 +474,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
     cube->GetPhysicsObject()->SetInverseMass(inverseMass);
     cube->GetPhysicsObject()->InitCubeInertia();
-
+    cube->GetRenderObject()->SetColour(Vector4(1,1,1,1));
     world->AddGameObject(cube);
 
     return cube;

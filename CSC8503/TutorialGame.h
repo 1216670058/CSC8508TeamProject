@@ -282,6 +282,7 @@ namespace NCL {
             TrainObject* train = nullptr;
             MaterialCarriage* carriage1 = nullptr;
             ProduceCarriage* carriage2 = nullptr;
+            WaterCarriage* carriage3 = nullptr;
 
             PlayerObject* player = nullptr;
             PlayerObject* player2 = nullptr;

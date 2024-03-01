@@ -18,6 +18,7 @@ namespace NCL::CSC8503 {
     class RailObject;
     class MaterialCarriage;
     class ProduceCarriage;
+    class WaterCarriage;
     class TrainCarriage : public GameObject {
     public:
         TrainCarriage();
@@ -121,5 +122,24 @@ namespace NCL::CSC8503 {
         float counter = 3.0f;
 
         MaterialCarriage* materialCarriage;
+    };
+    class WaterCarriage :public TrainCarriage {
+    public:
+        WaterCarriage(GameWorld* w) {
+            world = w;
+            name = "WaterCarriage";
+        };
+
+        ~WaterCarriage() {};
+
+        void Update(float dt) override;
+        void SetCarriageWater(float w) {
+            water = w;
+        }
+        float GetCarriageWater() {
+            return water;
+        }
+    protected:
+        float water = 100.0f;
     };
 }

@@ -16,7 +16,10 @@
 #include "NetworkObject.h"
 #include "TrainCarriage.h"
 
+
+
 namespace NCL::CSC8503 {
+    class BucketObject;
     class PlayerObject : public GameObject {
 
     public:
@@ -67,14 +70,17 @@ namespace NCL::CSC8503 {
         void SetCarriage(MaterialCarriage* c) {
             carriage = c;
         }
-
+        void SetBucket(BucketObject* b) {
+            bucket = b;
+        }
         void PlayerMovement(float dt);
 
     protected:
         void CutTree();
         void DigRock();
+        void ScoopWater();
         void LoadMaterial();
-
+        void UseWater();
         bool doing = false;
         bool cutting = false;
         bool digging = false;
@@ -88,5 +94,6 @@ namespace NCL::CSC8503 {
         vector<AnimationObject*> animations;
         vector<ShaderGroup*> shaders;
         MaterialCarriage* carriage;
+        BucketObject* bucket;
     };
 }

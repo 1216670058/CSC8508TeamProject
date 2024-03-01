@@ -13,5 +13,13 @@ namespace NCL::CSC8503 {
 			name = "Bucket";
 		}
 		~BucketObject() {};
+		bool GetWater() {
+			return water;
+		}
+		void SetWater(bool w) {
+			water = w;
+		}
+	protected:
+		bool water=false;
 	};
 }

@@ -160,6 +160,34 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
 
         return carriage;
     }
+    if (id == 23) {
+        WaterCarriage* carriage = new WaterCarriage(world);
+        carriage->path = path;
+        AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
+        carriage->SetBoundingVolume((CollisionVolume*)volume);
+
+        carriage->SetSpawned(spawn);
+
+        carriage->GetTransform()
+            .SetScale(Vector3(4, 4, 4))
+            .SetPosition(nextPos);
+
+        carriage->SetRenderObject(new RenderObject(&carriage->GetTransform(), carriageMesh, carriageTex, basicShader));
+        carriage->SetPhysicsObject(new PhysicsObject(&carriage->GetTransform(), carriage->GetBoundingVolume()));
+
+        carriage->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
+
+        carriage->GetPhysicsObject()->SetInverseMass(0);
+        carriage->GetPhysicsObject()->InitSphereInertia();
+        carriage->GetPhysicsObject()->SetChannel(1);
+
+        carriage->SetTypeID(id);
+
+        trainCarriage[++trainIndex] = *carriage;
+        world->AddGameObject(carriage);
+
+        return carriage;
+    }
 }
 
 void TrainObject::AddConstraint(GameObject* a, GameObject* b) {
