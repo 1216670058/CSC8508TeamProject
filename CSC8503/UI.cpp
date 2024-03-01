@@ -93,9 +93,15 @@ UI::UI(GameWorld* world)
     //setup
     titlefont = io.Fonts->AddFontFromFileTTF((Assets::FONTSSDIR + "ProggyTiny.ttf").c_str(), 60);
     menufont = io.Fonts->AddFontFromFileTTF((Assets::FONTSSDIR + "SuperFunky.ttf").c_str(), 35);
+    infofont = io.Fonts->AddFontFromFileTTF((Assets::FONTSSDIR + "TreeBold.ttf").c_str(), 30);
     normalfont = io.Fonts->AddFontFromFileTTF((Assets::FONTSSDIR + "KarlaRegular.ttf").c_str(), 30);
 
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_pickaxe.png").c_str(), &pickaxe.img_texture, &pickaxe.img_width, &pickaxe.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_axe.png").c_str(), &axe.img_texture, &axe.img_width, &axe.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_bucket_empty.png").c_str(), &bucket.img_texture, &bucket.img_width, &bucket.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_wood.png").c_str(), &plank.img_texture, &plank.img_width, &plank.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_iron.png").c_str(), &stone.img_texture, &stone.img_width, &stone.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_rail.png").c_str(), &rail.img_texture, &rail.img_width, &rail.img_height));
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -330,24 +336,87 @@ void UI::DrawPlayingUI(float dt)
 
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
     int hours = 0, minutes = 0, remainingSeconds = 0;
-    ConvertTime(TutorialGame::GetGame()->GetPlayTime(), hours, minutes, remainingSeconds);
+    float playtime = TutorialGame::GetGame()->GetPlayTime();
+    ConvertTime(playtime, hours, minutes, remainingSeconds);
     string time = (hours ? (hours >= 10 ? to_string(hours) : "0" + to_string(hours)) : "00") + ":" +
         (minutes ? (minutes >= 10 ? to_string(minutes) : "0" + to_string(minutes)) : "00") + ":" +
         (remainingSeconds >= 10 ? to_string(remainingSeconds) : "0" + to_string(remainingSeconds));
-    ImGui::PushFont(normalfont);
-    ImGui::Begin("Info", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
-    //ImGui::SetCursorPos(ImVec2(windowSize.x - ImGui::CalcTextSize(time.c_str()).x * 0.5, windowSize.y));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(2.5f, 2.5f));
-    ImGui::Text(time.c_str());
+    ImGui::PushFont(infofont);
+    ImGui::Begin("Info", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10.0f, 10.0f));
+    ImGui::Text(("Time: " + time).c_str());
+    std::stringstream distbuf;
+    distbuf.precision(1); distbuf.setf(std::ios::fixed);
+    float distance = TutorialGame::GetGame()->GetTrain()->GetDistance();
+    distbuf << distance;
+    string dist = "Distance: " + distbuf.str() + "m";
+    ImGui::Text(dist.c_str());
+    std::stringstream spdbuf;
+    float speed = TutorialGame::GetGame()->GetTrain()->GetSpeed();
+    spdbuf.precision(3); spdbuf.setf(std::ios::fixed);
+    spdbuf << speed;
+    string spd = "Speed: " + spdbuf.str() + "m/s";
+    ImGui::Text(spd.c_str());
     ImGui::PopFont();
     ImGui::PopStyleVar();
     ImGui::End();
 
-    ImVec2 imageSize(100, 100);
+    ImVec2 imageSize(125, 125);
+    ImGui::PushFont(normalfont);
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->GetCenter().y - imageSize.y / 2), ImGuiCond_Always);
-    ImGui::Begin("Tool", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
-    float contentWidth = ImGui::GetWindowContentRegionWidth();
-    ImGui::Image((void*)(intptr_t)axe.img_texture, imageSize);
+    ImGui::Begin("Tool", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+    int toolid = TutorialGame::GetGame()->GetPlayer()->GetSlot();
+    auto TextSlotNum = [&]() {
+        string slotnum = to_string(TutorialGame::GetGame()->GetPlayer()->GetSlotNum());
+        auto windowSize = ImGui::GetWindowSize();
+        auto textWidth = ImGui::CalcTextSize(slotnum.c_str()).x;
+        auto windowPos = ImGui::GetWindowPos();
+        ImGui::SetCursorPosX(windowPos.x + (windowSize.x - textWidth) * 0.5f);
+        ImGui::Text(slotnum.c_str());
+        };
+    switch (toolid)
+    {
+    case 2:
+        ImGui::Image((void*)(intptr_t)pickaxe.img_texture, imageSize);
+        break;
+    case 3:
+        ImGui::Image((void*)(intptr_t)axe.img_texture, imageSize);
+        break;
+    case 4:
+        ImGui::Image((void*)(intptr_t)bucket.img_texture, imageSize);
+        break;
+    case 5: //materials
+        ImGui::Image((void*)(intptr_t)plank.img_texture, imageSize);
+        TextSlotNum();
+        break;
+    case 6:
+        ImGui::Image((void*)(intptr_t)stone.img_texture, imageSize);
+        TextSlotNum();
+        break;
+    case 7:
+        ImGui::Image((void*)(intptr_t)rail.img_texture, imageSize);
+        break;
+    default:
+        ImGui::Image(NULL, imageSize, ImVec2(0, 0), ImVec2(0, 0), ImVec4(0, 0, 0, 0));
+        break;
+    }
+    ImGui::PopFont();
+    ImGui::End();
+
+    ImVec2 barSize(35, 240);
+    ImGui::PushFont(normalfont);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
+    ImGui::Begin("Water", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
+    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, IM_COL32(153, 255, 255, 255));
+    ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 200));
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 255, 255, 255));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 15.0f);
+    float value = 50.0f / 100.0f;
+    ImGui::VSliderFloat(" ", barSize, &value, 0.0f, 1.0f, "");
+    ImGui::PopFont();
+    ImGui::PopStyleVar(2);
+    ImGui::PopStyleColor(3);
     ImGui::End();
 }
 

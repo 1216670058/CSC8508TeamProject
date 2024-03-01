@@ -58,7 +58,8 @@ namespace NCL {
             void InitGameWorld(bool networked = false) { InitCamera(); InitWorld(networked); }
             bool IsExitGame() { return isExit; }
             float GetPlayTime() { return playtime; };
-            float GetTrainForce() { return train->GetForce(); };
+            TrainObject* GetTrain() const { return train; };
+            PlayerObject* GetPlayer() const { return player; }
 
         protected:
             void InitMeshes();

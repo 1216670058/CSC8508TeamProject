@@ -44,10 +44,15 @@ namespace NCL {
 
             ImFont* titlefont;
             ImFont* menufont;
+            ImFont* infofont;
             ImFont* normalfont;
 
-            UI_Image axe;
             UI_Image pickaxe;
+            UI_Image axe;
+            UI_Image bucket;
+            UI_Image plank;
+            UI_Image stone;
+            UI_Image rail;
 
             int loadingstep;
 
