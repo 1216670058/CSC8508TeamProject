@@ -38,8 +38,10 @@ namespace NCL::CSC8503 {
 
         void UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader);
 
-        float GetSpeed() { return speed; };
         float GetForce() { return force; };
+        float GetDistance() { return distance; };
+        float GetSpeed() { return speed; };
+        void SetInitPos(Vector3 pos1) { lastpos = curpos = pos1; }
 
     protected:
         //0  1  2 3 up down left right
@@ -50,8 +52,16 @@ namespace NCL::CSC8503 {
         Mesh* carriageMesh = nullptr;
         Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
+
+        //UI
+        float force = 10.0f;
+        Vector3 lastpos = Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 curpos = Vector3(0.0f, 0.0f, 0.0f);
+        float distance = 0.0f;
         float speed = 0.0f;
-        float force;
+        float dist_s = 0.0f;
+        float time_s = 0.0f;
+
     };
 }
 

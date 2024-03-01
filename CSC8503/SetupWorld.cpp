@@ -544,6 +544,7 @@ TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) 
         .SetScale(Vector3(10, 10, 10))
         .SetPosition(Vector3(100, -1000, 0));
 
+    train->SetInitPos(position);
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
 

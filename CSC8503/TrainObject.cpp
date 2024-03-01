@@ -5,7 +5,6 @@ using namespace NCL::CSC8503;
 
 TrainObject::TrainObject() {
     path.push_back({ Vector3(10, 5, 60), 4 });
-
     // path.push_back({Vector3(60, 0, 60), 1});
 }
 
@@ -21,6 +20,8 @@ TrainObject::TrainObject(GameWorld* w) {
     trainCarriage = new TrainCarriage[20];
     trainIndex = 0;
     name = "Train";
+
+    distance = 0.0f;
 }
 
 void TrainObject::OnCollisionBegin(GameObject* otherObject) {
@@ -49,9 +50,19 @@ void TrainObject::Update(float dt) {
     Vector3 target = itt;
     Vector3 dir = (target - this->GetTransform().GetPosition());
     dir = Vector3(dir.x, 0, dir.z);
-    force = 100.0f;
+    force = 30.0f;
     GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * force * dt);
+
     //std::cout << GetPhysicsObject()->GetInverseMass() << std::endl;
+    float dtdist = (lastpos - curpos).Length();
+    distance += dtdist; //run dist
+    lastpos = curpos; curpos = this->GetTransform().GetPosition();
+    time_s += dt;
+    dist_s += dtdist;
+    if (time_s >= 1.0f) {
+        speed = dist_s / time_s;
+        dist_s = time_s = 0.0f;
+    }
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5f) {

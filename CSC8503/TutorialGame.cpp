@@ -184,6 +184,7 @@ void TutorialGame::UpdatePlaying(float dt)
 
 void TutorialGame::UpdatePaused(float dt)
 {
+    UpdateKeys();
     audio->Update();
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
@@ -200,48 +201,60 @@ void TutorialGame::UpdateMenu(float dt)
 }
 
 void TutorialGame::UpdateKeys() {
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1)) {
-        InitWorld(); //We can reset the simulation at any time with F1
-        selectionObject = nullptr;
-    }
+    if (world->GetGameState() == GameState::PLAYING)
+    {
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1)) {
+            InitWorld(); //We can reset the simulation at any time with F1
+            selectionObject = nullptr;
+        }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F2)) {
-        InitCamera(); //F2 will reset the camera to a specific default place
-    }
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F2)) {
+            InitCamera(); //F2 will reset the camera to a specific default place
+        }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
-        renderer->ToggleNight();
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F3)) {
+            renderer->ToggleNight();
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
+            useGravity = !useGravity; //Toggle gravity!
+            physics->UseGravity(useGravity);
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
+            world->ShuffleConstraints(true);
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
+            world->ShuffleConstraints(false);
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F7)) {
+            world->ShuffleObjects(true);
+        }
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F8)) {
+            world->ShuffleObjects(false);
+        }
+
+        if (lockedObject) {
+            LockedObjectMovement();
+        }
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
-        world->SetGameState(GameState::PAUSED);
+        if (world->GetGameState() == GameState::PLAYING)
+            world->SetGameState(GameState::PAUSED);
+        else if (world->GetGameState() == GameState::PAUSED) {
+            world->SetGameState(GameState::PLAYING);
+            Window::GetWindow()->ShowOSPointer(false);
+        }
     }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
-        useGravity = !useGravity; //Toggle gravity!
-        physics->UseGravity(useGravity);
-    }
     //Running certain physics updates in a consistent order might cause some
     //bias in the calculations - the same objects might keep 'winning' the constraint
     //allowing the other one to stretch too much etc. Shuffling the order so that it
     //is random every frame can help reduce such bias.
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
-        world->ShuffleConstraints(true);
-    }
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
-        world->ShuffleConstraints(false);
-    }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F7)) {
-        world->ShuffleObjects(true);
-    }
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F8)) {
-        world->ShuffleObjects(false);
-    }
-
-    if (lockedObject) {
-        LockedObjectMovement();
-    }
 }
 
 void TutorialGame::LockedObjectMovement() {
