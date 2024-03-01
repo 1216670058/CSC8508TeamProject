@@ -16,6 +16,16 @@ namespace NCL::CSC8503 {
 		}
 	};
 
+	struct FullPlayerPacket : public FullPacket {
+		int		objectID = -1;
+		PlayerState fullPlayerState;
+
+		FullPlayerPacket() {
+			type = Full_State;
+			size = sizeof(FullPlayerPacket) - sizeof(GamePacket);
+		}
+	};
+
 	struct DeltaPacket : public GamePacket {
 		int		fullID		= -1;
 		int		objectID	= -1;
@@ -28,12 +38,26 @@ namespace NCL::CSC8503 {
 		}
 	};
 
+	struct DeltaPlayerPacket : public DeltaPacket {
+		int		fullID = -1;
+		int		objectID = -1;
+		char	pos[3];
+		char	orientation[4];
+		int     currentFrame;
+
+		DeltaPlayerPacket() {
+			type = Delta_State;
+			size = sizeof(DeltaPacket) - sizeof(GamePacket);
+		}
+	};
+
 	struct ClientPacket : public GamePacket {
 		int		lastID;
 		char	buttonstates[8];
 
 		ClientPacket() {
 			size = sizeof(ClientPacket);
+			type = BasicNetworkMessages::Full_State;
 		}
 	};
 
@@ -46,6 +70,7 @@ namespace NCL::CSC8503 {
 		virtual bool ReadPacket(GamePacket& p);
 		//Called by servers
 		virtual bool WritePacket(GamePacket** p, bool deltaFrame, int stateID);
+		virtual bool ReadClientPacket(ClientPacket& p);
 
 		void UpdateStateHistory(int minID);
 
@@ -72,6 +97,7 @@ namespace NCL::CSC8503 {
 		GameObject& object;
 
 		NetworkState lastFullState;
+		PlayerState lastFullPlayerState;
 
 		std::vector<NetworkState> stateHistory;
 

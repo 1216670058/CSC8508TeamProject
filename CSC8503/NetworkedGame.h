@@ -22,6 +22,8 @@ namespace NCL {
 
 			void SpawnPlayer();
 
+			void SpawnCarriage();
+
 			void StartLevel();
 
 			void ReceivePacket(int type, GamePacket* payload, int source) override;
@@ -54,6 +56,8 @@ namespace NCL {
 			GameObject* localPlayer;
 
 			static NetworkedGame* networkInstance;
+
+			bool spawn1;
 		};
 	}
 }
