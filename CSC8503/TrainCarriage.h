@@ -41,8 +41,8 @@ namespace NCL::CSC8503 {
 
     class MaterialCarriage : public TrainCarriage {
     public:
-        MaterialCarriage(GameWorld* w) { 
-            world = w; 
+        MaterialCarriage(GameWorld* w) {
+            world = w;
             name = "MaterialCarriage";
         };
 
@@ -90,8 +90,8 @@ namespace NCL::CSC8503 {
 
     class ProduceCarriage :public TrainCarriage {
     public:
-        ProduceCarriage(GameWorld* w) { 
-            world = w; 
+        ProduceCarriage(GameWorld* w) {
+            world = w;
             name = "ProduceCarriage";
         };
 

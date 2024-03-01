@@ -12,11 +12,11 @@ TrainCarriage::~TrainCarriage() {
 
 }
 
-void TrainCarriage::OnCollisionBegin(GameObject *otherObject) {
+void TrainCarriage::OnCollisionBegin(GameObject* otherObject) {
 
 }
 
-void TrainCarriage::OnCollisionEnd(GameObject *otherObject) {
+void TrainCarriage::OnCollisionEnd(GameObject* otherObject) {
 
 }
 
@@ -45,7 +45,7 @@ void TrainCarriage::Update(float dt) {
     Vector3 target = itt;
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrainForce() * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
@@ -66,7 +66,7 @@ void MaterialCarriage::Update(float dt) {
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
     //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrainForce() * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
@@ -117,7 +117,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                         rails[0]->SetPutDown(false);
                         rails[0]->SetInCarriage(false);
                         rails[0]->SetNum(otherObject->GetSlotNum() + 1);
-                        otherObject->SetSlotNum(otherObject->GetSlotNum() + 1);                      
+                        otherObject->SetSlotNum(otherObject->GetSlotNum() + 1);
                         rails.erase(rails.begin());
                         for (size_t i = 0; i < rails.size(); ++i) {
                             rails[i]->SetHeight(transform.GetPosition().y + 4 + i);
@@ -152,7 +152,7 @@ void ProduceCarriage::Update(float dt) {
     Vector3 target = itt;
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * 10.0f * dt);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrainForce() * dt);
     UpdateOrientation();
 
     float mm = (this->GetTransform().GetPosition() - target).Length();

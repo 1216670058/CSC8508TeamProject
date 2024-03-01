@@ -170,6 +170,7 @@ void TutorialGame::UpdatePlaying(float dt)
     SelectObject();
     MoveSelectedObject();*/
 
+    playtime += dt;
     UpdateKeys();
     audio->Update();
     world->UpdateWorld(dt);
@@ -302,6 +303,7 @@ void TutorialGame::InitWorld(bool networked) {
     InitGameExamples(networked);
     InitDefaultFloor();
 
+    playtime = 0.0f;
 }
 
 void TutorialGame::InitDefaultFloor() {

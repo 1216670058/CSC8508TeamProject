@@ -9,6 +9,7 @@
 #include "Debug.h"
 #include "Window.h"
 #include <functional>
+#include "math.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -396,7 +397,6 @@ void PhysicsSystem::IntegrateAccel(float dt) {
         linearVel += accel * dt; // integrate accel !
         object->SetLinearVelocity(linearVel);
 
-
         // Angular stuff
         Vector3 torque = object->GetTorque();
         Vector3 angVel = object->GetAngularVelocity();
@@ -422,8 +422,9 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
     std::vector<GameObject*>::const_iterator first;
     std::vector<GameObject*>::const_iterator last;
     gameWorld.GetObjectIterators(first, last);
-    float frameLinearDamping = 1.0f - (0.4f * dt);
-
+    //float frameLinearDamping = 1.0f - (2.28f * dt);
+    //std::cout << frameLinearDamping << std::endl;
+    float frameLinearDamping;
     for (auto i = first; i != last; ++i) {
         PhysicsObject* object = (*i)->GetPhysicsObject();
         if (object == nullptr) {
@@ -436,6 +437,7 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
         position += linearVel * dt;
         transform.SetPosition(position);
         // Linear Damping
+        frameLinearDamping = (*i)->GetPhysicsObject()->GetRealDamping();
         linearVel = linearVel * frameLinearDamping;
         object->SetLinearVelocity(linearVel);
 
@@ -451,6 +453,7 @@ void PhysicsSystem::IntegrateVelocity(float dt) {
 
         // Damp the angular velocity too
         float frameAngularDamping = 1.0f - (0.4f * dt);
+        //float frameAngularDamping = 0.5f;
         angVel = angVel * frameAngularDamping;
         object->SetAngularVelocity(angVel);
 

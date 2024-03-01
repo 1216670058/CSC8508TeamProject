@@ -76,7 +76,12 @@ namespace NCL {
 			void SetResolve(bool r) {
 				resolve = r;
 			}
-
+			float GetRealDamping() {
+				return RealDamping;
+			}
+			void SetRealDamping(float damping) {
+				RealDamping = damping;
+			}
 			void InitCubeInertia();
 			void InitSphereInertia();
 
@@ -93,7 +98,8 @@ namespace NCL {
 			float inverseMass;
 			float elasticity;
 			float friction;
-
+			float RealDamping=0.962f;
+			int AccelTime;
 			//linear stuff
 			Vector3 linearVelocity;
 			Vector3 force;

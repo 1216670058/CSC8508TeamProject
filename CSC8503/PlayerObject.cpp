@@ -167,7 +167,7 @@ void PlayerObject::Update(float dt) {
         slotNum = 0;
     }
 
-    PlayerMovement();
+    PlayerMovement(dt);
     
     doing = false;
     cutting = false;
@@ -181,12 +181,11 @@ void PlayerObject::Update(float dt) {
 void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
 
 }
-
-void PlayerObject::PlayerMovement() {
+static float a = 0;
+void PlayerObject::PlayerMovement(float dt) {
     Quaternion* qq;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
    // start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
-
     switch (networkObject->GetNetworkID()) {
     case 1:
         if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::UP)) {
@@ -247,6 +246,15 @@ void PlayerObject::PlayerMovement() {
         //std::cout << "Player2: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
         break;
     }
+    //else {
+    //   // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+    //}
+    //a += dt;
+    //if (a >= 1.0f) {
+    //    std::cout << "The force is: " << physicsObject->GetLinearVelocity().x << " " << physicsObject->GetLinearVelocity().y << " " << physicsObject->GetLinearVelocity().z << std::endl;
+    //    a = 0;
+    //}
+    //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 }
 
 void PlayerObject::CutTree() {
