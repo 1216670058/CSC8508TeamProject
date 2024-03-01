@@ -2,7 +2,6 @@
 #include "GameWorld.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
-#include "NetworkObject.h"
 #include "TextureLoader.h"
 
 #include "PositionConstraint.h"
@@ -61,7 +60,7 @@ void TutorialGame::InitMeshes() {
     assassinMesh = renderer->LoadMesh("Assassin.msh");
     //girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
-    //mooseMesh = renderer->LoadMesh("Moose.msh");
+    mooseMesh = renderer->LoadMesh("Moose.msh");
     //robotMesh = renderer->LoadMesh("Robot.msh");
     //droneMesh = renderer->LoadMesh("Drone.msh");
 
@@ -193,18 +192,18 @@ void TutorialGame::InitMaterials() {
     //    smurfBumpTextures.emplace_back(texID2);
     //}
 
-    //mooseMaterial = new MeshMaterial("Moose.mat");
-    //for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        mooseMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    mooseTextures.emplace_back(texID);
-    //}
+    mooseMaterial = new MeshMaterial("Moose.mat");
+    for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            mooseMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        mooseTextures.emplace_back(texID);
+    }
     //
     //robotMaterial = new MeshMaterial("Robot.mat");
     //for (int i = 0; i < robotMesh->GetSubMeshCount(); ++i) {
@@ -302,13 +301,13 @@ void TutorialGame::InitAnimations() {
     //smurfAnimation->SetActiveAnim(smurfAnimation->GetAnim1());
     //smurfAnimation->SetIdle(false);
 
-    //mooseAnimation = new AnimationObject();
-    //mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim2(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim3(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim4(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
+    mooseAnimation = new AnimationObject();
+    mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim2(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim3(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim4(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
     //
     //robotAnimation = new AnimationObject();
     //robotAnimation->SetAnim1(new MeshAnimation("Robot.anm"));
@@ -528,22 +527,14 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
     return character;
 }
 
-TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) {
+TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(world);
 
     AABBVolume* volume = new AABBVolume(Vector3(5, 5, 5));
     train->SetBoundingVolume((CollisionVolume*)volume);
-
-    train->SetSpawned(spawn);
-
-    if (spawn)
-        train->GetTransform()
+    train->GetTransform()
         .SetScale(Vector3(10, 10, 10))
         .SetPosition(position);
-    else
-        train->GetTransform()
-        .SetScale(Vector3(10, 10, 10))
-        .SetPosition(Vector3(100, -1000, 0));
 
     train->SetRenderObject(new RenderObject(&train->GetTransform(), trainMesh, nullptr, basicShader));
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
@@ -584,20 +575,13 @@ GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position, const 
     return cube;
 }
 
-PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::string name, int num, bool spawn) {
-    PlayerObject* player = new PlayerObject(name);
+PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
+    player = new PlayerObject("Player");
     AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     player->SetBoundingVolume((CollisionVolume*)volume);
 
-    player->SetSpawned(spawn);
-
-    if (spawn)
-        player->GetTransform()
+    player->GetTransform()
         .SetPosition(position)
-        .SetScale(Vector3(6, 6, 6));
-    else
-        player->GetTransform()
-        .SetPosition(Vector3(400 + (num - 1) * 100, -1000, 0))
         .SetScale(Vector3(6, 6, 6));
 
     player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
@@ -615,8 +599,6 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::strin
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
     player->GetPhysicsObject()->InitCubeInertia();
-
-    player->SetNetworkObject(new NetworkObject(*player, num));
 
     world->AddGameObject(player);
 
@@ -702,7 +684,7 @@ CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)
     return groundObject;
 }
 
-PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spawn) {
+PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position) {
     PickaxeObject* pickaxe = new PickaxeObject(world, "Pickaxe");
 
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
@@ -710,15 +692,8 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spa
 
     pickaxe->SetPlayer(player);
 
-    pickaxe->SetSpawned(spawn);
-
-    if (spawn)
-        pickaxe->GetTransform()
+    pickaxe->GetTransform()
         .SetPosition(pickaxe->FindNearestGridCenter(position))
-        .SetScale(Vector3(4, 4, 4));
-    else
-        pickaxe->GetTransform()
-        .SetPosition(Vector3(0, -1000, 0))
         .SetScale(Vector3(4, 4, 4));
 
     pickaxe->SetRenderObject(new RenderObject(&pickaxe->GetTransform(), pickaxeMesh, pickaxeTex, bumpShader));
@@ -735,7 +710,7 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spa
     return pickaxe;
 }
 
-AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
+AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position) {
     AxeObject* axe = new AxeObject(world, "Axe");
 
     AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
@@ -743,15 +718,8 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
 
     axe->SetPlayer(player);
 
-    axe->SetSpawned(spawn);
-
-    if (spawn)
-        axe->GetTransform()
+    axe->GetTransform()
         .SetPosition(axe->FindNearestGridCenter(position))
-        .SetScale(Vector3(1, 1, 1));
-    else
-        axe->GetTransform()
-        .SetPosition(Vector3(200, -1000, 0))
         .SetScale(Vector3(1, 1, 1));
 
     axe->SetRenderObject(new RenderObject(&axe->GetTransform(), axeMesh, axeTex, bumpShader));
@@ -768,7 +736,7 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
     return axe;
 }
 
-BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position, bool spawn) {
+BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
     BucketObject* bucket = new BucketObject(world, "Bucket");
 
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
@@ -776,15 +744,8 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position, bool spawn
 
     bucket->SetPlayer(player);
 
-    bucket->SetSpawned(spawn);
-
-    if (spawn)
-        bucket->GetTransform()
+    bucket->GetTransform()
         .SetPosition(bucket->FindNearestGridCenter(position))
-        .SetScale(Vector3(4, 4, 4));
-    else
-        bucket->GetTransform()
-        .SetPosition(Vector3(300, -1000, 0))
         .SetScale(Vector3(4, 4, 4));
 
     bucket->SetRenderObject(new RenderObject(&bucket->GetTransform(), bucketMesh, bucketTex, bumpShader));
@@ -883,8 +844,8 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
     return rail;
 }
 
-AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
-    AnimalObject* moose = new AnimalObject();
+AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax) {
+    AnimalObject* moose = new AnimalObject(xMin, xMax, zMin, zMax);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 

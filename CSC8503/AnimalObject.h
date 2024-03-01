@@ -18,11 +18,21 @@
 namespace NCL::CSC8503 {
 	class AnimalObject :public GameObject {
 	public:
-		AnimalObject() {
-			typeID = 10;
-		}
+		AnimalObject(float xMin, float xMax, float zMin, float zMax);
 		~AnimalObject() {};
 
 		void Update(float dt) override;
+
+		StateMachine* stateMachine;
+
+		Vector3 currentPos;
+
+		float xMin;
+		float xMax;
+		float zMin;
+		float zMax;
+
+		std::vector<Vector3> wanderPoints = {};
+		int currentWanderIndex = 0;
 	};
 }

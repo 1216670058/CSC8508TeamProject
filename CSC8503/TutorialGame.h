@@ -44,21 +44,12 @@ namespace NCL {
                 return instance;
             };
 
-            bool IsNetworked() const {
-                return networked;
-            }
-            void SetNetworked(bool n) {
-                networked = n;
-            }
-
             PlankObject* AddPlankToWorld(const Vector3& position);
             StoneObject* AddStoneToWorld(const Vector3& position);
             RailObject* AddRailToWorld(const Vector3& position);
 
-            void InitGameWorld(bool networked = false) { InitCamera(); InitWorld(networked); }
+            void InitGameWorld() { InitCamera(); InitWorld(); }
             bool IsExitGame() { return isExit; }
-            float GetPlayTime() { return playtime; };
-            float GetTrainForce() { return train->GetForce(); };
 
         protected:
             void InitMeshes();
@@ -70,7 +61,7 @@ namespace NCL {
             int assetsLoadedStep = 0;
 
             void InitCamera();
-            void InitWorld(bool networked = false);
+            void InitWorld();
 
             void UpdateKeys();
 
@@ -84,7 +75,7 @@ namespace NCL {
             in the module. Feel free to mess around with them to see different objects being created in different
             test scenarios (constraints, collision types, and so on).
             */
-            void InitGameExamples(bool networked = false);
+            void InitGameExamples();
 
             void InitDefaultFloor();
             //int SelectRailDir(Vector3 lastRailPosition,Vector3 RailPosition);
@@ -102,16 +93,16 @@ namespace NCL {
 
             GameObject* AddPlayer0ToWorld(const Vector3& position);
             GameObject* AddEnemyToWorld(const Vector3& position);
-            TrainObject* AddTrainToWorld(const Vector3& position, bool spawn = true);
+            TrainObject* AddTrainToWorld(const Vector3& position);
             GameObject* AddTestingLightToWorld(const Vector3& position, const Vector4& colour);
-            PlayerObject* AddPlayerToWorld(const Vector3& position, std::string name, int num, bool spawn = true);
+            PlayerObject* AddPlayerToWorld(const Vector3& position);
             TreeObject* AddTreeToWorld(const Vector3& position);
             RockObject* AddRockToWorld(const Vector3& position);
             CollectableObject* AddCollectableObjectToGround(int ID);
-            PickaxeObject* AddPickaxeToWorld(const Vector3& position, bool spawn = true);
-            AxeObject* AddAxeToWorld(const Vector3& position, bool spawn = true);
-            BucketObject* AddBucketToWorld(const Vector3& position, bool spawn = true);
-            AnimalObject* AddMooseToWorld(const Vector3& position);
+            PickaxeObject* AddPickaxeToWorld(const Vector3& position);
+            AxeObject* AddAxeToWorld(const Vector3& position);
+            BucketObject* AddBucketToWorld(const Vector3& position);
+            AnimalObject* AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);
 
@@ -141,7 +132,6 @@ namespace NCL {
             Vector3 lastRailPositin;
             Vector3 RailPositin;
 
-            bool networked = false;
             bool useGravity;
             bool inSelectionMode;
             int cameraMode = 1;
@@ -283,9 +273,6 @@ namespace NCL {
             ProduceCarriage* carriage2 = nullptr;
 
             PlayerObject* player = nullptr;
-            PlayerObject* player2 = nullptr;
-            PlayerObject* player3 = nullptr;
-            PlayerObject* player4 = nullptr;
 
             CollectableObject* object = nullptr;
             CollectableObject* groundObject = nullptr;
@@ -293,6 +280,7 @@ namespace NCL {
             PickaxeObject* pickaxe = nullptr;
             AxeObject* axe = nullptr;
             BucketObject* bucket = nullptr;
+            AnimalObject* moose = nullptr;
 
             vector<Vector3> mazeNodes;
             NavigationGrid* navGrid;
@@ -300,7 +288,6 @@ namespace NCL {
             static TutorialGame* instance;
 
             bool isExit = false;
-            float playtime = 0.0f;
         };
 
         /* struct AssetsInfo
