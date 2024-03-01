@@ -26,6 +26,8 @@ NetworkedGame::NetworkedGame()	{
 	timeToNextPacket  = 0.0f;
 	packetsToSnapshot = 0;
 
+	spawn1 = false;
+
 	networkInstance = this;
 }
 
@@ -54,6 +56,7 @@ void NetworkedGame::StartAsClient(char a, char b, char c, char d) {
 	thisClient->RegisterPacketHandler(Player_Disconnected, this);
 
 	SpawnPlayer();
+	SpawnCarriage();
 }
 
 void NetworkedGame::UpdateGame(float dt) {
@@ -120,6 +123,13 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
 }
 
 void NetworkedGame::UpdateAsServer(float dt) {
+	if (thisServer->IsConnected()) {
+		if (!spawn1) {
+			SpawnPlayer();
+			spawn1 = true;
+		}
+	}
+
 	packetsToSnapshot--;
 	if (packetsToSnapshot < 0) {
 		BroadcastSnapshot(false);
@@ -130,22 +140,40 @@ void NetworkedGame::UpdateAsServer(float dt) {
 	}
 	thisServer->UpdateServer();
 
-	world->UpdateWorld(dt, "Player2");
+	world->UpdateWorld(dt);
+
+	std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
+		player->GetTransform().GetPosition().y << " " <<
+		player->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::UpdateAsClient(float dt) {
-	packetsToSnapshot--;
-	if (packetsToSnapshot < 0) {
-		ClientSend(false);
-		packetsToSnapshot = 5;
-	}
-	else {
-		ClientSend(true);
-	}
-	//if (player1->HasFinished() || player2->HasFinished())finished = true;
+	ClientPacket newPacket;
+
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::UP))
+		newPacket.buttonstates[0] = 1;
+	else
+		newPacket.buttonstates[0] = 0;
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::DOWN))
+		newPacket.buttonstates[1] = 1;
+	else
+		newPacket.buttonstates[1] = 0;
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::LEFT))
+		newPacket.buttonstates[2] = 1;
+	else
+		newPacket.buttonstates[2] = 0;
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::RIGHT))
+		newPacket.buttonstates[3] = 1;
+	else
+		newPacket.buttonstates[3] = 0;
+
+	thisClient->SendPacket(newPacket);
+
 	thisClient->UpdateClient();
-	player2->Update(dt);
-	//if (!inPauseMode) GoatMovement(player2);
+
+	std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
+		player->GetTransform().GetPosition().y << " " <<
+		player->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
@@ -156,7 +184,7 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
 
 	for (auto i = first; i != last; ++i) {
 		NetworkObject* o = (*i)->GetNetworkObject();
-		if (!o || o->GetNetworkID() == 2) {
+		if (!o) {
 			continue;
 		}
 		//TODO - you'll need some way of determining
@@ -207,19 +235,32 @@ void NetworkedGame::UpdateMinimumState() {
 }
 
 void NetworkedGame::SpawnPlayer() {
-	player2 = AddPlayerToWorld(Vector3(20, 5, 110), "Player2", 2, true);
+	player2->SetSpawned(true);
+	player2->GetTransform().SetPosition(Vector3(20, 5, 110));
 }
 
-void NetworkedGame::StartLevel() {
-	train = AddTrainToWorld(Vector3(70, 5, 100), true);
+void NetworkedGame::SpawnCarriage() {
 	carriage1 = (MaterialCarriage*)(train->AddCarriage(21, true));
 	carriage2 = (ProduceCarriage*)(train->AddCarriage(22, true));
 	carriage1->SetProduceCarriage(carriage2);
 	carriage2->SetMaterialCarriage(carriage1);
-	player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, true);
-	pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90), true);
-	axe = AddAxeToWorld(Vector3(40, 5, 100), true);
-	bucket = AddBucketToWorld(Vector3(40, 5, 110), true);
+}
+
+void NetworkedGame::StartLevel() {
+	train->SetSpawned(true);
+	train->GetTransform().SetPosition(Vector3(70, 5, 100));
+	carriage1 = (MaterialCarriage*)(train->AddCarriage(21, true));
+	carriage2 = (ProduceCarriage*)(train->AddCarriage(22, true));
+	carriage1->SetProduceCarriage(carriage2);
+	carriage2->SetMaterialCarriage(carriage1);
+	player->SetSpawned(true);
+	player->GetTransform().SetPosition(Vector3(20, 5, 100));
+	pickaxe->SetSpawned(true);
+	pickaxe->GetTransform().SetPosition(Vector3(40, 5, 90));
+	axe->SetSpawned(true);
+	axe->GetTransform().SetPosition(Vector3(40, 5, 100));
+	bucket->SetSpawned(true);
+	bucket->GetTransform().SetPosition(Vector3(40, 5, 110));
 }
 
 void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -229,15 +270,16 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 		world->GetObjectIterators(first, last);
 		for (auto i = first; i != last; ++i) {
 			NetworkObject* o = (*i)->GetNetworkObject();
-			if (!o || o->GetNetworkID() == 2) {
+			if (!o) {
 				continue;
 			}
 			o->ReadPacket(*payload);
 		}
 	}
 	else if (thisServer) {
-		player2->GetNetworkObject()->ReadPacket(*payload);
-		std::cout << "Receiving" << std::endl;
+		ClientPacket* packet = (ClientPacket*)payload;
+		player2->GetNetworkObject()->ReadClientPacket(*packet);
+		//std::cout << "Receiving" << std::endl;
 	}
 }
 

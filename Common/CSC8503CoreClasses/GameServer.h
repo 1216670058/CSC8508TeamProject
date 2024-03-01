@@ -19,6 +19,10 @@ namespace NCL {
 
 			virtual void UpdateServer();
 
+			bool IsConnected() const {
+				return connected;
+			}
+
 		protected:
 			int			port;
 			int			clientMax;
@@ -27,6 +31,8 @@ namespace NCL {
 
 			int incomingDataRate;
 			int outgoingDataRate;
+
+			bool connected = false;
 		};
 	}
 }

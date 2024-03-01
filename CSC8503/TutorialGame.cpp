@@ -312,10 +312,12 @@ void TutorialGame::InitDefaultFloor() {
 
 void TutorialGame::InitGameExamples(bool networked) {
     train = AddTrainToWorld(Vector3(70, 5, 100), !networked);
-    carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
-    carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
-    carriage1->SetProduceCarriage(carriage2);
-    carriage2->SetMaterialCarriage(carriage1);
+    if (!networked) {
+        carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
+        carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
+        carriage1->SetProduceCarriage(carriage2);
+        carriage2->SetMaterialCarriage(carriage1);
+    }
     player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
     if (networked) {
         player2 = AddPlayerToWorld(Vector3(20, 5, 110), "Player2", 2, false);

@@ -194,6 +194,7 @@ void UI::DrawLoading(float dt)
 void UI::DrawMenu(float dt)
 {
     Window::GetWindow()->ShowOSPointer(true);
+    Window::GetWindow()->LockMouseToWindow(false);
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
@@ -230,6 +231,7 @@ void UI::DrawMenu(float dt)
         TutorialGame::GetGame()->InitGameWorld(false);
         world->SetGameState(GameState::PLAYING);
         Window::GetWindow()->ShowOSPointer(false);
+        Window::GetWindow()->LockMouseToWindow(true);
     }
 
     //set Multiplayer
@@ -251,6 +253,7 @@ void UI::DrawMenu(float dt)
 
 void UI::DrawChooseServer(float dt) {
     Window::GetWindow()->ShowOSPointer(true);
+    Window::GetWindow()->LockMouseToWindow(false);
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
@@ -289,6 +292,7 @@ void UI::DrawChooseServer(float dt) {
         NetworkedGame::GetNetworkedGame()->StartAsServer();
         world->SetGameState(GameState::SERVERPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
+        Window::GetWindow()->LockMouseToWindow(true);
     }
 
     //set Client
@@ -298,6 +302,7 @@ void UI::DrawChooseServer(float dt) {
         NetworkedGame::GetNetworkedGame()->StartAsClient(127, 0, 0, 1);
         world->SetGameState(GameState::CLIENTPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
+        Window::GetWindow()->LockMouseToWindow(true);
     }
 
     //set Exit Game
@@ -349,6 +354,7 @@ void UI::DrawPlayingUI(float dt)
 void UI::DrawPausedMenu(float dt)
 {
     Window::GetWindow()->ShowOSPointer(true);
+    Window::GetWindow()->LockMouseToWindow(false);
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);

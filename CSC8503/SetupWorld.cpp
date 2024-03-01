@@ -49,7 +49,6 @@ void TutorialGame::InitMeshes() {
     carriageMesh = renderer->LoadMesh("Carriage.msh");
     treeMesh = renderer->LoadMesh("Tree.msh");
     rockMesh = renderer->LoadMesh("Rock.msh");
-    //creeperMesh = renderer->LoadOBJMesh("Creeper.obj");
     pickaxeMesh = renderer->LoadMesh("Pickaxe.msh");
     axeMesh = renderer->LoadMesh("Axe.msh");
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
@@ -59,7 +58,7 @@ void TutorialGame::InitMeshes() {
     //maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     assassinMesh = renderer->LoadMesh("Assassin.msh");
-    //girlMesh = renderer->LoadMesh("Girl.msh");
+    girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
     //mooseMesh = renderer->LoadMesh("Moose.msh");
     //robotMesh = renderer->LoadMesh("Robot.msh");
@@ -155,24 +154,24 @@ void TutorialGame::InitMaterials() {
     }
     //vector<GLuint> assassinBumpTextures;
     //
-    //girlMaterial = new MeshMaterial("Girl.mat");
-    //for (int i = 0; i < girlMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        girlMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    girlTextures.emplace_back(texID);
-    //
-    //    matEntry->GetEntry("Bump", &filename);
-    //    string path2 = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    girlBumpTextures.emplace_back(texID2);
-    //}
+    girlMaterial = new MeshMaterial("Girl.mat");
+    for (int i = 0; i < girlMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            girlMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        girlTextures.emplace_back(texID);
+    
+        matEntry->GetEntry("Bump", &filename);
+        string path2 = Assets::TEXTUREDIR + *filename;
+        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        girlBumpTextures.emplace_back(texID2);
+    }
     //
     //smurfMaterial = new MeshMaterial("Smurf.mat");
     //for (int i = 0; i < smurfMesh->GetSubMeshCount(); ++i) {
@@ -283,15 +282,15 @@ void TutorialGame::InitAnimations() {
     assassinAnimation->SetAnim5(new MeshAnimation("Assassin.anm"));
     assassinAnimation->SetActiveAnim(assassinAnimation->GetAnim1());
     assassinAnimation->SetIdle(false);
-    //
-    //girlAnimation = new AnimationObject();
-    //girlAnimation->SetAnim1(new MeshAnimation("Girl.anm"));
-    //girlAnimation->SetAnim2(new MeshAnimation("Girl.anm"));
-    //girlAnimation->SetAnim3(new MeshAnimation("Girl.anm"));
-    //girlAnimation->SetAnim4(new MeshAnimation("Girl.anm"));
-    //girlAnimation->SetAnim5(new MeshAnimation("Girl.anm"));
-    //girlAnimation->SetActiveAnim(girlAnimation->GetAnim1());
-    //girlAnimation->SetIdle(false);
+    
+    girlAnimation = new AnimationObject();
+    girlAnimation->SetAnim1(new MeshAnimation("Girl.anm"));
+    girlAnimation->SetAnim2(new MeshAnimation("Girl.anm"));
+    girlAnimation->SetAnim3(new MeshAnimation("Girl.anm"));
+    girlAnimation->SetAnim4(new MeshAnimation("Girl.anm"));
+    girlAnimation->SetAnim5(new MeshAnimation("Girl.anm"));
+    girlAnimation->SetActiveAnim(girlAnimation->GetAnim1());
+    girlAnimation->SetIdle(false);
     //
     //smurfAnimation = new AnimationObject();
     //smurfAnimation->SetAnim1(new MeshAnimation("Smurf.anm"));
@@ -599,11 +598,26 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::strin
         player->GetTransform()
         .SetPosition(Vector3(400 + (num - 1) * 100, -1000, 0))
         .SetScale(Vector3(6, 6, 6));
-
-    player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
-    player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-    player->GetRenderObject()->SetAnimationObject(assassinAnimation);
-    player->GetRenderObject()->SetTextures(assassinTextures);
+    switch (num) {
+    case 1:
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
+        player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+        player->GetRenderObject()->SetAnimationObject(assassinAnimation);
+        player->GetRenderObject()->SetTextures(assassinTextures);
+        break;
+    case 2:
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), girlMesh, nullptr, skinningBumpShader, 3));
+        player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+        player->GetRenderObject()->SetAnimationObject(girlAnimation);
+        player->GetRenderObject()->SetTextures(girlTextures);
+        break;
+    default:
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), assassinMesh, nullptr, skinningPerPixelShader, 3));
+        player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+        player->GetRenderObject()->SetAnimationObject(assassinAnimation);
+        player->GetRenderObject()->SetTextures(assassinTextures);
+        break;
+    }
     //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
 
     //player->SetPlayerMeshes(meshes);
@@ -730,6 +744,8 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spa
     pickaxe->GetPhysicsObject()->SetInverseMass(1);
     pickaxe->GetPhysicsObject()->InitCubeInertia();
 
+    pickaxe->SetNetworkObject(new NetworkObject(*pickaxe, 5));
+
     world->AddGameObject(pickaxe);
 
     return pickaxe;
@@ -763,6 +779,8 @@ AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
     axe->GetPhysicsObject()->SetInverseMass(1);
     axe->GetPhysicsObject()->InitCubeInertia();
 
+    axe->SetNetworkObject(new NetworkObject(*axe, 6));
+
     world->AddGameObject(axe);
 
     return axe;
@@ -795,6 +813,8 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position, bool spawn
     bucket->GetPhysicsObject()->SetResolve(false);
     bucket->GetPhysicsObject()->SetInverseMass(1);
     bucket->GetPhysicsObject()->InitCubeInertia();
+
+    bucket->SetNetworkObject(new NetworkObject(*bucket, 7));
 
     world->AddGameObject(bucket);
 

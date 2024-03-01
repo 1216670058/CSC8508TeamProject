@@ -13,6 +13,7 @@
 #include <vector>
 #include "RenderObject.h"
 #include "AnimationObject.h"
+#include "NetworkObject.h"
 #include "TrainCarriage.h"
 
 namespace NCL::CSC8503 {

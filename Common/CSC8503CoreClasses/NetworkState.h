@@ -13,6 +13,13 @@ namespace NCL {
 			Quaternion	orientation;
 			int			stateID;
 		};
+		class PlayerState :public NetworkState {
+		public:
+			PlayerState() {};
+			virtual ~PlayerState() {};
+
+			int currentFrame = 0;
+		};
 	}
 }
 

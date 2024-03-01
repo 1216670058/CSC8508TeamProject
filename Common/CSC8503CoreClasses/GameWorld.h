@@ -54,7 +54,7 @@ namespace NCL {
 
             bool Raycast(Ray& r, RayCollision& closestCollision, bool closestObject = false, GameObject* ignore = nullptr) const;
 
-            virtual void UpdateWorld(float dt, std::string omit = "000");
+            virtual void UpdateWorld(float dt);
 
             void OperateOnContents(GameObjectFunc f);
 

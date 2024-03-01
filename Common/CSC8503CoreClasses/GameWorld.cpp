@@ -65,7 +65,7 @@ void GameWorld::OperateOnContents(GameObjectFunc f) {
     }
 }
 
-void GameWorld::UpdateWorld(float dt, std::string omit) {
+void GameWorld::UpdateWorld(float dt) {
 	auto rng = std::default_random_engine{};
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -81,7 +81,6 @@ void GameWorld::UpdateWorld(float dt, std::string omit) {
 
 	for (auto& i : gameObjects) {
 		if (i->IsActive()) {
-			if (i->GetName() != omit)
 				i->Update(dt);
 		}
 		else {

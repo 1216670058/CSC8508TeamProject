@@ -176,6 +176,13 @@ namespace NCL::CSC8503 {
             return flag5;
         }
 
+        void SetButton(int index, bool state) {
+            buttonStates[index] = state;
+        }
+        bool GetButton(int index) const {
+            return buttonStates[index];
+        }
+
         double EuclideanDistance(float x1, float y1, float x2, float y2);
         Vector3 FindNearestGridCenter(const Vector3& position);
 
@@ -209,6 +216,8 @@ namespace NCL::CSC8503 {
         bool flag5 = false;
 
         Vector3 broadphaseAABB;
+
+        bool buttonStates[8];
     };
 }
 
