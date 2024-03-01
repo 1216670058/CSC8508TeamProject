@@ -328,6 +328,7 @@ void TutorialGame::InitGameExamples(bool networked) {
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
         carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
+        carriage3 = (WaterCarriage*)(train->AddCarriage(23, !networked));
         carriage1->SetProduceCarriage(carriage2);
         carriage2->SetMaterialCarriage(carriage1);
     }
@@ -340,6 +341,7 @@ void TutorialGame::InitGameExamples(bool networked) {
     pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90), !networked);
     axe = AddAxeToWorld(Vector3(40, 5, 100), !networked);
     bucket = AddBucketToWorld(Vector3(40, 5, 110), !networked);
+    player->SetBucket(bucket);
     AddSceneToWorld();
 }
 

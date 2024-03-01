@@ -182,3 +182,9 @@ void ProduceCarriage::Update(float dt) {
         }
     }
 }
+void WaterCarriage::Update(float dt) {
+    float speed=3.0f;
+    if(water>0.0f)water -= dt*speed;
+    float color = water / 100.f;
+    renderObject->SetColour(Vector4(1 - color, 0, color, 1));
+}
