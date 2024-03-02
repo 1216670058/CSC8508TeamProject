@@ -5,114 +5,109 @@
 using namespace NCL::CSC8503;
 
 void PlayerObject::Update(float dt) {
-    bool keyDown = false;
-    switch (networkObject->GetNetworkID()) {
-    case 1:
-        if (!doing) {
-            if (Window::GetKeyboard()->KeyDown(KeyCodes::UP) && renderObject->GetAnimationObject()->GetAnim2()) {
-                if (renderObject->GetAnimationObject()->GetFlag2()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim2());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(2);
-                }
-            }
-            else if (Window::GetKeyboard()->KeyDown(KeyCodes::RIGHT) && renderObject->GetAnimationObject()->GetAnim3()) {
-                if (renderObject->GetAnimationObject()->GetFlag3()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim3());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(3);
-                }
-            }
-            else if (Window::GetKeyboard()->KeyDown(KeyCodes::LEFT) && renderObject->GetAnimationObject()->GetAnim4()) {
-                if (renderObject->GetAnimationObject()->GetFlag4()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim4());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(4);
-                }
-            }
-            else if (Window::GetKeyboard()->KeyDown(KeyCodes::DOWN) && renderObject->GetAnimationObject()->GetAnim5()) {
-                if (renderObject->GetAnimationObject()->GetFlag5()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim5());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(5);
-                }
-            }
-            else if (Window::GetKeyboard()->KeyDown(KeyCodes::NUM3) && renderObject->GetAnimationObject()->GetAnim8()) {
-                if (renderObject->GetAnimationObject()->GetFlag8()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim8());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(8);
-                }
-            }
-            else {
-                if (renderObject->GetAnimationObject()->GetFlag1()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim1());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(1);
-                }
-            }
-        }
-        break;
-    case 2:
-        if (!doing) {
-            if (buttonStates[0] && renderObject->GetAnimationObject()->GetAnim2()) {
-                if (renderObject->GetAnimationObject()->GetFlag2()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim2());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(2);
-                }
-            }
-            else if (buttonStates[3] && renderObject->GetAnimationObject()->GetAnim3()) {
-                if (renderObject->GetAnimationObject()->GetFlag3()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim3());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(3);
-                }
-            }
-            else if (buttonStates[1] && renderObject->GetAnimationObject()->GetAnim4()) {
-                if (renderObject->GetAnimationObject()->GetFlag4()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim4());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(4);
-                }
-            }
-            else if (buttonStates[2] && renderObject->GetAnimationObject()->GetAnim5()) {
-                if (renderObject->GetAnimationObject()->GetFlag5()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim5());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(5);
-                }
-            }
-            else if (Window::GetKeyboard()->KeyDown(KeyCodes::NUM3) && renderObject->GetAnimationObject()->GetAnim8()) {
-                if (renderObject->GetAnimationObject()->GetFlag8()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim8());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(8);
-                }
-            }
-            else {
-                if (renderObject->GetAnimationObject()->GetFlag1()) {
-                    renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim1());
-                    renderObject->GetAnimationObject()->SetCurrentFrame(0);
-                    renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-                    renderObject->GetAnimationObject()->UpdateFlags(1);
-                }
-            }
-        }
-        break;
+    bool RPressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
+    else
+        RPressed = buttonStates[4];
+
+    if (renderObject->GetAnimationObject())
+        UpdateAnimation(dt);
+    PlayerMovement(dt);
+    //SwitchSkin();
+
+    if (RPressed) {
+        slot = 0;
+        slotNum = 0;
     }
-    if (doing) {
+    
+    doing = false;
+    cutting = false;
+    digging = false;
+
+    CutTree();
+    DigRock();
+    ScoopWater();
+    UseWater();
+    LoadMaterial();
+}
+
+void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
+
+}
+static float a = 0;
+
+void PlayerObject::UpdateAnimation(float dt) {
+    bool WHeld = false;
+    bool DHeld = false;
+    bool AHeld = false;
+    bool SHeld = false;
+
+    if (networkObject->GetNetworkID() == 1) {
+        WHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::W);
+        DHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::D);
+        AHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::A);
+        SHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::S);
+    }
+    else {
+        WHeld = buttonStates[0];
+        SHeld = buttonStates[1];
+        AHeld = buttonStates[2];
+        DHeld = buttonStates[3];
+    }
+
+    if (!doing) {
+        if (WHeld && renderObject->GetAnimationObject()->GetAnim2()) {
+            if (renderObject->GetAnimationObject()->GetFlag2()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim2());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(2);
+            }
+        }
+        else if (DHeld && renderObject->GetAnimationObject()->GetAnim3()) {
+            if (renderObject->GetAnimationObject()->GetFlag3()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim3());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(3);
+            }
+        }
+        else if (AHeld && renderObject->GetAnimationObject()->GetAnim4()) {
+            if (renderObject->GetAnimationObject()->GetFlag4()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim4());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(4);
+            }
+        }
+        else if (SHeld && renderObject->GetAnimationObject()->GetAnim5()) {
+            if (renderObject->GetAnimationObject()->GetFlag5()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim5());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(5);
+            }
+        }
+        else if (Window::GetKeyboard()->KeyHeld(KeyCodes::NUM3) && renderObject->GetAnimationObject()->GetAnim8()) {
+            if (renderObject->GetAnimationObject()->GetFlag8()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim8());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(8);
+            }
+        }
+        else {
+            if (renderObject->GetAnimationObject()->GetFlag1()) {
+                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim1());
+                renderObject->GetAnimationObject()->SetCurrentFrame(0);
+                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
+                renderObject->GetAnimationObject()->UpdateFlags(1);
+            }
+        }
+    }
+
+    else {
         if (cutting && renderObject->GetAnimationObject()->GetAnim6()) {
             if (renderObject->GetAnimationObject()->GetFlag6()) {
                 renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim6());
@@ -138,13 +133,13 @@ void PlayerObject::Update(float dt) {
             }
         }
     }
-    
+
     if (renderObject->GetAnimationObject()->GetActiveAnim() != renderObject->GetAnimationObject()->GetAnim1() ||
         renderObject->GetAnimationObject()->HasIdle()) {
-        //if (!TutorialGame::GetGame()->IsNetworked())
+        if (!TutorialGame::GetGame()->IsNetworked())
             renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
-        //else
-            //renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - (dt / 4));
+        else
+            renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - (dt * 4));
         while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
             renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
                 renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameCount());
@@ -152,104 +147,61 @@ void PlayerObject::Update(float dt) {
                 renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
         }
     }
-
-    //if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
-    //    renderObject->SetMesh(meshes[(index + 1) % 5]);
-    //    renderObject->SetAnimationObject(animations[(index + 1) % 5]);
-    //    renderObject->SetTextures(textures[(index + 1) % 5]);
-    //    renderObject->SetBumpTextures(bumpTextures[(index + 1) % 5]);
-    //    renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
-    //    index++;
-    //}
-
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::R)) {
-        slot = 0;
-        slotNum = 0;
-    }
-
-    PlayerMovement(dt);
-    
-    doing = false;
-    cutting = false;
-    digging = false;
-
-    CutTree();
-    DigRock();
-    ScoopWater();
-    UseWater();
-    LoadMaterial();
 }
 
-void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
-
-}
-static float a = 0;
 void PlayerObject::PlayerMovement(float dt) {
-    Quaternion* qq;
-    //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
-   // start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
-    switch (networkObject->GetNetworkID()) {
-    case 1:
-        if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::UP)) {
-            face = Vector3(0, 0, -1);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
-        }
-        else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::LEFT)) {
-            face = Vector3(-1, 0, 0);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
-        }
-        else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::DOWN)) {
-            face = Vector3(0, 0, 1);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
-        }
-        else if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::RIGHT)) {
-            face = Vector3(1, 0, 0);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
-        }
-        else {
-            physicsObject->SetRealDamping(0.858f);
-        }
-        //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
-        break;
-    case 2:
-        if (buttonStates[0]) {
-            face = Vector3(0, 0, -1);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
-        }
-        else if (buttonStates[2]) {
-            face = Vector3(-1, 0, 0);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
-        }
-        else if (buttonStates[1]) {
-            face = Vector3(0, 0, 1);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
-        }
-        else if (buttonStates[3]) {
-            face = Vector3(1, 0, 0);
-            physicsObject->SetRealDamping(0.962f);
-            physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-            transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
-        }
-        else {
-            physicsObject->SetRealDamping(0.858f);
-        }
-        //std::cout << "Player2: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
-        break;
+    bool WHeld = false;
+    bool DHeld = false;
+    bool AHeld = false;
+    bool SHeld = false;
+
+    if (networkObject->GetNetworkID() == 1) {
+        WHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::W);
+        DHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::D);
+        AHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::A);
+        SHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::S);
     }
+    else {
+        WHeld = buttonStates[0];
+        SHeld = buttonStates[1];
+        AHeld = buttonStates[2];
+        DHeld = buttonStates[3];
+    }
+
+    Quaternion* qq;
+    speed = TutorialGame::GetGame()->IsNetworked() ? 100 : 50;
+    //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
+    //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
+
+    if (WHeld) {
+        face = Vector3(0, 0, -1);
+        physicsObject->SetRealDamping(0.962f);
+        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
+    }
+    else if (AHeld) {
+        face = Vector3(-1, 0, 0);
+        physicsObject->SetRealDamping(0.962f);
+        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
+    }
+    else if (SHeld) {
+        face = Vector3(0, 0, 1);
+        physicsObject->SetRealDamping(0.962f);
+        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
+    }
+    else if (DHeld) {
+        face = Vector3(1, 0, 0);
+        physicsObject->SetRealDamping(0.962f);
+        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
+    }
+    else {
+        physicsObject->SetRealDamping(0.858f);
+    }
+        //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
+
     //else {
     //   // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
     //}
@@ -261,8 +213,25 @@ void PlayerObject::PlayerMovement(float dt) {
     //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 }
 
+void PlayerObject::SwitchSkin() {
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
+        renderObject->SetMesh(meshes[(index + 1) % 5]);
+        renderObject->SetAnimationObject(animations[(index + 1) % 5]);
+        renderObject->SetTextures(textures[(index + 1) % 5]);
+        renderObject->SetBumpTextures(bumpTextures[(index + 1) % 5]);
+        renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
+        index++;
+    }
+}
+
 void PlayerObject::CutTree() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 3) {
+    bool spacePressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        spacePressed = Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE);
+    else
+        spacePressed = buttonStates[5];
+
+    if (spacePressed && slot == 3) {
         doing = true;
         cutting = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
@@ -283,7 +252,7 @@ void PlayerObject::CutTree() {
 }
 
 void PlayerObject::DigRock() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 2) {
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE) && slot == 2) {
         doing = true;
         digging = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
@@ -304,7 +273,7 @@ void PlayerObject::DigRock() {
 }
 
 void PlayerObject::ScoopWater() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 4) {
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE) && slot == 4) {
         doing = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
         Ray r = Ray(transform.GetPosition(), face);
@@ -321,7 +290,7 @@ void PlayerObject::ScoopWater() {
 }
 
 void PlayerObject::UseWater() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 4) {
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE) && slot == 4) {
         doing = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
         Ray r = Ray(transform.GetPosition(), face);
@@ -332,14 +301,14 @@ void PlayerObject::UseWater() {
                 WaterCarriage* watercarriage = (WaterCarriage*)closest;
                 watercarriage->SetCarriageWater(100.0f);
                 bucket->SetWater(false);
-                bucket->GetRenderObject()->SetColour(Vector4(0, 0, 0, 1));
+                bucket->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
             }
         }
     }
 }
 
 void PlayerObject::LoadMaterial() {
-    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::Y)) {
+    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SPACE)) {
         if (slot == 5 || slot == 6) {
             Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
             Ray r = Ray(transform.GetPosition(), face);

@@ -6,8 +6,6 @@ set(PROJECT_NAME CSC8503)
 set(Header_Files
         "GameTechRenderer.h"
         "NetworkedGame.h"
-        "NetworkPlayer.h"
-        "StateGameObject.h"
         "TutorialGame.h"
         "Audio.h"
         "UI.h"
@@ -18,8 +16,6 @@ set(Source_Files
         "GameTechRenderer.cpp"
         "Main.cpp"
         "NetworkedGame.cpp"
-        "NetworkPlayer.cpp"
-        "StateGameObject.cpp"
         "TutorialGame.cpp"
         "Audio.cpp"
         "SetupWorld.cpp"
@@ -42,6 +38,8 @@ set(GameObjects
         "AnimalObject.h"
         "DroneObject.h"
         "RobotObject.h"
+        "NetworkPlayer.h"
+        "StateGameObject.h"
         "CollectableObject.cpp"
         "PickaxeObject.cpp"
         "AxeObject.cpp"
@@ -57,6 +55,8 @@ set(GameObjects
         "AnimalObject.cpp"
         "DroneObject.cpp"
         "RobotObject.cpp"
+        "NetworkPlayer.cpp"
+        "StateGameObject.cpp"
 )
 
 file(GLOB UI

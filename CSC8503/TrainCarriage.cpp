@@ -114,6 +114,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                 num = rails.size() > 3 ? 3 : rails.size();
                 for (int i = 0; i < num; ++i) {
                     if (rails[0]) {
+                        rails[0]->SetPlayer((PlayerObject*)otherObject);
                         rails[0]->SetPutDown(false);
                         rails[0]->SetInCarriage(false);
                         rails[0]->SetNum(otherObject->GetSlotNum() + 1);
@@ -129,6 +130,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
             else if (otherObject->GetSlot() == 7 && otherObject->GetSlotNum() < 3) {
                 for (int i = 0; i < 3 - otherObject->GetSlotNum(); ++i) {
                     if (rails[0]) {
+                        rails[0]->SetPlayer((PlayerObject*)otherObject);
                         rails[0]->SetPutDown(false);
                         rails[0]->SetInCarriage(false);
                         rails[0]->SetNum(otherObject->GetSlotNum() + 1);
@@ -183,6 +185,24 @@ void ProduceCarriage::Update(float dt) {
     }
 }
 void WaterCarriage::Update(float dt) {
+    if (path.size() == 0) return;
+    auto it = path.begin();
+    auto itt = it->first;
+    int flag = it->second;
+
+    Vector3 target = itt;
+    direction = (target - this->GetTransform().GetPosition());
+    direction = Vector3(direction.x, 0, direction.z);
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
+    UpdateOrientation();
+
+    float mm = (this->GetTransform().GetPosition() - target).Length();
+    if (mm < 0.5) {
+        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
+        path.erase(it);
+    }
+
     float speed=3.0f;
     if(water>0.0f)water -= dt*speed;
     float color = water / 100.f;

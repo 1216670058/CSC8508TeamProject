@@ -222,11 +222,11 @@ void TutorialGame::UpdateKeys() {
         }
 
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
-            world->ShuffleConstraints(true);
+            cameraMode = 1;
         }
 
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
-            world->ShuffleConstraints(false);
+            cameraMode = 2;
         }
 
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::F7)) {
@@ -247,6 +247,7 @@ void TutorialGame::UpdateKeys() {
         else if (world->GetGameState() == GameState::PAUSED) {
             world->SetGameState(GameState::PLAYING);
             Window::GetWindow()->ShowOSPointer(false);
+            Window::GetWindow()->LockMouseToWindow(true);
         }
     }
 
@@ -324,6 +325,7 @@ void TutorialGame::InitDefaultFloor() {
 }
 
 void TutorialGame::InitGameExamples(bool networked) {
+    player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
     train = AddTrainToWorld(Vector3(70, 5, 100), !networked);
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
@@ -332,8 +334,7 @@ void TutorialGame::InitGameExamples(bool networked) {
         carriage1->SetProduceCarriage(carriage2);
         carriage2->SetMaterialCarriage(carriage1);
     }
-    player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
-    if (networked) {
+    else {
         player2 = AddPlayerToWorld(Vector3(20, 5, 110), "Player2", 2, false);
         player3 = AddPlayerToWorld(Vector3(20, 5, 120), "Player3", 3, false);
         player4 = AddPlayerToWorld(Vector3(20, 5, 130), "Player4", 4, false);

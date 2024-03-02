@@ -125,6 +125,8 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->GetPhysicsObject()->InitSphereInertia();
         carriage->GetPhysicsObject()->SetChannel(1);
 
+        carriage->SetNetworkObject(new NetworkObject(*carriage, id));
+
         carriage->SetTypeID(id);
 
         trainCarriage[++trainIndex] = *carriage;
@@ -153,6 +155,8 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->GetPhysicsObject()->InitSphereInertia();
         carriage->GetPhysicsObject()->SetChannel(1);
 
+        carriage->SetNetworkObject(new NetworkObject(*carriage, id));
+
         carriage->SetTypeID(id);
 
         trainCarriage[++trainIndex] = *carriage;
@@ -180,6 +184,8 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->GetPhysicsObject()->SetInverseMass(0);
         carriage->GetPhysicsObject()->InitSphereInertia();
         carriage->GetPhysicsObject()->SetChannel(1);
+
+        carriage->SetNetworkObject(new NetworkObject(*carriage, id));
 
         carriage->SetTypeID(id);
 

@@ -284,7 +284,7 @@ void GameTechRenderer::LoadSkybox() {
     skyboxMesh->SetVertexIndices({ 0,1,2,2,3,0 });
     skyboxMesh->UploadToGPU();
 
-    std::string name[6] = {
+    std::string name1[6] = {
         "../Assets/Textures/Cubemap/skyrender0004.png",
         "../Assets/Textures/Cubemap/skyrender0001.png",
         "../Assets/Textures/Cubemap/skyrender0003.png",
@@ -293,23 +293,59 @@ void GameTechRenderer::LoadSkybox() {
         "../Assets/Textures/Cubemap/skyrender0005.png"
     };
 
-    GLuint axis[6] = {
+    GLuint axis1[6] = {
         GL_TEXTURE_CUBE_MAP_POSITIVE_X,GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
         GL_TEXTURE_CUBE_MAP_POSITIVE_Y,GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
         GL_TEXTURE_CUBE_MAP_POSITIVE_Z,GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
     };
 
-    glGenTextures(1, &skyboxTex);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+    glGenTextures(1, &daySkyboxTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, daySkyboxTex);
 
-    int iWidth, iHeight;
+    int iWidth1, iHeight1;
 
     for (int i = 0; i < 6; ++i) {
-        unsigned char* image = SOIL_load_image(name[i].c_str(),
-            &iWidth, &iHeight, 0, SOIL_LOAD_RGB);
-        glTexImage2D(axis[i], 0, GL_RGB, iWidth, iHeight,
-            0, GL_RGB, GL_UNSIGNED_BYTE, image);
-        SOIL_free_image_data(image);
+        unsigned char* image1 = SOIL_load_image(name1[i].c_str(),
+            &iWidth1, &iHeight1, 0, SOIL_LOAD_RGB);
+        glTexImage2D(axis1[i], 0, GL_RGB, iWidth1, iHeight1,
+            0, GL_RGB, GL_UNSIGNED_BYTE, image1);
+        SOIL_free_image_data(image1);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,
+        GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP,
+        GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    std::string name2[6] = {
+    "../Assets/Textures/Cubemap/nightrender0004.png",
+    "../Assets/Textures/Cubemap/nightrender0001.png",
+    "../Assets/Textures/Cubemap/nightrender0003.png",
+    "../Assets/Textures/Cubemap/nightrender0006.png",
+    "../Assets/Textures/Cubemap/nightrender0002.png",
+    "../Assets/Textures/Cubemap/nightrender0005.png"
+    };
+
+    GLuint axis2[6] = {
+        GL_TEXTURE_CUBE_MAP_POSITIVE_X,GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Y,GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        GL_TEXTURE_CUBE_MAP_POSITIVE_Z,GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+    };
+
+    glGenTextures(1, &nightSkyboxTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, nightSkyboxTex);
+
+    int iWidth2, iHeight2;
+
+    for (int i = 0; i < 6; ++i) {
+        unsigned char* image2 = SOIL_load_image(name2[i].c_str(),
+            &iWidth2, &iHeight2, 0, SOIL_LOAD_RGB);
+        glTexImage2D(axis2[i], 0, GL_RGB, iWidth2, iHeight2,
+            0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+        SOIL_free_image_data(image2);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP,
         GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -503,7 +539,7 @@ void GameTechRenderer::RenderSkybox() {
 
     glUniform1i(texLocation, 6);
     glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, daySkyboxTex);
 
     Draw(skyboxMesh, false);
 

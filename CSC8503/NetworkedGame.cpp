@@ -122,6 +122,22 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
 	Debug::UpdateRenderables(dt);
 }
 
+void NetworkedGame::UpdateKeys() {
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
+		if (world->GetGameState() == GameState::SERVERPLAYING ||
+			world->GetGameState() == GameState::CLIENTPLAYING)
+			world->SetGameState(GameState::PAUSED);
+		else if (world->GetGameState() == GameState::PAUSED) {
+			if (IsServer())
+				world->SetGameState(GameState::SERVERPLAYING);
+			else if (IsClient())
+				world->SetGameState(GameState::CLIENTPLAYING);
+			Window::GetWindow()->ShowOSPointer(false);
+			Window::GetWindow()->LockMouseToWindow(true);
+		}
+	}
+}
+
 void NetworkedGame::UpdateAsServer(float dt) {
 	if (thisServer->IsConnected()) {
 		if (!spawn1) {
@@ -142,38 +158,46 @@ void NetworkedGame::UpdateAsServer(float dt) {
 
 	world->UpdateWorld(dt);
 
-	std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
-		player->GetTransform().GetPosition().y << " " <<
-		player->GetTransform().GetPosition().z << " " << std::endl;
+	//std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
+	//	player->GetTransform().GetPosition().y << " " <<
+	//	player->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::UpdateAsClient(float dt) {
 	ClientPacket newPacket;
 
-	if (Window::GetKeyboard()->KeyHeld(KeyCodes::UP))
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::W))
 		newPacket.buttonstates[0] = 1;
 	else
 		newPacket.buttonstates[0] = 0;
-	if (Window::GetKeyboard()->KeyHeld(KeyCodes::DOWN))
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::S))
 		newPacket.buttonstates[1] = 1;
 	else
 		newPacket.buttonstates[1] = 0;
-	if (Window::GetKeyboard()->KeyHeld(KeyCodes::LEFT))
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::A))
 		newPacket.buttonstates[2] = 1;
 	else
 		newPacket.buttonstates[2] = 0;
-	if (Window::GetKeyboard()->KeyHeld(KeyCodes::RIGHT))
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::D))
 		newPacket.buttonstates[3] = 1;
 	else
 		newPacket.buttonstates[3] = 0;
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::R))
+		newPacket.buttonstates[4] = 1;
+	else
+		newPacket.buttonstates[4] = 0;
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE))
+		newPacket.buttonstates[5] = 1;
+	else
+		newPacket.buttonstates[5] = 0;
 
 	thisClient->SendPacket(newPacket);
 
 	thisClient->UpdateClient();
 
-	std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
-		player->GetTransform().GetPosition().y << " " <<
-		player->GetTransform().GetPosition().z << " " << std::endl;
+	//std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
+	//	player->GetTransform().GetPosition().y << " " <<
+	//	player->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
@@ -240,8 +264,10 @@ void NetworkedGame::SpawnPlayer() {
 }
 
 void NetworkedGame::SpawnCarriage() {
+	train->SetSpawned(true);
 	carriage1 = (MaterialCarriage*)(train->AddCarriage(21, true));
 	carriage2 = (ProduceCarriage*)(train->AddCarriage(22, true));
+	carriage3 = (WaterCarriage*)(train->AddCarriage(23, true));
 	carriage1->SetProduceCarriage(carriage2);
 	carriage2->SetMaterialCarriage(carriage1);
 }
@@ -251,6 +277,7 @@ void NetworkedGame::StartLevel() {
 	train->GetTransform().SetPosition(Vector3(70, 5, 100));
 	carriage1 = (MaterialCarriage*)(train->AddCarriage(21, true));
 	carriage2 = (ProduceCarriage*)(train->AddCarriage(22, true));
+	carriage3 = (WaterCarriage*)(train->AddCarriage(23, true));
 	carriage1->SetProduceCarriage(carriage2);
 	carriage2->SetMaterialCarriage(carriage1);
 	player->SetSpawned(true);

@@ -16,36 +16,14 @@ namespace NCL::CSC8503 {
 		}
 	};
 
-	struct FullPlayerPacket : public FullPacket {
-		int		objectID = -1;
-		PlayerState fullPlayerState;
-
-		FullPlayerPacket() {
-			type = Full_State;
-			size = sizeof(FullPlayerPacket) - sizeof(GamePacket);
-		}
-	};
-
 	struct DeltaPacket : public GamePacket {
 		int		fullID		= -1;
 		int		objectID	= -1;
 		char	pos[3];
 		char	orientation[4];
-
-		DeltaPacket() {
-			type = Delta_State;
-			size = sizeof(DeltaPacket) - sizeof(GamePacket);
-		}
-	};
-
-	struct DeltaPlayerPacket : public DeltaPacket {
-		int		fullID = -1;
-		int		objectID = -1;
-		char	pos[3];
-		char	orientation[4];
 		int     currentFrame;
 
-		DeltaPlayerPacket() {
+		DeltaPacket() {
 			type = Delta_State;
 			size = sizeof(DeltaPacket) - sizeof(GamePacket);
 		}
@@ -97,7 +75,6 @@ namespace NCL::CSC8503 {
 		GameObject& object;
 
 		NetworkState lastFullState;
-		PlayerState lastFullPlayerState;
 
 		std::vector<NetworkState> stateHistory;
 

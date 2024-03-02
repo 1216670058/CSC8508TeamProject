@@ -11,14 +11,8 @@ namespace NCL {
 
 			Vector3		position;
 			Quaternion	orientation;
+			int         currentFrame;
 			int			stateID;
-		};
-		class PlayerState :public NetworkState {
-		public:
-			PlayerState() {};
-			virtual ~PlayerState() {};
-
-			int currentFrame = 0;
 		};
 	}
 }

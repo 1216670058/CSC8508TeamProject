@@ -5,6 +5,7 @@ using namespace NCL::CSC8503;
 
 void StoneObject::OnCollisionBegin(GameObject* otherObject) {
     if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 0) {
+        player = (PlayerObject*)otherObject;
         putDown = false;
         player->SetSlot(this->GetTypeID());
         player->SetSlotNum(player->GetSlotNum() + 1);
@@ -13,6 +14,7 @@ void StoneObject::OnCollisionBegin(GameObject* otherObject) {
         transform.SetScale(Vector3(2, 2, 2));
     }
     else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 6 && otherObject->GetSlotNum() < 3) {
+        player = (PlayerObject*)otherObject;
         putDown = false;
         num = player->GetSlotNum() + 1;
         player->SetSlotNum(player->GetSlotNum() + 1);
@@ -53,6 +55,7 @@ void StoneObject::Update(float dt) {
                     if (player->GetSlotNum() == 0) {
                         player->SetSlot(0);
                         player->SetCarriage(nullptr);
+                        player = nullptr;
                     }
                 }
             }
@@ -77,15 +80,24 @@ void StoneObject::Update(float dt) {
             }
         }
 
-        if (Window::GetKeyboard()->KeyPressed(KeyCodes::R)) {
-            if (!loading && !inCarriage) {
-                putDown = true;
-                num = 1;
-                Vector3 position = transform.GetPosition();
-                transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
-                SphereVolume* volume = new SphereVolume(2);
-                SetBoundingVolume((CollisionVolume*)volume);
-                transform.SetScale(Vector3(4, 4, 4));
+        if (!loading && !inCarriage) {
+            bool RPressed = false;
+            if (player->GetNetworkObject()->GetNetworkID() == 1)
+                RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
+            else
+                RPressed = player->GetButton(4);
+
+            if (RPressed) {
+                if (!loading && !inCarriage) {
+                    putDown = true;
+                    num = 1;
+                    Vector3 position = transform.GetPosition();
+                    transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
+                    SphereVolume* volume = new SphereVolume(2);
+                    SetBoundingVolume((CollisionVolume*)volume);
+                    transform.SetScale(Vector3(4, 4, 4));
+                    player = nullptr;
+                }
             }
         }
     }

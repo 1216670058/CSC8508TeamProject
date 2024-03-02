@@ -20,6 +20,8 @@ namespace NCL {
 
 			void UpdateNetworkedPlaying(float dt);
 
+			void UpdateKeys();
+
 			void SpawnPlayer();
 
 			void SpawnCarriage();
@@ -29,6 +31,13 @@ namespace NCL {
 			void ReceivePacket(int type, GamePacket* payload, int source) override;
 
 			void OnPlayerCollision(NetworkPlayer* a, NetworkPlayer* b);
+
+			bool IsServer() {
+				return thisServer != nullptr;
+			}
+			bool IsClient() {
+				return thisClient != nullptr;
+			}
 
 			static NetworkedGame* GetNetworkedGame() {
 				return networkInstance;
