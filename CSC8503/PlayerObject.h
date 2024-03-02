@@ -74,6 +74,10 @@ namespace NCL::CSC8503 {
             bucket = b;
         }
 
+        BucketObject* GetBucket() {
+            return bucket;
+        }
+
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
         void SwitchSkin();

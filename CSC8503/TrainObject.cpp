@@ -17,7 +17,7 @@ TrainObject::TrainObject(GameWorld* w) {
     path.push_back({ Vector3(300, 5, 100), 4 });
     path.push_back({ Vector3(300, 5, 0), 1 });
     world = w;
-    trainCarriage = new TrainCarriage[20];
+    trainCarriage = new TrainCarriage[trainMaxIndex];
     trainIndex = 0;
     name = "Train";
 
