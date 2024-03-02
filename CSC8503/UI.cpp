@@ -98,7 +98,8 @@ UI::UI(GameWorld* world)
 
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_pickaxe.png").c_str(), &pickaxe.img_texture, &pickaxe.img_width, &pickaxe.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_axe.png").c_str(), &axe.img_texture, &axe.img_width, &axe.img_height));
-    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_bucket_empty.png").c_str(), &bucket.img_texture, &bucket.img_width, &bucket.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_bucket_empty.png").c_str(), &bucket_empty.img_texture, &bucket_empty.img_width, &bucket_empty.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_bucket_fill.png").c_str(), &bucket_fill.img_texture, &bucket_fill.img_width, &bucket_fill.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_wood.png").c_str(), &plank.img_texture, &plank.img_width, &plank.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_iron.png").c_str(), &stone.img_texture, &stone.img_width, &stone.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "minecraft_rail.png").c_str(), &rail.img_texture, &rail.img_width, &rail.img_height));
@@ -383,7 +384,10 @@ void UI::DrawPlayingUI(float dt)
         ImGui::Image((void*)(intptr_t)axe.img_texture, imageSize);
         break;
     case 4:
-        ImGui::Image((void*)(intptr_t)bucket.img_texture, imageSize);
+        if (!TutorialGame::GetGame()->GetPlayer()->GetBucket()->GetWater())
+            ImGui::Image((void*)(intptr_t)bucket_empty.img_texture, imageSize);
+        else
+            ImGui::Image((void*)(intptr_t)bucket_fill.img_texture, imageSize);
         break;
     case 5: //materials
         ImGui::Image((void*)(intptr_t)plank.img_texture, imageSize);
@@ -413,7 +417,7 @@ void UI::DrawPlayingUI(float dt)
     ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 255, 255, 255));
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 15.0f);
-    float value = 50.0f / 100.0f;
+    float value = TutorialGame::GetGame()->GetWaterCarriage()->GetCarriageWater() / 100.0f;
     ImGui::VSliderFloat(" ", barSize, &value, 0.0f, 1.0f, "");
     ImGui::PopFont();
     ImGui::PopStyleVar(2);
@@ -456,7 +460,7 @@ void UI::DrawPausedMenu(float dt)
             world->SetGameState(GameState::PLAYING);
         else if (NetworkedGame::GetNetworkedGame()->IsServer())
             world->SetGameState(GameState::SERVERPLAYING);
-        else if(NetworkedGame::GetNetworkedGame()->IsClient())
+        else if (NetworkedGame::GetNetworkedGame()->IsClient())
             world->SetGameState(GameState::CLIENTPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);

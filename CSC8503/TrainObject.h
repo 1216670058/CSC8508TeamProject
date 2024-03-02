@@ -38,15 +38,16 @@ namespace NCL::CSC8503 {
 
         void UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader);
 
-        float GetForce() { return force; };
-        float GetDistance() { return distance; };
-        float GetSpeed() { return speed; };
+        float GetForce() { return force; }
+        float GetDistance() { return distance; }
+        float GetSpeed() { return speed; }
         void SetInitPos(Vector3 pos1) { lastpos = curpos = pos1; }
 
     protected:
         //0  1  2 3 up down left right
         std::vector< std::pair<Vector3, int> > path;
         TrainCarriage* trainCarriage;
+        int trainMaxIndex = 20;
         int trainIndex = 0;
         GameWorld* world;
         Mesh* carriageMesh = nullptr;
