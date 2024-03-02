@@ -99,10 +99,11 @@ namespace NCL {
             GLuint blurColourTex[2];
 
             //Skybox Buffer
-            OGLShader* debugShader;
-            OGLShader* skyboxShader;
-            OGLMesh* skyboxMesh;
-            GLuint		skyboxTex;
+            OGLShader*  debugShader;
+            OGLShader*  skyboxShader;
+            OGLMesh*    skyboxMesh;
+            GLuint		daySkyboxTex;
+            GLuint      nightSkyboxTex;
             GLuint		skyboxBufferTex;
             GLuint      skyboxFBO;
 

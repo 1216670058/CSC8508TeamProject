@@ -73,7 +73,10 @@ namespace NCL::CSC8503 {
         void SetBucket(BucketObject* b) {
             bucket = b;
         }
+
+        void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
+        void SwitchSkin();
 
     protected:
         void CutTree();

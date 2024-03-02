@@ -451,8 +451,15 @@ void UI::DrawPausedMenu(float dt)
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
     if (ImGui::Button("Resume Game", ImVec2(contentWidth, 50))) {
-        world->SetGameState(GameState::PLAYING);
+        if (!NetworkedGame::GetNetworkedGame()->IsServer() &&
+            !NetworkedGame::GetNetworkedGame()->IsClient())
+            world->SetGameState(GameState::PLAYING);
+        else if (NetworkedGame::GetNetworkedGame()->IsServer())
+            world->SetGameState(GameState::SERVERPLAYING);
+        else if(NetworkedGame::GetNetworkedGame()->IsClient())
+            world->SetGameState(GameState::CLIENTPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
+        Window::GetWindow()->LockMouseToWindow(true);
     }
 
     //set Multiplayer

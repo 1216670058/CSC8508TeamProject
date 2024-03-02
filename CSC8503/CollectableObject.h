@@ -42,6 +42,6 @@ namespace NCL::CSC8503 {
         PlayerObject* player;
         GameWorld* world;
 
-        float distance(const Vector3& v1, const Vector3& v2);
+        float Distance(const Vector3& v1, const Vector3& v2);
     };
 }
