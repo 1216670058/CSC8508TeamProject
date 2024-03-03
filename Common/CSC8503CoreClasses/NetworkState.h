@@ -11,6 +11,8 @@ namespace NCL {
 
 			Vector3		position;
 			Quaternion	orientation;
+			Vector3     scale;
+			Vector4     colour;
 			int         currentFrame;
 			int			stateID;
 		};

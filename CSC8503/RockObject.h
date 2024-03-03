@@ -25,6 +25,7 @@ public:
         return scale;
     }
     // void Update(float dt) override;
-    bool moving = false;
+
+protected:
     float scale;
 };

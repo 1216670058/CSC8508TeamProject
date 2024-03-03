@@ -51,6 +51,13 @@ void GameWorld::RemoveGameObject(GameObject* o, bool andDelete) {
     worldStateCounter++;
 }
 
+void GameWorld::RemoveGameObject(int id) {
+    for (auto& i : gameObjects) {
+        if (i->GetWorldID() == id)
+            RemoveGameObject(i, false);
+    }  
+}
+
 void GameWorld::GetObjectIterators(
     GameObjectIterator& first,
     GameObjectIterator& last) const {
@@ -91,7 +98,7 @@ void GameWorld::UpdateWorld(float dt) {
 
 bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObject, GameObject* ignoreThis) const {
     //The simplest raycast just goes through each object and sees if there's a collision
-    RayCollision collision;
+     RayCollision collision;
 
     for (auto& i : gameObjects) {
         if (!i->GetBoundingVolume()) { //objects might not be collideable etc...

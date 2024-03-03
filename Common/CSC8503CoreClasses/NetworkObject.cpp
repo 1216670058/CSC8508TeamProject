@@ -15,9 +15,9 @@ NetworkObject::~NetworkObject()	{
 }
 
 bool NetworkObject::ReadPacket(GamePacket &p) {
-    if (p.type == Delta_State) {
-        return ReadDeltaPacket((DeltaPacket &)p);
-    }
+    //if (p.type == Delta_State) {
+    //    return ReadDeltaPacket((DeltaPacket &)p);
+    //}
     if (p.type == Full_State) {
         return ReadFullPacket((FullPacket &)p);
     }
@@ -35,11 +35,11 @@ bool NetworkObject::ReadClientPacket(ClientPacket& p) {
 }
 
 bool NetworkObject::WritePacket(GamePacket** p, bool deltaFrame, int stateID) {
-	if (deltaFrame) {
-		if (!WriteDeltaPacket(p, stateID)) {
-			return WriteFullPacket(p);
-		}
-	}
+	//if (deltaFrame) {
+	//	if (!WriteDeltaPacket(p, stateID)) {
+	//		return WriteFullPacket(p);
+	//	}
+	//}
 	return WriteFullPacket(p);
 }
 //Client objects recieve these packets
@@ -67,26 +67,55 @@ bool NetworkObject::ReadDeltaPacket(DeltaPacket& p) {
         if (networkID <= 2) {
             int fullCurrentFrame = lastFullState.currentFrame;
 
-            fullCurrentFrame += (int)(p.currentFrame);
+            fullCurrentFrame += p.currentFrame;
 
             object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(fullCurrentFrame);
+        }
+        else if (object.GetTypeID() == 10010 || object.GetTypeID() == 10086) {
+            Vector3 fullScale = lastFullState.scale;
+
+            fullScale.x += p.scale[0];
+            fullScale.y += p.scale[1];
+            fullScale.z += p.scale[2];
+
+            object.GetTransform().SetScale(fullScale);
+        }
+        else if (object.GetTypeID() == 7 || object.GetTypeID() == 23) {
+            Vector4 fullColour = lastFullState.colour;
+
+            fullColour.x += ((float)p.colour[0]) / 127.0f;
+            fullColour.y += ((float)p.colour[1]) / 127.0f;
+            fullColour.z += ((float)p.colour[2]) / 127.0f;
+            fullColour.w += ((float)p.colour[3]) / 127.0f;
+
+            object.GetRenderObject()->SetColour(fullColour);
         }
     }
     return true;
 }
 
-
 bool NetworkObject::ReadFullPacket(FullPacket& p) {
     if (p.fullState.stateID < lastFullState.stateID) {
         return false; // received an 'old' packet, ignore!
     }
-    lastFullState = p.fullState;
     if (p.objectID == object.GetNetworkObject()->GetNetworkID()) {
-        object.GetTransform().SetPosition(lastFullState.position);
-        object.GetTransform().SetOrientation(lastFullState.orientation);
+        lastFullState = p.fullState;
+        if (!(object.GetTypeID() == 10010) && !(object.GetTypeID() == 10086)) {
+            object.GetTransform().SetPosition(lastFullState.position);
+            object.GetTransform().SetOrientation(lastFullState.orientation);
 
-        if (networkID <= 2) {
-            object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+            if (networkID <= 2) {
+                object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+            }
+            else if (object.GetTypeID() == 7 || object.GetTypeID() == 23) {
+                object.GetRenderObject()->SetColour(lastFullState.colour);
+            }
+            else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
+                object.GetTransform().SetScale(lastFullState.scale);
+            }
+        }
+        else {
+            object.GetTransform().SetScale(lastFullState.scale);
         }
     }
 
@@ -94,6 +123,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
 
     return true;
 }
+
 bool NetworkObject::WriteDeltaPacket(GamePacket** p, int stateID) {
     DeltaPacket* dp = new DeltaPacket();
     NetworkState state;
@@ -124,7 +154,26 @@ bool NetworkObject::WriteDeltaPacket(GamePacket** p, int stateID) {
 
         currentFrame -= state.currentFrame;
 
-        dp->currentFrame = (char)(currentFrame);
+        dp->currentFrame = currentFrame;
+    }
+    else if (object.GetTypeID() == 10010 || object.GetTypeID() == 10086) {
+        Vector3 currentScale = object.GetTransform().GetScale();
+
+        currentScale -= state.scale;
+
+        dp->scale[0] = (char)currentScale.x;
+        dp->scale[1] = (char)currentScale.y;
+        dp->scale[2] = (char)currentScale.z;
+    }
+    else if (object.GetTypeID() == 7 || object.GetTypeID() == 23) {
+        Vector4 currentColour = object.GetRenderObject()->GetColour();
+
+        currentColour -= state.colour;
+
+        dp->colour[0] = (char)(currentColour.x * 127.0f);
+        dp->colour[1] = (char)(currentColour.y * 127.0f);
+        dp->colour[2] = (char)(currentColour.z * 127.0f);
+        dp->colour[3] = (char)(currentColour.w * 127.0f);
     }
 
     *p = dp;
@@ -134,16 +183,36 @@ bool NetworkObject::WriteDeltaPacket(GamePacket** p, int stateID) {
 bool NetworkObject::WriteFullPacket(GamePacket** p) {
     FullPacket* fp = new FullPacket();
     fp->objectID = networkID;
-    fp->fullState.position = object.GetTransform().GetPosition();
-    fp->fullState.orientation = object.GetTransform().GetOrientation();
     fp->fullState.stateID = lastFullState.stateID++;
 
-    if (networkID <= 2) {
-        fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
-    }
+    if (!(object.GetTypeID() == 10010) && !(object.GetTypeID() == 10086)) {
+        fp->fullState.position = object.GetTransform().GetPosition();
+        fp->fullState.orientation = object.GetTransform().GetOrientation();
 
-    *p = fp;
-    return true;
+        if (networkID <= 2) {
+            fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
+        }
+
+        else if (object.GetTypeID() == 4 || object.GetTypeID() == 23) {
+            fp->fullState.colour = object.GetRenderObject()->GetColour();
+        }
+
+        else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
+            fp->fullState.scale = object.GetTransform().GetScale();
+        }
+
+        *p = fp;
+        return true;
+    }
+  
+    else {
+        if (object.GetFlag1()) {
+            fp->fullState.scale = object.GetTransform().GetScale();
+            *p = fp;
+            return true;
+        }
+        else return false;
+    }
 }
 
 void NetworkObject::UpdateStateHistory(int minID) {
