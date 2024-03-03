@@ -49,7 +49,8 @@ namespace NCL {
 
             UI_Image pickaxe;
             UI_Image axe;
-            UI_Image bucket;
+            UI_Image bucket_empty;
+            UI_Image bucket_fill;
             UI_Image plank;
             UI_Image stone;
             UI_Image rail;

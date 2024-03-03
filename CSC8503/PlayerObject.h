@@ -74,12 +74,9 @@ namespace NCL::CSC8503 {
             bucket = b;
         }
 
-        //bool GetCutting() const {
-        //    return cutting;
-        //}
-        //bool GetDigging() const {
-        //    return digging;
-        //}
+        BucketObject* GetBucket() {
+            return bucket;
+        }
 
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);

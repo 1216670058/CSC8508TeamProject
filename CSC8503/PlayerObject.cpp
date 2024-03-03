@@ -18,6 +18,7 @@ void PlayerObject::Update(float dt) {
         PlayerMovement(dt);
         //SwitchSkin();
 
+
         if (RPressed) {
             slot = 0;
             slotNum = 0;
@@ -206,17 +207,17 @@ void PlayerObject::PlayerMovement(float dt) {
     else {
         physicsObject->SetRealDamping(0.858f);
     }
-        //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
-
-    //else {
-    //   // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
-    //}
-    //a += dt;
-    //if (a >= 1.0f) {
-    //    std::cout << "The force is: " << physicsObject->GetLinearVelocity().x << " " << physicsObject->GetLinearVelocity().y << " " << physicsObject->GetLinearVelocity().z << std::endl;
-    //    a = 0;
-    //}
     //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
+
+//else {
+//   // physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+//}
+//a += dt;
+//if (a >= 1.0f) {
+//    std::cout << "The force is: " << physicsObject->GetLinearVelocity().x << " " << physicsObject->GetLinearVelocity().y << " " << physicsObject->GetLinearVelocity().z << std::endl;
+//    a = 0;
+//}
+//std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 }
 
 void PlayerObject::UpdateFace() {
@@ -348,7 +349,7 @@ void PlayerObject::UseWater() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f&&bucket->GetWater()==true) {
+            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && bucket->GetWater() == true) {
                 WaterCarriage* watercarriage = (WaterCarriage*)closest;
                 watercarriage->SetCarriageWater(100.0f);
                 bucket->SetWater(false);

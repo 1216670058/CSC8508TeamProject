@@ -60,6 +60,7 @@ namespace NCL {
             float GetPlayTime() { return playtime; };
             TrainObject* GetTrain() const { return train; };
             PlayerObject* GetPlayer() const { return player; }
+            WaterCarriage* GetWaterCarriage() { return carriage3; }
 
         protected:
             void InitMeshes();
