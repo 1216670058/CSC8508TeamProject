@@ -21,11 +21,25 @@ namespace NCL::CSC8503 {
 		int		objectID	= -1;
 		char	pos[3];
 		char	orientation[4];
+		char    scale[3];
+		char    colour[4];
 		int     currentFrame;
 
 		DeltaPacket() {
 			type = Delta_State;
 			size = sizeof(DeltaPacket) - sizeof(GamePacket);
+		}
+	};
+
+	struct AddPacket : public GamePacket {
+		Vector3 position;
+		int     networkID;
+		int     worldID;
+		int     tag;
+
+		AddPacket() {
+			type = Add_Remove;
+			size = sizeof(FullPacket) - sizeof(GamePacket);
 		}
 	};
 

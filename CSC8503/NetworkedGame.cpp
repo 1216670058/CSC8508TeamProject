@@ -54,6 +54,7 @@ void NetworkedGame::StartAsClient(char a, char b, char c, char d) {
 	thisClient->RegisterPacketHandler(Full_State, this);
 	thisClient->RegisterPacketHandler(Player_Connected, this);
 	thisClient->RegisterPacketHandler(Player_Disconnected, this);
+	thisClient->RegisterPacketHandler(Add_Remove, this);
 
 	SpawnPlayer();
 	SpawnCarriage();
@@ -186,7 +187,7 @@ void NetworkedGame::UpdateAsClient(float dt) {
 		newPacket.buttonstates[4] = 1;
 	else
 		newPacket.buttonstates[4] = 0;
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE))
+	if (Window::GetKeyboard()->KeyHeld(KeyCodes::SPACE))
 		newPacket.buttonstates[5] = 1;
 	else
 		newPacket.buttonstates[5] = 0;
@@ -195,9 +196,22 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
 	thisClient->UpdateClient();
 
-	//std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
-	//	player->GetTransform().GetPosition().y << " " <<
-	//	player->GetTransform().GetPosition().z << " " << std::endl;
+	if (tempTag == 1) {
+		AddPlankToWorld(tempPosition , true, tempNetworkID);
+		world->RemoveGameObject(tempWorldID);
+		tempTag = 0;
+	}
+	else if (tempTag == 2) {
+		AddStoneToWorld(tempPosition, true, tempNetworkID);
+		world->RemoveGameObject(tempWorldID);
+		tempTag = 0;
+	}
+
+	//player2->Update(dt);
+
+	//std::cout << "Player2: " << player2->GetTransform().GetPosition().x << " " <<
+	//	player2->GetTransform().GetPosition().y << " " <<
+	//	player2->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
@@ -222,6 +236,17 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
 			thisServer->SendGlobalPacket(*newPacket);
 			delete newPacket;
 		}
+	}
+	if (treeCut || rockDug) {
+		AddPacket addPacket;
+
+		addPacket.position = tempPosition;
+		addPacket.networkID = tempNetworkID;
+		addPacket.worldID = tempWorldID;
+		addPacket.tag = tempTag;
+		thisServer->SendGlobalPacket(addPacket);
+		treeCut = false;
+		rockDug = false;
 	}
 }
 
@@ -292,15 +317,25 @@ void NetworkedGame::StartLevel() {
 
 void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 	if (thisClient) {
-		std::vector<GameObject*>::const_iterator first;
-		std::vector<GameObject*>::const_iterator last;
-		world->GetObjectIterators(first, last);
-		for (auto i = first; i != last; ++i) {
-			NetworkObject* o = (*i)->GetNetworkObject();
-			if (!o) {
-				continue;
+		if (payload->type != Add_Remove) {
+			std::vector<GameObject*>::const_iterator first;
+			std::vector<GameObject*>::const_iterator last;
+			world->GetObjectIterators(first, last);
+			for (auto i = first; i != last; ++i) {
+				NetworkObject* o = (*i)->GetNetworkObject();
+				if (!o) {
+					continue;
+				}
+				o->ReadPacket(*payload);
 			}
-			o->ReadPacket(*payload);
+		}
+		else {
+			AddPacket* addPacket = (AddPacket*)payload;
+
+			tempPosition = addPacket->position;
+			tempNetworkID = addPacket->networkID;
+			tempWorldID = addPacket->worldID;
+			tempTag = addPacket->tag;			
 		}
 	}
 	else if (thisServer) {

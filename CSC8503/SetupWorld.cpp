@@ -664,6 +664,8 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
 
     world->AddGameObject(tree);
 
+    tree->SetNetworkObject(new NetworkObject(*tree, tree->GetWorldID() + 4000));
+
     return tree;
 }
 
@@ -688,6 +690,8 @@ RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
     rock->GetPhysicsObject()->SetChannel(1);
 
     world->AddGameObject(rock);
+
+    rock->SetNetworkObject(new NetworkObject(*rock, rock->GetWorldID() + 5000));
 
     return rock;
 }
@@ -827,7 +831,7 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position, bool spawn
     return bucket;
 }
 
-PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
+PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position, bool network, int id) {
     PlankObject* plank = new PlankObject(world);
 
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
@@ -850,10 +854,15 @@ PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
 
     world->AddGameObject(plank);
 
+    if (!network)
+        plank->SetNetworkObject(new NetworkObject(*plank, plank->GetWorldID() + 1000));
+    else
+        plank->SetNetworkObject(new NetworkObject(*plank, id));
+
     return plank;
 }
 
-StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
+StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position, bool network, int id) {
     StoneObject* stone = new StoneObject(world);
 
     SphereVolume* volume = new SphereVolume(2);
@@ -873,8 +882,13 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
     stone->GetPhysicsObject()->SetResolve(false);
     stone->GetPhysicsObject()->SetInverseMass(1);
     stone->GetPhysicsObject()->InitCubeInertia();
-
+   
     world->AddGameObject(stone);
+
+    if (!network)
+        stone->SetNetworkObject(new NetworkObject(*stone, stone->GetWorldID() + 2000));
+    else
+        stone->SetNetworkObject(new NetworkObject(*stone, id));
 
     return stone;
 }
@@ -905,6 +919,8 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
     rail->GetPhysicsObject()->InitCubeInertia();
 
     world->AddGameObject(rail);
+
+    rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
 
     return rail;
 }

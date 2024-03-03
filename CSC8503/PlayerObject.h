@@ -80,6 +80,7 @@ namespace NCL::CSC8503 {
 
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
+        void UpdateFace();
         void SwitchSkin();
 
     protected:
