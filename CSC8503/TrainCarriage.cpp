@@ -1,6 +1,7 @@
 #include "TrainCarriage.h"
 #include "TrainObject.h"
 #include "TutorialGame.h"
+#include "NetworkedGame.h"
 
 using namespace NCL::CSC8503;
 
@@ -90,6 +91,12 @@ void MaterialCarriage::Update(float dt) {
 }
 
 void MaterialCarriage::UpdateMaterial() {
+    if (TutorialGame::GetGame()->IsNetworked()) {
+        NetworkedGame::GetNetworkedGame()->SetUpdateMaterialFlag(true);
+        NetworkedGame::GetNetworkedGame()->SetRemovedPlankNetworkID(planks[0]->GetNetworkObject()->GetNetworkID());
+        NetworkedGame::GetNetworkedGame()->SetRemovedStoneNetworkID(stones[0]->GetNetworkObject()->GetNetworkID());
+        NetworkedGame::GetNetworkedGame()->SetMaterialUpdatingTag(3);
+    }
     world->RemoveGameObject(planks[0]);
     planks.erase(planks.begin());
     if (!planks.empty()) {
@@ -181,6 +188,11 @@ void ProduceCarriage::Update(float dt) {
             rail->SetCarriage(this);
             rail->SetHeight(transform.GetPosition().y + 4 + rails.size());
             rails.push_back(rail);
+            if (NetworkedGame::GetNetworkedGame()->IsNetworked()) {
+                NetworkedGame::GetNetworkedGame()->SetProduceRailFlag(true);
+                NetworkedGame::GetNetworkedGame()->SetRailNetworkID(rail->GetNetworkObject()->GetNetworkID());
+                NetworkedGame::GetNetworkedGame()->SetRailProducedTag(4);
+            }
         }
     }
 }

@@ -191,20 +191,34 @@ void NetworkedGame::UpdateAsClient(float dt) {
 		newPacket.buttonstates[5] = 1;
 	else
 		newPacket.buttonstates[5] = 0;
+	if (Window::GetKeyboard()->KeyPressed(KeyCodes::SPACE))
+		newPacket.buttonstates[6] = 1;
+	else
+		newPacket.buttonstates[6] = 0;
 
 	thisClient->SendPacket(newPacket);
 
 	thisClient->UpdateClient();
 
-	if (tempTag == 1) {
-		AddPlankToWorld(tempPosition , true, tempNetworkID);
-		world->RemoveGameObject(tempWorldID);
-		tempTag = 0;
+	if (treeCutTag == 1) {
+		AddPlankToWorld(Vector3(0, -2000, 0), true, plankNetworkID);
+		world->RemoveGameObject(treeWorldID);
+		treeCutTag = 0;
 	}
-	else if (tempTag == 2) {
-		AddStoneToWorld(tempPosition, true, tempNetworkID);
-		world->RemoveGameObject(tempWorldID);
-		tempTag = 0;
+	else if (rockDugTag == 2) {
+		AddStoneToWorld(Vector3(0, -2000, 0), true, stoneNetworkID);
+		world->RemoveGameObject(rockWorldID);
+		rockDugTag = 0;
+	}
+	else if (materialUpdatingTag == 3) {
+		world->RemoveGameObject(removedPlankNetworkID, true);
+		world->RemoveGameObject(removedStoneNetworkID, true);
+		materialUpdatingTag = 0;
+	}
+	else if (railProducedTag == 4) {
+		std::cout << "RailReceived: " << railNetworkID << std::endl;
+		AddRailToWorld(Vector3(0, -3000, 0), true, railNetworkID);
+		railProducedTag = 0;
 	}
 
 	//player2->Update(dt);
@@ -237,16 +251,41 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
 			delete newPacket;
 		}
 	}
-	if (treeCut || rockDug) {
+	if (treeCut) {
 		AddPacket addPacket;
 
-		addPacket.position = tempPosition;
-		addPacket.networkID = tempNetworkID;
-		addPacket.worldID = tempWorldID;
-		addPacket.tag = tempTag;
+		addPacket.networkID1 = plankNetworkID;
+		addPacket.worldID = treeWorldID;
+		addPacket.tag = treeCutTag;
 		thisServer->SendGlobalPacket(addPacket);
 		treeCut = false;
+	}
+	if (rockDug) {
+		AddPacket addPacket;
+
+		addPacket.networkID1 = stoneNetworkID;
+		addPacket.worldID = rockWorldID;
+		addPacket.tag = rockDugTag;
+		thisServer->SendGlobalPacket(addPacket);
 		rockDug = false;
+	}
+	if (materialUpdating) {
+		AddPacket addPacket;
+
+		addPacket.networkID1 = removedPlankNetworkID;
+		addPacket.networkID2 = removedStoneNetworkID;
+		addPacket.tag = materialUpdatingTag;
+		thisServer->SendGlobalPacket(addPacket);
+		materialUpdating = false;
+	}
+	if (railProduced) {
+		AddPacket addPacket;
+
+		addPacket.networkID1 = railNetworkID;
+		addPacket.tag = railProducedTag;
+		thisServer->SendGlobalPacket(addPacket);
+		railProduced = false;
+		std::cout << "RailSend: " << addPacket.networkID1 << std::endl;
 	}
 }
 
@@ -332,10 +371,25 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 		else {
 			AddPacket* addPacket = (AddPacket*)payload;
 
-			tempPosition = addPacket->position;
-			tempNetworkID = addPacket->networkID;
-			tempWorldID = addPacket->worldID;
-			tempTag = addPacket->tag;			
+			if (addPacket->tag == 1) {
+				treeCutTag = addPacket->tag;
+				plankNetworkID = addPacket->networkID1;
+				treeWorldID = addPacket->worldID;
+			}
+			else if (addPacket->tag == 2) {
+				rockDugTag = addPacket->tag;
+				stoneNetworkID = addPacket->networkID1;
+				rockWorldID = addPacket->worldID;
+			}
+			else if (addPacket->tag == 3) {
+				materialUpdatingTag = addPacket->tag;
+				removedPlankNetworkID = addPacket->networkID1;
+				removedStoneNetworkID = addPacket->networkID2;
+			}
+			else if (addPacket->tag == 4) {
+				railProducedTag = addPacket->tag;
+				railNetworkID = addPacket->networkID1;
+			}
 		}
 	}
 	else if (thisServer) {

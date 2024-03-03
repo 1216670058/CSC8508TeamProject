@@ -31,6 +31,7 @@ bool NetworkObject::ReadClientPacket(ClientPacket& p) {
     object.SetButton(3, p.buttonstates[3]);
     object.SetButton(4, p.buttonstates[4]);
     object.SetButton(5, p.buttonstates[5]);
+    object.SetButton(6, p.buttonstates[6]);
     return true;
 }
 
@@ -107,7 +108,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
             if (networkID <= 2) {
                 object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
             }
-            else if (object.GetTypeID() == 7 || object.GetTypeID() == 23) {
+            else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
             }
             else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
@@ -193,12 +194,15 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
             fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
         }
 
-        else if (object.GetTypeID() == 4 || object.GetTypeID() == 23) {
+        else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
         }
 
         else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
             fp->fullState.scale = object.GetTransform().GetScale();
+        }
+        else if (object.GetTypeID() == 7) {
+            std::cout << "Server: Rail" << std::endl;
         }
 
         *p = fp;

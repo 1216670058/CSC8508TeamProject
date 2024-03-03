@@ -70,13 +70,6 @@ namespace NCL::CSC8503 {
         void SetCarriage(MaterialCarriage* c) {
             carriage = c;
         }
-        void SetBucket(BucketObject* b) {
-            bucket = b;
-        }
-
-        BucketObject* GetBucket() {
-            return bucket;
-        }
 
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
@@ -102,6 +95,5 @@ namespace NCL::CSC8503 {
         vector<AnimationObject*> animations;
         vector<ShaderGroup*> shaders;
         MaterialCarriage* carriage;
-        BucketObject* bucket;
     };
 }

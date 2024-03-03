@@ -3,7 +3,7 @@
 #include "Constraint.h"
 #include "CollisionDetection.h"
 #include "Camera.h"
-
+#include "NetworkObject.h"
 
 using namespace NCL;
 using namespace NCL::CSC8503;
@@ -51,11 +51,21 @@ void GameWorld::RemoveGameObject(GameObject* o, bool andDelete) {
     worldStateCounter++;
 }
 
-void GameWorld::RemoveGameObject(int id) {
-    for (auto& i : gameObjects) {
-        if (i->GetWorldID() == id)
-            RemoveGameObject(i, false);
-    }  
+void GameWorld::RemoveGameObject(int id, bool networkID) {
+    if (!networkID) {
+        for (auto& i : gameObjects) {
+            if (i->GetWorldID() == id)
+                RemoveGameObject(i, false);
+        }
+    }
+    else {
+        for (auto& i : gameObjects) {
+            if (i->GetNetworkObject()) {
+                if (i->GetNetworkObject()->GetNetworkID() == id)
+                    RemoveGameObject(i, false);
+            }
+        }
+    }
 }
 
 void GameWorld::GetObjectIterators(

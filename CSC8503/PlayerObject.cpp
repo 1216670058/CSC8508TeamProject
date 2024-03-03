@@ -250,7 +250,6 @@ void PlayerObject::CutTree() {
         spaceHeld = buttonStates[5];
 
     if (spaceHeld && slot == 3) {
-        Vector3 position1;
         int worldID1;
         doing = true;
         cutting = true;        
@@ -264,18 +263,16 @@ void PlayerObject::CutTree() {
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
                     closest->SetFlag1(false);
-                    if (TutorialGame::GetGame()->IsNetworked()) {
-                        position1 = Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z);
+                    if (TutorialGame::GetGame()->IsNetworked()) {                       
                         worldID1 = closest->GetWorldID();
                     }
                     PlankObject* plank1 = TutorialGame::GetGame()->AddPlankToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));                   
                     TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
                     if (TutorialGame::GetGame()->IsNetworked()) {
                         NetworkedGame::GetNetworkedGame()->SetCutTreeFlag(true);
-                        NetworkedGame::GetNetworkedGame()->SetTempPosition(position1);
-                        NetworkedGame::GetNetworkedGame()->SetTempNetworkID(plank1->GetNetworkObject()->GetNetworkID());
-                        NetworkedGame::GetNetworkedGame()->SetTempWorldID(worldID1);
-                        NetworkedGame::GetNetworkedGame()->SetTempTag(1);
+                        NetworkedGame::GetNetworkedGame()->SetPlankNetworkID(plank1->GetNetworkObject()->GetNetworkID());
+                        NetworkedGame::GetNetworkedGame()->SetTreeWorldID(worldID1);
+                        NetworkedGame::GetNetworkedGame()->SetTreeCutTag(1);
                     }
                 }
             }
@@ -291,7 +288,6 @@ void PlayerObject::DigRock() {
         spaceHeld = buttonStates[5];
 
     if (spaceHeld && slot == 2) {
-        Vector3 position1;
         int worldID1;
         doing = true;
         digging = true;
@@ -305,18 +301,16 @@ void PlayerObject::DigRock() {
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
                     closest->SetFlag1(false);
-                    if (TutorialGame::GetGame()->IsNetworked()) {
-                        position1 = Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z);
+                    if (TutorialGame::GetGame()->IsNetworked()) {                       
                         worldID1 = closest->GetWorldID();
                     }
                     StoneObject* stone1 = TutorialGame::GetGame()->AddStoneToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
                     TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
                     if (TutorialGame::GetGame()->IsNetworked()) {
                         NetworkedGame::GetNetworkedGame()->SetDigRockFlag(true);
-                        NetworkedGame::GetNetworkedGame()->SetTempPosition(position1);
-                        NetworkedGame::GetNetworkedGame()->SetTempNetworkID(stone1->GetNetworkObject()->GetNetworkID());
-                        NetworkedGame::GetNetworkedGame()->SetTempWorldID(worldID1);
-                        NetworkedGame::GetNetworkedGame()->SetTempTag(2);
+                        NetworkedGame::GetNetworkedGame()->SetStoneNetworkID(stone1->GetNetworkObject()->GetNetworkID());
+                        NetworkedGame::GetNetworkedGame()->SetRockWorldID(worldID1);
+                        NetworkedGame::GetNetworkedGame()->SetRockDugTag(2);
                     }
                 }
             }
@@ -325,7 +319,13 @@ void PlayerObject::DigRock() {
 }
 
 void PlayerObject::ScoopWater() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE) && slot == 4) {
+    bool spaceHeld = false;
+    if (networkObject->GetNetworkID() == 1)
+        spaceHeld = Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE);
+    else
+        spaceHeld = buttonStates[5];
+
+    if (spaceHeld && slot == 4) {
         doing = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
         Ray r = Ray(transform.GetPosition(), face);
@@ -333,34 +333,45 @@ void PlayerObject::ScoopWater() {
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
-                std::cout << "yes" << "\n";
-                bucket->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
-                bucket->SetWater(true);
+                TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
+                TutorialGame::GetGame()->GetBucket()->SetWater(true);
             }
         }
     }
 }
 
 void PlayerObject::UseWater() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE) && slot == 4) {
+    bool spaceHeld = false;
+    if (networkObject->GetNetworkID() == 1)
+        spaceHeld = Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::SPACE);
+    else
+        spaceHeld = buttonStates[5];
+
+    if (spaceHeld && slot == 4) {
         doing = true;
         Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
         Ray r = Ray(transform.GetPosition(), face);
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && bucket->GetWater() == true) {
+            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && TutorialGame::GetGame()->GetBucket()->GetWater() == true) {
                 WaterCarriage* watercarriage = (WaterCarriage*)closest;
                 watercarriage->SetCarriageWater(100.0f);
-                bucket->SetWater(false);
-                bucket->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+                TutorialGame::GetGame()->GetBucket()->SetWater(false);
+                TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
             }
         }
     }
 }
 
 void PlayerObject::LoadMaterial() {
-    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SPACE)) {
+    bool spacePressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        spacePressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SPACE);
+    else
+        spacePressed = buttonStates[6];
+
+    if (spacePressed) {
         if (slot == 5 || slot == 6) {
             Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(8, 5, 0, 8));
             Ray r = Ray(transform.GetPosition(), face);
