@@ -51,43 +51,54 @@ namespace NCL {
 			void SetDigRockFlag(bool f) {
 				rockDug = f;
 			}
+			bool GetUpdateMaterialFlag() const {
+				return materialUpdating;
+			}
+			void SetUpdateMaterialFlag(bool f) {
+				materialUpdating = f;
+			}
+			bool GetProduceRailFlag() const {
+				return railProduced;
+			}
+			void SetProduceRailFlag(bool f) {
+				railProduced = f;
+			}
 
-			//bool IsCutting() const {
-			//	return cutting;
-			//}
-			//void SetCutting(bool c) {
-			//	cutting = c;
-			//}
-			//bool IsDigging() const {
-			//	return digging;
-			//}
-			//void SetDigging(bool d) {
-			//	digging = d;
-			//}
+			void SetTreeCutTag(int t) {
+				treeCutTag = t;
+			}
+			void SetPlankNetworkID(int id) {
+				plankNetworkID = id;
+			}
+			void SetTreeWorldID(int id) {
+				treeWorldID = id;
+			}
 
-			Vector3 GetTempPosition() const {
-				return tempPosition;
+			void SetRockDugTag(int t) {
+				rockDugTag = t;
 			}
-			void SetTempPosition(Vector3 t) {
-				tempPosition = t;
+			void SetStoneNetworkID(int id) {
+				stoneNetworkID = id;
 			}
-			int GetTempNetworkID() const {
-				return tempNetworkID;
+			void SetRockWorldID(int id) {
+				rockWorldID = id;
 			}
-			void SetTempNetworkID(int t) {
-				tempNetworkID = t;
+
+			void SetMaterialUpdatingTag(int t) {
+				materialUpdatingTag = t;
 			}
-			int GetTempWorldID() const {
-				return tempWorldID;
+			void SetRemovedPlankNetworkID(int id) {
+				removedPlankNetworkID = id;
 			}
-			void SetTempWorldID(int t) {
-				tempWorldID = t;
+			void SetRemovedStoneNetworkID(int id) {
+				removedStoneNetworkID = id;
 			}
-			int GetTempTag() const {
-				return tempTag;
+
+			void SetRailProducedTag(int t) {
+				railProducedTag = t;
 			}
-			void SetTempTag(int t) {
-				tempTag = t;
+			void SetRailNetworkID(int id) {
+				railNetworkID = id;
 			}
 
 			static NetworkedGame* GetNetworkedGame() {
@@ -121,14 +132,24 @@ namespace NCL {
 
 			bool treeCut = false;
 			bool rockDug = false;
+			bool materialUpdating = false;
+			bool railProduced = false;
 
-			//bool cutting = false;
-			//bool digging = false;
+			int treeCutTag = 0;
+			int plankNetworkID;
+			int treeWorldID;
 
-			Vector3 tempPosition;
-			int     tempNetworkID;
-			int     tempWorldID;
-			int     tempTag = 0;
+			int rockDugTag = 0;
+			int stoneNetworkID;
+			int rockWorldID;
+
+			int materialUpdatingTag = 0;
+			int removedPlankNetworkID;
+			int removedStoneNetworkID;
+
+			int railProducedTag = 0;
+			int railNetworkID;
+
 		};
 	}
 }

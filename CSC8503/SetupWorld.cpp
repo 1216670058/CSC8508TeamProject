@@ -893,7 +893,7 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position, bool network
     return stone;
 }
 
-RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
+RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, int id)
 {
     RailObject* rail = new RailObject(world);
 
@@ -920,7 +920,10 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position)
 
     world->AddGameObject(rail);
 
-    rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
+    if (!network)
+        rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
+    else
+        rail->SetNetworkObject(new NetworkObject(*rail, id));
 
     return rail;
 }

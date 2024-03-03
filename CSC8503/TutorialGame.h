@@ -51,9 +51,13 @@ namespace NCL {
                 networked = n;
             }
 
+            BucketObject* GetBucket() const {
+                return bucket;
+            }
+
             PlankObject* AddPlankToWorld(const Vector3& position, bool network = false, int id = 0);
             StoneObject* AddStoneToWorld(const Vector3& position, bool network = false, int id = 0);
-            RailObject* AddRailToWorld(const Vector3& position);
+            RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0);
 
             void InitGameWorld(bool networked = false) { InitCamera(); InitWorld(networked); }
             bool IsExitGame() { return isExit; }

@@ -33,7 +33,8 @@ namespace NCL::CSC8503 {
 
 	struct AddPacket : public GamePacket {
 		Vector3 position;
-		int     networkID;
+		int     networkID1;
+		int     networkID2;
 		int     worldID;
 		int     tag;
 

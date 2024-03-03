@@ -342,7 +342,6 @@ void TutorialGame::InitGameExamples(bool networked) {
     pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90), !networked);
     axe = AddAxeToWorld(Vector3(40, 5, 100), !networked);
     bucket = AddBucketToWorld(Vector3(40, 5, 110), !networked);
-    player->SetBucket(bucket);
     AddSceneToWorld();
 }
 
