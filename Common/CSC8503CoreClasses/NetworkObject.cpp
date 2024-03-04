@@ -105,7 +105,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
             object.GetTransform().SetPosition(lastFullState.position);
             object.GetTransform().SetOrientation(lastFullState.orientation);
 
-            if (networkID <= 2) {
+            if (object.GetTypeID() == 1) {
                 object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
             }
             else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
@@ -190,7 +190,7 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
         fp->fullState.position = object.GetTransform().GetPosition();
         fp->fullState.orientation = object.GetTransform().GetOrientation();
 
-        if (networkID <= 2) {
+        if (object.GetTypeID() == 1) {
             fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
         }
 
@@ -200,9 +200,6 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
 
         else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
             fp->fullState.scale = object.GetTransform().GetScale();
-        }
-        else if (object.GetTypeID() == 7) {
-            std::cout << "Server: Rail" << std::endl;
         }
 
         *p = fp;

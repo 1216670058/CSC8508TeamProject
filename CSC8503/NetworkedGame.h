@@ -26,6 +26,10 @@ namespace NCL {
 
 			void SpawnCarriage();
 
+			void UpdateGameObjects();
+
+			void SpawnGameObjects();
+
 			void StartLevel();
 
 			void ReceivePacket(int type, GamePacket* payload, int source) override;
@@ -37,6 +41,10 @@ namespace NCL {
 			}
 			bool IsClient() {
 				return thisClient != nullptr;
+			}
+
+			PlayerObject* GetLocalPlayer() const {
+				return localPlayer;
 			}
 
 			bool GetCutTreeFlag() const {
@@ -124,11 +132,14 @@ namespace NCL {
 			std::vector<NetworkObject*> networkObjects;
 
 			std::map<int, GameObject*> serverPlayers;
-			GameObject* localPlayer;
+			PlayerObject* localPlayer;
+			int playerNum;
+			int spawnNum;
 
 			static NetworkedGame* networkInstance;
 
-			bool spawn1;
+			bool spawn = false;
+			bool objectSpawned = false;
 
 			bool treeCut = false;
 			bool rockDug = false;
@@ -150,6 +161,12 @@ namespace NCL {
 			int railProducedTag = 0;
 			int railNetworkID;
 
+			int newObjectTag = 0;
+			vector<int> objectType;
+			vector<int> objectNetworkID;
+
+			int removeObjectTag = 0;
+			vector<int> removedObjectNetworkID;
 		};
 	}
 }

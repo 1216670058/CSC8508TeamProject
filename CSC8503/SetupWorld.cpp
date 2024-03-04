@@ -101,7 +101,7 @@ void TutorialGame::InitTextures() {
 }
 
 void TutorialGame::InitMaterials() {
-    //std::cout << std::endl << "--------Loading Materials--------" << std::endl;
+    std::cout << std::endl << "--------Loading Materials--------" << std::endl;
     //maleMaterial = new MeshMaterial("Male_Guard.mat");
     //for (int i = 0; i < maleMesh->GetSubMeshCount(); ++i) {
     //    const MeshMaterialEntry* matEntry =
@@ -120,7 +120,7 @@ void TutorialGame::InitMaterials() {
     //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
     //    maleBumpTextures.emplace_back(texID2);
     //}
-
+    //
     //femaleMaterial = new MeshMaterial("Female_Guard.mat");
     //for (int i = 0; i < femaleMesh->GetSubMeshCount(); ++i) {
     //    const MeshMaterialEntry* matEntry =
@@ -139,7 +139,7 @@ void TutorialGame::InitMaterials() {
     //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
     //    femaleBumpTextures.emplace_back(texID2);
     //}
-    //
+    
     assassinMaterial = new MeshMaterial("Assassin.mat");
     for (int i = 0; i < assassinMesh->GetSubMeshCount(); ++i) {
         const MeshMaterialEntry* matEntry =
@@ -251,28 +251,28 @@ void TutorialGame::InitMaterials() {
 }
 
 void TutorialGame::InitAnimations() {
-    //std::cout << std::endl << "--------Loading Animations--------" << std::endl;
-    //maleAnimation = new AnimationObject();
-    //maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
-    //maleAnimation->SetAnim2(new MeshAnimation("StepForward1.anm"));
-    //maleAnimation->SetAnim3(new MeshAnimation("StepLeft1.anm"));
-    //maleAnimation->SetAnim4(new MeshAnimation("StepRight1.anm"));
-    //maleAnimation->SetAnim5(new MeshAnimation("StepBack1.anm"));
-    //maleAnimation->SetAnim6(new MeshAnimation("Angry1.anm"));
-    //maleAnimation->SetAnim7(new MeshAnimation("Happy1.anm"));
-    //maleAnimation->SetAnim8(new MeshAnimation("Cheer1.anm"));
-    //maleAnimation->SetActiveAnim(maleAnimation->GetAnim1());
+    std::cout << std::endl << "--------Loading Animations--------" << std::endl;
+    maleAnimation = new AnimationObject();
+    maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
+    maleAnimation->SetAnim2(new MeshAnimation("StepForward1.anm"));
+    maleAnimation->SetAnim3(new MeshAnimation("StepLeft1.anm"));
+    maleAnimation->SetAnim4(new MeshAnimation("StepRight1.anm"));
+    maleAnimation->SetAnim5(new MeshAnimation("StepBack1.anm"));
+    maleAnimation->SetAnim6(new MeshAnimation("Angry1.anm"));
+    maleAnimation->SetAnim7(new MeshAnimation("Happy1.anm"));
+    maleAnimation->SetAnim8(new MeshAnimation("Cheer1.anm"));
+    maleAnimation->SetActiveAnim(maleAnimation->GetAnim1());
 
-    //femaleAnimation = new AnimationObject();
-    //femaleAnimation->SetAnim1(new MeshAnimation("Idle2.anm"));
-    //femaleAnimation->SetAnim2(new MeshAnimation("StepForward2.anm"));
-    //femaleAnimation->SetAnim3(new MeshAnimation("StepLeft2.anm"));
-    //femaleAnimation->SetAnim4(new MeshAnimation("StepRight2.anm"));
-    //femaleAnimation->SetAnim5(new MeshAnimation("StepBack2.anm"));
-    //femaleAnimation->SetAnim6(new MeshAnimation("Angry2.anm"));
-    //femaleAnimation->SetAnim7(new MeshAnimation("Happy2.anm"));
-    //femaleAnimation->SetAnim8(new MeshAnimation("Cheer2.anm"));
-    //femaleAnimation->SetActiveAnim(femaleAnimation->GetAnim1());
+    femaleAnimation = new AnimationObject();
+    femaleAnimation->SetAnim1(new MeshAnimation("Idle2.anm"));
+    femaleAnimation->SetAnim2(new MeshAnimation("StepForward2.anm"));
+    femaleAnimation->SetAnim3(new MeshAnimation("StepLeft2.anm"));
+    femaleAnimation->SetAnim4(new MeshAnimation("StepRight2.anm"));
+    femaleAnimation->SetAnim5(new MeshAnimation("StepBack2.anm"));
+    femaleAnimation->SetAnim6(new MeshAnimation("Angry2.anm"));
+    femaleAnimation->SetAnim7(new MeshAnimation("Happy2.anm"));
+    femaleAnimation->SetAnim8(new MeshAnimation("Cheer2.anm"));
+    femaleAnimation->SetActiveAnim(femaleAnimation->GetAnim1());
     
     assassinAnimation = new AnimationObject();
     assassinAnimation->SetAnim1(new MeshAnimation("Assassin.anm"));
@@ -594,6 +594,8 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::strin
 
     player->SetSpawned(spawn);
 
+    player->SetNum(num);
+
     if (spawn)
         player->GetTransform()
         .SetPosition(position)
@@ -616,12 +618,19 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::strin
         player->GetRenderObject()->SetTextures(girlTextures);
         player->GetRenderObject()->SetBumpTextures(girlBumpTextures);
         break;
-    default:
+    case 3:
         player->SetRenderObject(new RenderObject(&player->GetTransform(), cubeMesh, nullptr, basicShader, 1));
         player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-        player->GetRenderObject()->SetAnimationObject(nullptr);
+        player->GetRenderObject()->SetAnimationObject(maleAnimation);
         //player->GetRenderObject()->SetTextures(maleTextures);
         //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
+        break;
+    case 4:
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), cubeMesh, nullptr, basicShader, 1));
+        player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+        player->GetRenderObject()->SetAnimationObject(femaleAnimation);
+        //player->GetRenderObject()->SetTextures(femaleTextures);
+        //player->GetRenderObject()->SetBumpTextures(femaleBumpTextures);
         break;
     }
     //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);

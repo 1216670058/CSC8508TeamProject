@@ -44,6 +44,7 @@ void GameWorld::AddGameObject(GameObject* o) {
 }
 
 void GameWorld::RemoveGameObject(GameObject* o, bool andDelete) {
+    removedNetworkIDs.push_back(o->GetNetworkObject()->GetNetworkID());
     gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), o), gameObjects.end());
     if (andDelete) {
         delete o;
@@ -162,4 +163,11 @@ void GameWorld::GetConstraintIterators(
     std::vector<Constraint*>::const_iterator& last) const {
     first = constraints.begin();
     last = constraints.end();
+}
+
+void GameWorld::GetRemovedObjectIterators(
+    std::vector<int>::const_iterator& first,
+    std::vector<int>::const_iterator& last) const {
+    first = removedNetworkIDs.begin();
+    last = removedNetworkIDs.end();
 }

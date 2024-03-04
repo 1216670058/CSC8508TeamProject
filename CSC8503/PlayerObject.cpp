@@ -16,8 +16,6 @@ void PlayerObject::Update(float dt) {
         if (renderObject->GetAnimationObject())
             UpdateAnimation(dt);
         PlayerMovement(dt);
-        //SwitchSkin();
-
 
         if (RPressed) {
             slot = 0;
@@ -34,9 +32,6 @@ void PlayerObject::Update(float dt) {
         UseWater();
         LoadMaterial();
     }
-    //else if (NetworkedGame::GetNetworkedGame()->IsClient()) {
-    //    UpdateFace();
-    //}
 }
 
 void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
@@ -231,16 +226,16 @@ void PlayerObject::UpdateFace() {
         face = Vector3(1, 0, 0);
 }
 
-void PlayerObject::SwitchSkin() {
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
-        renderObject->SetMesh(meshes[(index + 1) % 5]);
-        renderObject->SetAnimationObject(animations[(index + 1) % 5]);
-        renderObject->SetTextures(textures[(index + 1) % 5]);
-        renderObject->SetBumpTextures(bumpTextures[(index + 1) % 5]);
-        renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
-        index++;
-    }
-}
+//void PlayerObject::SwitchSkin() {
+//    if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
+//        renderObject->SetMesh(meshes[(index + 1) % 5]);
+//        renderObject->SetAnimationObject(animations[(index + 1) % 5]);
+//        renderObject->SetTextures(textures[(index + 1) % 5]);
+//        renderObject->SetBumpTextures(bumpTextures[(index + 1) % 5]);
+//        renderObject->SetShaderGroup(shaders[(index + 1) % 5]);
+//        index++;
+//    }
+//}
 
 void PlayerObject::CutTree() {
     bool spaceHeld = false;

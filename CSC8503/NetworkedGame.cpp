@@ -26,7 +26,7 @@ NetworkedGame::NetworkedGame()	{
 	timeToNextPacket  = 0.0f;
 	packetsToSnapshot = 0;
 
-	spawn1 = false;
+	playerNum = -1;
 
 	networkInstance = this;
 }
@@ -55,8 +55,8 @@ void NetworkedGame::StartAsClient(char a, char b, char c, char d) {
 	thisClient->RegisterPacketHandler(Player_Connected, this);
 	thisClient->RegisterPacketHandler(Player_Disconnected, this);
 	thisClient->RegisterPacketHandler(Add_Remove, this);
+	thisClient->RegisterPacketHandler(Client_Num, this);
 
-	SpawnPlayer();
 	SpawnCarriage();
 }
 
@@ -140,11 +140,9 @@ void NetworkedGame::UpdateKeys() {
 }
 
 void NetworkedGame::UpdateAsServer(float dt) {
-	if (thisServer->IsConnected()) {
-		if (!spawn1) {
-			SpawnPlayer();
-			spawn1 = true;
-		}
+	if (thisServer->GetSpawnFlag()) {
+		SpawnPlayer();
+		UpdateGameObjects();
 	}
 
 	packetsToSnapshot--;
@@ -167,6 +165,7 @@ void NetworkedGame::UpdateAsServer(float dt) {
 void NetworkedGame::UpdateAsClient(float dt) {
 	ClientPacket newPacket;
 
+	newPacket.playerNum = playerNum;
 	if (Window::GetKeyboard()->KeyHeld(KeyCodes::W))
 		newPacket.buttonstates[0] = 1;
 	else
@@ -200,6 +199,12 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
 	thisClient->UpdateClient();
 
+	if (spawn)
+		SpawnPlayer();
+
+	if (!objectSpawned)
+		SpawnGameObjects();
+
 	if (treeCutTag == 1) {
 		AddPlankToWorld(Vector3(0, -2000, 0), true, plankNetworkID);
 		world->RemoveGameObject(treeWorldID);
@@ -216,16 +221,9 @@ void NetworkedGame::UpdateAsClient(float dt) {
 		materialUpdatingTag = 0;
 	}
 	else if (railProducedTag == 4) {
-		std::cout << "RailReceived: " << railNetworkID << std::endl;
 		AddRailToWorld(Vector3(0, -3000, 0), true, railNetworkID);
 		railProducedTag = 0;
 	}
-
-	//player2->Update(dt);
-
-	//std::cout << "Player2: " << player2->GetTransform().GetPosition().x << " " <<
-	//	player2->GetTransform().GetPosition().y << " " <<
-	//	player2->GetTransform().GetPosition().z << " " << std::endl;
 }
 
 void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
@@ -285,7 +283,6 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
 		addPacket.tag = railProducedTag;
 		thisServer->SendGlobalPacket(addPacket);
 		railProduced = false;
-		std::cout << "RailSend: " << addPacket.networkID1 << std::endl;
 	}
 }
 
@@ -323,8 +320,57 @@ void NetworkedGame::UpdateMinimumState() {
 }
 
 void NetworkedGame::SpawnPlayer() {
-	player2->SetSpawned(true);
-	player2->GetTransform().SetPosition(Vector3(20, 5, 110));
+	if (thisServer) {
+		if (thisServer->GetClientCount() == 1) {
+			player2->SetSpawned(true);
+			player2->GetTransform().SetPosition(Vector3(20, 5, 110));
+			thisServer->SetSpawnFlag(false);
+		}
+		else if (thisServer->GetClientCount() == 2) {
+			player3->SetSpawned(true);
+			player3->GetTransform().SetPosition(Vector3(20, 5, 120));
+			thisServer->SetSpawnFlag(false);
+		}
+		else if (thisServer->GetClientCount() == 3) {
+			player4->SetSpawned(true);
+			player4->GetTransform().SetPosition(Vector3(20, 5, 130));
+			thisServer->SetSpawnFlag(false);
+		}
+
+		NumPacket numPacket;
+
+		numPacket.num = thisServer->GetClientCount() + 1;
+		thisServer->SendGlobalPacket(numPacket);
+	}
+	else if (thisClient) {
+		if (spawnNum == 2) {
+			player2->SetSpawned(true);
+			player2->GetTransform().SetPosition(Vector3(20, 5, 110));
+			if (playerNum == -1) {
+				playerNum = 2;
+				localPlayer = player2;
+			}
+			spawn = false;
+		}
+		if (spawnNum == 3) {
+			player3->SetSpawned(true);
+			player3->GetTransform().SetPosition(Vector3(20, 5, 120));
+			if (playerNum == -1) {
+				playerNum = 3;
+				localPlayer = player3;
+			}
+			spawn = false;
+		}
+		if (spawnNum == 4) {
+			player4->SetSpawned(true);
+			player4->GetTransform().SetPosition(Vector3(20, 5, 130));
+			if (playerNum == -1) {
+				playerNum = 4;
+				localPlayer = player4;
+			}
+			spawn = false;
+		}
+	}
 }
 
 void NetworkedGame::SpawnCarriage() {
@@ -334,6 +380,62 @@ void NetworkedGame::SpawnCarriage() {
 	carriage3 = (WaterCarriage*)(train->AddCarriage(23, true));
 	carriage1->SetProduceCarriage(carriage2);
 	carriage2->SetMaterialCarriage(carriage1);
+}
+
+void NetworkedGame::UpdateGameObjects() {
+	std::vector<GameObject*>::const_iterator first1;
+	std::vector<GameObject*>::const_iterator last1;
+	world->GetObjectIterators(first1, last1);
+
+	for (auto i = first1; i != last1; ++i) {
+		if ((*i)->GetTypeID() == 5 || (*i)->GetTypeID() == 6 || (*i)->GetTypeID() == 7) {
+			AddPacket addPacket;
+
+			addPacket.typeID = (*i)->GetTypeID();
+			addPacket.networkID1 = (*i)->GetNetworkObject()->GetNetworkID();
+			addPacket.tag = 5;
+			thisServer->SendGlobalPacket(addPacket);
+			std::cout << "Server: AddPacket" << std::endl;
+		}
+	}
+
+	std::vector<int>::const_iterator first2;
+	std::vector<int>::const_iterator last2;
+	world->GetRemovedObjectIterators(first2, last2);
+
+	for (auto i = first2; i != last2; ++i) {
+		AddPacket addPacket;
+
+		addPacket.networkID1 = *i;
+		addPacket.tag = 6;
+		thisServer->SendGlobalPacket(addPacket);
+	}
+}
+
+void NetworkedGame::SpawnGameObjects() {
+	if (newObjectTag == 5) {
+		for (int i = 0; i < objectType.size(); ++i) {
+			switch (objectType[i]) {
+			case 5:
+				AddPlankToWorld(Vector3(0, -2000, 0), true, objectNetworkID[i]);
+				break;
+			case 6:
+				AddStoneToWorld(Vector3(0, -2000, 0), true, objectNetworkID[i]);
+				break;
+			case 7:
+				AddRailToWorld(Vector3(0, -2000, 0), true, objectNetworkID[i]);
+				break;
+			}
+		}
+		newObjectTag = 0;
+	}
+	if (removeObjectTag == 6) {
+		for (int i = 0; i < removedObjectNetworkID.size(); ++i) {
+			world->RemoveGameObject(removedObjectNetworkID[i], true);
+		}
+		removeObjectTag = 0;
+		objectSpawned = true;
+	}
 }
 
 void NetworkedGame::StartLevel() {
@@ -346,6 +448,8 @@ void NetworkedGame::StartLevel() {
 	carriage2->SetMaterialCarriage(carriage1);
 	player->SetSpawned(true);
 	player->GetTransform().SetPosition(Vector3(20, 5, 100));
+	localPlayer = player;
+	playerNum = 1;
 	pickaxe->SetSpawned(true);
 	pickaxe->GetTransform().SetPosition(Vector3(40, 5, 90));
 	axe->SetSpawned(true);
@@ -356,7 +460,7 @@ void NetworkedGame::StartLevel() {
 
 void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 	if (thisClient) {
-		if (payload->type != Add_Remove) {
+		if (payload->type == Full_State) {
 			std::vector<GameObject*>::const_iterator first;
 			std::vector<GameObject*>::const_iterator last;
 			world->GetObjectIterators(first, last);
@@ -368,7 +472,7 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 				o->ReadPacket(*payload);
 			}
 		}
-		else {
+		else if (payload->type == Add_Remove) {
 			AddPacket* addPacket = (AddPacket*)payload;
 
 			if (addPacket->tag == 1) {
@@ -390,12 +494,37 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
 				railProducedTag = addPacket->tag;
 				railNetworkID = addPacket->networkID1;
 			}
+			else if (addPacket->tag == 5) {
+				newObjectTag = addPacket->tag;
+				objectType.push_back(addPacket->typeID);
+				objectNetworkID.push_back(addPacket->networkID1);
+				std::cout << "Client: AddPacket" << std::endl;
+			}
+			else if (addPacket->tag == 6) {
+				removeObjectTag = addPacket->tag;
+				removedObjectNetworkID.push_back(addPacket->networkID1);
+			}
+		}
+		else if (payload->type == Client_Num) {
+			NumPacket* numPacket = (NumPacket*)payload;
+
+			spawnNum = numPacket->num;
+			spawn = true;
 		}
 	}
 	else if (thisServer) {
 		ClientPacket* packet = (ClientPacket*)payload;
-		player2->GetNetworkObject()->ReadClientPacket(*packet);
-		//std::cout << "Receiving" << std::endl;
+		switch (packet->playerNum) {
+		case 2:
+			player2->GetNetworkObject()->ReadClientPacket(*packet);
+			break;
+		case 3:
+			player3->GetNetworkObject()->ReadClientPacket(*packet);
+			break;
+		case 4:
+			player4->GetNetworkObject()->ReadClientPacket(*packet);
+			break;
+		}
 	}
 }
 
