@@ -19,8 +19,19 @@ namespace NCL {
 
 			virtual void UpdateServer();
 
+			bool GetSpawnFlag() const {
+				return spawnFlag;
+			}
+			void SetSpawnFlag(bool f) {
+				spawnFlag = f;
+			}
+
 			bool IsConnected() const {
 				return connected;
+			}
+
+			int GetClientCount() const {
+				return clientCount;
 			}
 
 		protected:
@@ -32,6 +43,7 @@ namespace NCL {
 			int incomingDataRate;
 			int outgoingDataRate;
 
+			bool spawnFlag = false;
 			bool connected = false;
 		};
 	}

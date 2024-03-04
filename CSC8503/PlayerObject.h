@@ -51,6 +51,13 @@ namespace NCL::CSC8503 {
             shaders = s;
         }
 
+        int GetNum() const {
+            return num;
+        }
+        void SetNum(int n) {
+            num = n;
+        }
+
         void SetFace(Vector3 a) {
             face = a;
         }
@@ -74,7 +81,6 @@ namespace NCL::CSC8503 {
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
         void UpdateFace();
-        void SwitchSkin();
 
     protected:
         void CutTree();
@@ -86,6 +92,7 @@ namespace NCL::CSC8503 {
         bool cutting = false;
         bool digging = false;
 
+        int num;
         int index;
         Vector3 face;
         float speed = 50.0f;

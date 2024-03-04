@@ -17,8 +17,8 @@ namespace NCL::CSC8503 {
 	};
 
 	struct DeltaPacket : public GamePacket {
-		int		fullID		= -1;
-		int		objectID	= -1;
+		int		fullID = -1;
+		int		objectID = -1;
 		char	pos[3];
 		char	orientation[4];
 		char    scale[3];
@@ -36,6 +36,7 @@ namespace NCL::CSC8503 {
 		int     networkID1;
 		int     networkID2;
 		int     worldID;
+		int     typeID;
 		int     tag;
 
 		AddPacket() {
@@ -44,8 +45,18 @@ namespace NCL::CSC8503 {
 		}
 	};
 
+	struct NumPacket :public GamePacket {
+		int num;
+
+		NumPacket() {
+			type = Client_Num;
+			size = sizeof(FullPacket) - sizeof(GamePacket);
+		}
+	};
+
 	struct ClientPacket : public GamePacket {
 		int		lastID;
+		int     playerNum;
 		char	buttonstates[8];
 
 		ClientPacket() {

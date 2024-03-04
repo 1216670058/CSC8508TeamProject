@@ -67,6 +67,10 @@ namespace NCL {
                 std::vector<Constraint*>::const_iterator& first,
                 std::vector<Constraint*>::const_iterator& last) const;
 
+            void GetRemovedObjectIterators(
+                std::vector<int>::const_iterator& first,
+                std::vector<int>::const_iterator& last) const;
+
             int GetWorldStateID() const {
                 return worldStateCounter;
             }
@@ -77,6 +81,7 @@ namespace NCL {
         protected:
             std::vector<GameObject*> gameObjects;
             std::vector<Constraint*> constraints;
+            std::vector<int> removedNetworkIDs;
 
             PerspectiveCamera mainCamera;
 
