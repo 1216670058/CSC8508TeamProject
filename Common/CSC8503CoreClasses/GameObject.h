@@ -185,6 +185,7 @@ namespace NCL::CSC8503 {
 
         double EuclideanDistance(float x1, float y1, float x2, float y2);
         Vector3 FindNearestGridCenter(const Vector3& position);
+        Vector3 FindGrid(const Vector3& position);
 
     protected:
         Transform			transform;
@@ -208,6 +209,7 @@ namespace NCL::CSC8503 {
         int GRID_SIZE_Z = 20;
         float GRID_CENTER_X = 5.0f;
         float  GRID_CENTER_Z = 5.0f;
+        int GridSize=10;
 
         bool flag1 = false;
         bool flag2 = false;

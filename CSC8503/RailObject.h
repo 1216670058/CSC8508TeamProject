@@ -9,6 +9,7 @@ namespace NCL::CSC8503 {
 			this->world = world;
 			triggerDelete = true;
 			typeID = 7;
+			placed = false;
 			name = "Rail";
 		}
 		~RailObject() {};
@@ -40,9 +41,12 @@ namespace NCL::CSC8503 {
 
 		int GetRailDirection(const Vector3& position);
 	protected:
+		void PlaceRail();
+
 		bool inCarriage = true;
 		float height;
 		int num = 1;
+		bool placed;
 
 		ProduceCarriage* carriage = nullptr;
 	};

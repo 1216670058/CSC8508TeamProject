@@ -27,6 +27,10 @@ namespace NCL {
 				parent = nullptr;
 			}
 			~GridNode() {	}
+
+			void SetType(int t) {
+				type = t;
+			}
 		};
 
 		class NavigationGrid : public NavigationMap	{
@@ -36,6 +40,17 @@ namespace NCL {
 			~NavigationGrid();
 
 			bool FindPath(const Vector3& from, const Vector3& to, NavigationPath& outPath) override;
+
+			GridNode& GetGridNode(int index) const {
+				return allNodes[index];
+			}
+			void SetGridNode(GridNode* g) {
+				allNodes = g;
+			}
+
+			int GetGridWidth() const {
+				return gridWidth;
+			}
 				
 		protected:
 			bool		NodeInList(GridNode* n, std::vector<GridNode*>& list) const;

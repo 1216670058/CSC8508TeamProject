@@ -76,3 +76,9 @@ Vector3 GameObject::FindNearestGridCenter(const Vector3& position) {
     return _nearestGridCenter;*/
     return position;
 }
+Vector3 GameObject::FindGrid(const Vector3& position) {
+    Vector3 p;
+    p.x = (float)(((int)((int)position.x / (int)GridSize)) * (int)GridSize);
+    p.z = (float)(((int)((int)position.z / (int)GridSize)) * (int)GridSize);
+    return Vector3(p.x, position.y, p.z);
+}

@@ -28,7 +28,7 @@ namespace NCL::CSC8503 {
 
         void Update(float dt);
 
-        void UpdatePath(std::vector<std::pair<Vector3, int>> p);
+        void UpdatePath(std::pair<Vector3, int> p);
 
         TrainCarriage* AddCarriage(int id, bool spawn = true);
 

@@ -22,7 +22,7 @@ void CollectableObject::Update(float dt) {
             putDown = true;
             num = 1;
             Vector3 position = transform.GetPosition();
-            transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
+            transform.SetPosition(FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
             player = nullptr;
         }       
     }
