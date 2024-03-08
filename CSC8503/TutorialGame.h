@@ -55,6 +55,10 @@ namespace NCL {
                 return bucket;
             }
 
+            NavigationGrid* GetNavigationGrid()const {
+                return navGrid;
+            }
+
             PlankObject* AddPlankToWorld(const Vector3& position, bool network = false, int id = 0);
             StoneObject* AddStoneToWorld(const Vector3& position, bool network = false, int id = 0);
             RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0);

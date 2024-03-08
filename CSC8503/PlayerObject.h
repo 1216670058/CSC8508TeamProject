@@ -71,6 +71,19 @@ namespace NCL::CSC8503 {
             return face;
         }
 
+        bool IsPlacing1() const {
+            return placing1;
+        }
+        void SetPlacing1(bool p) {
+            placing1 = p;
+        }
+        bool IsPlacing2() const {
+            return placing2;
+        }
+        void SetPlacing2(bool p) {
+            placing2 = p;
+        }
+
         MaterialCarriage* GetCarriage() const {
             return carriage;
         }
@@ -86,11 +99,13 @@ namespace NCL::CSC8503 {
         void CutTree();
         void DigRock();
         void ScoopWater();
-        void LoadMaterial();
         void UseWater();
+        void LoadMaterial();
         bool doing = false;
         bool cutting = false;
         bool digging = false;
+        bool placing1 = false;
+        bool placing2 = false;
 
         int num;
         int index;

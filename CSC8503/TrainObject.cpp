@@ -76,8 +76,8 @@ void TrainObject::Update(float dt) {
     UpdateOrientation(dir);
 }
 
-void TrainObject::UpdatePath(std::vector<std::pair<Vector3, int>> p) {
-    path = p;
+void TrainObject::UpdatePath(std::pair<Vector3, int> p) {
+    path.push_back(p);
 }
 
 void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader) {

@@ -1,6 +1,7 @@
 #include "TutorialGame.h"
 #include "PlayerObject.h"
 #include "NetworkedGame.h"
+#include "NavigationGrid.h"
 #include "Window.h"
 
 using namespace NCL::CSC8503;

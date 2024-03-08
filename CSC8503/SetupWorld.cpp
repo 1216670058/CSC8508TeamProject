@@ -406,7 +406,7 @@ void TutorialGame::AddSceneToWorld()
             n.type = type;
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
-            if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));
+            if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));    
             if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, 2.5f, 0)));
             if (type == '3')scene.emplace_back(AddRockToWorld(n.position + Vector3(0, -2.5f, 0)));
             if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize / 2, 0));
@@ -662,7 +662,7 @@ TreeObject* TutorialGame::AddTreeToWorld(const Vector3& position) {
     tree->SetBoundingVolume((CollisionVolume*)volume);
     tree->GetTransform()
         .SetScale(Vector3(tree->Getscale(), tree->Getscale(), tree->Getscale()))
-        .SetPosition(tree->FindNearestGridCenter(position));
+        .SetPosition(tree->FindGrid(position));
 
     tree->SetRenderObject(new RenderObject(&tree->GetTransform(), treeMesh, treeTex, basicShader));// todo can change capsule
     tree->SetPhysicsObject(new PhysicsObject(&tree->GetTransform(), tree->GetBoundingVolume()));
@@ -688,7 +688,7 @@ RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(rock->Getscale(), rock->Getscale(), rock->Getscale()))
-        .SetPosition(rock->FindNearestGridCenter(position));
+        .SetPosition(rock->FindGrid(position));
 
     rock->SetRenderObject(new RenderObject(&rock->GetTransform(), rockMesh, rockTex, bumpShader));// todo can change capsule
     rock->GetRenderObject()->SetBumpTexture(rockBumpTex);
@@ -906,9 +906,9 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
 {
     RailObject* rail = new RailObject(world);
 
-    //Path.push_back(std::make_pair(position, rail->GetRailDirection(position)));
+    std::pair<Vector3, int > path = std::make_pair(position, rail->GetRailDirection(position));
 
-    //train->UpdatePath(Path);
+    train->UpdatePath(path);
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     rail->SetBoundingVolume((CollisionVolume*)volume);
 

@@ -239,6 +239,7 @@ void TutorialGame::UpdateKeys() {
         if (lockedObject) {
             LockedObjectMovement();
         }
+        
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
