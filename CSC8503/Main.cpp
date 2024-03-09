@@ -122,9 +122,9 @@ int main() {
             w->ShowConsole(false);
         }
 
-        if (Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
-            w->SetWindowPosition(0, 0);
-        }
+        //if (Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
+        //    w->SetWindowPosition(0, 0);
+        //}
 
         w->SetTitle("Train Bob   " + std::to_string(1000.0f * dt));
 

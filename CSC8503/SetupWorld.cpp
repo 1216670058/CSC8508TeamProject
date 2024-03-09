@@ -416,7 +416,7 @@ void TutorialGame::AddSceneToWorld()
             if (type == '6') {
                 RailObject* rail = new RailObject(world);
                 rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
-                navGrid->GetGridNode((gridWidth * y) + x).SetRail(rail);
+                navGrid->GetGridNode((gridWidth * y) + x).SetRail(rail);                
             }
         }
     }
@@ -928,11 +928,6 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
 
     rail->UploadAssets(railTurnMesh, railTurnTex, railTurnBumpTex);
 
-    if (!network)
-        rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
-    else
-        rail->SetNetworkObject(new NetworkObject(*rail, id));
-
     if (!placed) {
         rail->GetTransform()
             .SetPosition(position)
@@ -943,12 +938,14 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
 
         world->AddGameObject(rail);
 
+        if (!network)
+            rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
+        else
+            rail->SetNetworkObject(new NetworkObject(*rail, id));
+
         return rail;
     }
     else {
-        //std::pair<Vector3, int > path = std::make_pair(position, rail->GetRailDirection(position));
-        //train->UpdatePath(path);
-
         rail->GetTransform()
             .SetPosition(rail->FindGrid(position))
             .SetScale(Vector3(10, 10, 10));
@@ -957,10 +954,16 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
         rail->GetPhysicsObject()->InitCubeInertia();
         rail->SetInCarriage(false);
         rail->SetPlaced(true);
+        rail->SetFlag1(true);
 
         rail->SetDirection(3);
 
         world->AddGameObject(rail);
+
+        if (!network)
+            rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
+        else
+            rail->SetNetworkObject(new NetworkObject(*rail, id));
 
         return rail;
     }

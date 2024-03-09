@@ -31,7 +31,7 @@ namespace NCL::CSC8503 {
 		}
 	};
 
-	struct AddPacket : public GamePacket {
+	struct UpdatePacket : public GamePacket {
 		Vector3 position;
 		int     networkID1;
 		int     networkID2;
@@ -39,8 +39,8 @@ namespace NCL::CSC8503 {
 		int     typeID;
 		int     tag;
 
-		AddPacket() {
-			type = Add_Remove;
+		UpdatePacket() {
+			type = Update_Objects;
 			size = sizeof(FullPacket) - sizeof(GamePacket);
 		}
 	};

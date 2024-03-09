@@ -1,24 +1,27 @@
 #include "RailObject.h"
 #include "TutorialGame.h"
+#include "NetworkedGame.h"
 #include "NavigationGrid.h"
 #include "Window.h"
 
 using namespace NCL::CSC8503;
 
 void RailObject::OnCollisionBegin(GameObject* otherObject) {
-    if(!placed){
-        if (!inCarriage) {
-            if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 0) {
-                player = (PlayerObject*)otherObject;
-                putDown = false;
-                player->SetSlot(this->GetTypeID());
-                player->SetSlotNum(player->GetSlotNum() + 1);
-            }
-            else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 7 && otherObject->GetSlotNum() < 3) {
-                player = (PlayerObject*)otherObject;
-                putDown = false;
-                num = player->GetSlotNum() + 1;
-                player->SetSlotNum(player->GetSlotNum() + 1);
+    if (!TutorialGame::GetGame()->IsNetworked() || NetworkedGame::GetNetworkedGame()->IsServer()) {
+        if (!placed) {
+            if (!inCarriage) {
+                if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 0) {
+                    player = (PlayerObject*)otherObject;
+                    putDown = false;
+                    player->SetSlot(this->GetTypeID());
+                    player->SetSlotNum(player->GetSlotNum() + 1);
+                }
+                else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 7 && otherObject->GetSlotNum() < 3) {
+                    player = (PlayerObject*)otherObject;
+                    putDown = false;
+                    num = player->GetSlotNum() + 1;
+                    player->SetSlotNum(player->GetSlotNum() + 1);
+                }
             }
         }
     }
@@ -133,8 +136,15 @@ void RailObject::Update(float dt) {
 //}
 
 void RailObject::PlaceRail() {
+    bool FPressed = false;
     TrainObject* train = TutorialGame::GetGame()->GetTrain();
-    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F) && player->GetSlot() == 7 && num == 1) {
+
+    if (player->GetNetworkObject()->GetNetworkID() == 1)
+        FPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::F);
+    else
+        FPressed = player->GetButton(7);
+
+    if (FPressed && player->GetSlot() == 7 && num == 1) {
         if (!putDown && !inCarriage) {
             bool canConnect = false;
             bool isPath = false;
@@ -172,12 +182,22 @@ void RailObject::PlaceRail() {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0));
                     }
                     else if (lastRail->GetDirection() == 3) {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
                             .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x - 10, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z + 8))
                             .SetScale(Vector3(17, 1, 17));
@@ -191,12 +211,22 @@ void RailObject::PlaceRail() {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 180, 0));
                     }
                     else if (lastRail->GetDirection() == 3) {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 270, 0))
                             .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x - 8, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z - 8))
                             .SetScale(Vector3(17, 1, 17));
@@ -210,6 +240,11 @@ void RailObject::PlaceRail() {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0))
                             .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x + 6, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z + 10))
                             .SetScale(Vector3(15, 10, 15));
@@ -218,6 +253,11 @@ void RailObject::PlaceRail() {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 180, 0))
                             .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x + 10, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z - 7))
                             .SetScale(Vector3(15, 10, 15));
@@ -231,12 +271,22 @@ void RailObject::PlaceRail() {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
                     }
                     else if (lastRail->GetDirection() == 1) {
                         lastRail->GetRenderObject()->SetMesh(railTurnMesh);
                         lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
                         lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        if (TutorialGame::GetGame()->IsNetworked()) {
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailFlag(true);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailTag(7);
+                            NetworkedGame::GetNetworkedGame()->SetUpdateRailNetworkID(lastRail->GetNetworkObject()->GetNetworkID());
+                        }
                         lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 270, 0));
                     }
                     break;

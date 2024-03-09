@@ -58,9 +58,9 @@ namespace NCL::CSC8503 {
 		void PlaceRail();
 
 		bool inCarriage = true;
+		bool placed = false;
 		float height;
 		int num = 1;
-		bool placed;
 		int direction = -1;
 
 		Mesh* railTurnMesh = nullptr;
