@@ -34,10 +34,16 @@ namespace NCL::CSC8503 {
         void UpdateOrientation();
         int GetDirection();
 
-        std::vector< std::pair<Vector3, int> > path;
+        void AddPath(Vector3 p);
+
+        void SetPath(vector<Vector3> p) {
+            path = p;
+        }
+
     protected:
         Vector3 direction;
         GameWorld* world;
+        std::vector<Vector3> path;
     };
 
     class MaterialCarriage : public TrainCarriage {

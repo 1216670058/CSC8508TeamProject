@@ -28,7 +28,9 @@ namespace NCL::CSC8503 {
 
         void Update(float dt);
 
-        void UpdatePath(std::pair<Vector3, int> p);
+        void AddPath(Vector3 p);
+
+        void AddCarriagePath(Vector3 p);
 
         TrainCarriage* AddCarriage(int id, bool spawn = true);
 
@@ -41,11 +43,14 @@ namespace NCL::CSC8503 {
         float GetForce() { return force; }
         float GetDistance() { return distance; }
         float GetSpeed() { return speed; }
+        Vector3 GetLastPath() { return path[path.size() - 1]; }
         void SetInitPos(Vector3 pos1) { lastpos = curpos = pos1; }
 
     protected:
+        int GetDirection();
+
         //0  1  2 3 up down left right
-        std::vector< std::pair<Vector3, int> > path;
+        std::vector<Vector3> path;
         TrainCarriage* trainCarriage;
         int trainMaxIndex = 20;
         int trainIndex = 0;
@@ -53,6 +58,7 @@ namespace NCL::CSC8503 {
         Mesh* carriageMesh = nullptr;
         Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
+        Vector3 direction;
 
         //UI
         float force = 10.0f;

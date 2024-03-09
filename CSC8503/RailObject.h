@@ -22,6 +22,10 @@ namespace NCL::CSC8503 {
 			inCarriage = i;
 		}
 
+		void SetPlaced(bool p) {
+			placed = p;
+		}
+
 		void SetHeight(float h) {
 			height = h;
 		}
@@ -37,9 +41,19 @@ namespace NCL::CSC8503 {
 
 		void Update(float dt) override;
 
+		void UploadAssets(Mesh* m, Texture* t, Texture* bt);
+
 		//int GetDirection(Vector3 point1, Vector3 point2);
 
-		int GetRailDirection(const Vector3& position);
+		//int GetRailDirection(const Vector3& position);
+
+		int GetDirection() const {
+			return direction;
+		}
+		void SetDirection(int d) {
+			direction = d;
+		}
+
 	protected:
 		void PlaceRail();
 
@@ -47,6 +61,11 @@ namespace NCL::CSC8503 {
 		float height;
 		int num = 1;
 		bool placed;
+		int direction = -1;
+
+		Mesh* railTurnMesh = nullptr;
+		Texture* railTurnTex = nullptr;
+		Texture* railTurnBumpTex = nullptr;
 
 		ProduceCarriage* carriage = nullptr;
 	};

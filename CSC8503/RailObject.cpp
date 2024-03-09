@@ -61,11 +61,19 @@ void RailObject::Update(float dt) {
                 RPressed = player->GetButton(4);
 
             if (RPressed) {
-                putDown = true;
-                num = 1;
                 Vector3 position = transform.GetPosition();
-                transform.SetPosition(FindNearestGridCenter(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
-                player = nullptr;
+                Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+                GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+                if (n.type != 12345 && n.type != 10000 && n.type != 10086
+                    && n.type != 10010 && n.type != 114514) {
+                    putDown = true;
+                    num = 1;
+                    transform.SetPosition(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                    player->SetSlot(0);
+                    player->SetSlotNum(0);
+                    player = nullptr;
+                }
             }
         }
         PlaceRail();
@@ -87,59 +95,154 @@ void RailObject::Update(float dt) {
 
 //1 ×ó,2 ÓÒ,3 Ç°,4 ºó
 
-int GetDirection(Vector3 point1, Vector3 point2)
-{
-    float deltaX = point2.x - point1.x;
-    float deltaY = point2.y - point1.y;
+//int GetDirection(Vector3 point1, Vector3 point2)
+//{
+//    float deltaX = point2.x - point1.x;
+//    float deltaY = point2.y - point1.y;
+//
+//    if (std::abs(deltaX) > std::abs(deltaY)) {
+//        if (deltaX > 0)
+//            return 2;
+//        else
+//            return 1;
+//    }
+//    else {
+//        if (deltaY > 0)
+//            return 3;
+//        else
+//            return 4;
+//    }
+//}
 
-    if (std::abs(deltaX) > std::abs(deltaY)) {
-        if (deltaX > 0)
-            return 2;
-        else
-            return 1;
-    }
-    else {
-        if (deltaY > 0)
-            return 3;
-        else
-            return 4;
-    }
-}
-int RailObject::GetRailDirection(const Vector3& position)
-{
-
-    static std::vector<Vector3> values;
-
-    values.push_back(position);
-
-    if (values.size() == 2)
-    {
-        return GetDirection(values[0], values[1]);
-    }
-    else if (values.size() == 3)
-    {
-        values.erase(values.begin());
-        return GetDirection(values[0], values[1]);
-    }
-}
+//int RailObject::GetRailDirection(const Vector3& position)
+//{
+//
+//    static std::vector<Vector3> values;
+//
+//    values.push_back(position);
+//
+//    if (values.size() == 2)
+//    {
+//        return GetDirection(values[0], values[1]);
+//    }
+//    else if (values.size() == 3)
+//    {
+//        values.erase(values.begin());
+//        return GetDirection(values[0], values[1]);
+//    }
+//}
 
 void RailObject::PlaceRail() {
-    Vector3 pposition = transform.GetPosition();
-    Vector3 pp = FindGrid(Vector3(pposition.x, 2, pposition.z));
-    int indexx = pp.x / 10 + (pp.y / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
-    std::cout << "Type: " << TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(indexx).type << std::endl;
+    TrainObject* train = TutorialGame::GetGame()->GetTrain();
     if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F) && player->GetSlot() == 7 && num == 1) {
         if (!putDown && !inCarriage) {
-            Vector3 position = transform.GetPosition();
-            Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
-            int index = p.x / 10 + (p.y / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
-            if (TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type == 0) {
+            bool canConnect = false;
+            bool isPath = false;
+            int connectedIndex = -1;
+            RailObject* lastRail = nullptr;
+            Vector3 position = FindGrid(Vector3(transform.GetPosition().x, 4.5f, transform.GetPosition().z));
+            int index = position.x / 10 + (position.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+            for (int i = 0; i < 4; ++i) {
+                if (n.connected[i]) {
+                    if (n.connected[i]->type == 7) {
+                        canConnect = true;
+                        connectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            if ((train->GetLastPath() - position).Length() < 14)
+                isPath = true;
+            if (n.type == 0 && canConnect && isPath) {
                 placed = true;
                 putDown = true;
-                physicsObject->SetResolve(false);
-                TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).SetType(7);
-                //std::cout << "Type: " << TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type << std::endl;
-                transform.SetPosition(p);
+                transform.SetScale(Vector3(10, 10, 10));
+                n.SetType(7);
+                n.SetRail(this);
+                transform.SetPosition(position);
+                train->AddPath(position);
+                train->AddCarriagePath(position);
+                switch (connectedIndex) {
+                case 0:
+                    transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0));
+                    direction = 1;
+                    lastRail = n.connected[connectedIndex]->GetRail();
+                    if (lastRail->GetDirection() == 2) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0));
+                    }
+                    else if (lastRail->GetDirection() == 3) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
+                            .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x - 10, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z + 8))
+                            .SetScale(Vector3(17, 1, 17));
+                    }
+                    break;
+                case 1:
+                    transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0));
+                    direction = 0;
+                    lastRail = n.connected[connectedIndex]->GetRail();
+                    if (lastRail->GetDirection() == 2) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 180, 0));
+                    }
+                    else if (lastRail->GetDirection() == 3) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 270, 0))
+                            .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x - 8, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z - 8))
+                            .SetScale(Vector3(17, 1, 17));
+                    }
+                    break;
+                case 2:
+                    transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
+                    direction = 3;
+                    lastRail = n.connected[connectedIndex]->GetRail();
+                    if (lastRail->GetDirection() == 0) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 90, 0))
+                            .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x + 6, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z + 10))
+                            .SetScale(Vector3(15, 10, 15));
+                    }
+                    else if (lastRail->GetDirection() == 1) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 180, 0))
+                            .SetPosition(Vector3(lastRail->GetTransform().GetPosition().x + 10, lastRail->GetTransform().GetPosition().y + 1, lastRail->GetTransform().GetPosition().z - 7))
+                            .SetScale(Vector3(15, 10, 15));
+                    }
+                    break;
+                case 3:
+                    transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
+                    direction = 2;
+                    lastRail = n.connected[connectedIndex]->GetRail();
+                    if (lastRail->GetDirection() == 0) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
+                    }
+                    else if (lastRail->GetDirection() == 1) {
+                        lastRail->GetRenderObject()->SetMesh(railTurnMesh);
+                        lastRail->GetRenderObject()->SetDefaultTexture(railTurnTex);
+                        lastRail->GetRenderObject()->SetBumpTexture(railTurnBumpTex);
+                        lastRail->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 270, 0));
+                    }
+                    break;
+                default:
+                    break;
+                }
                 player->SetSlotNum(player->GetSlotNum() - 1);
                 if (player->GetSlotNum() == 0) {
                     player->SetSlot(0);
@@ -155,4 +258,10 @@ void RailObject::PlaceRail() {
             }
         }
     }
+}
+
+void RailObject::UploadAssets(Mesh* m, Texture* t, Texture* bt) {
+    railTurnMesh = m;
+    railTurnTex = t;
+    railTurnBumpTex = bt;
 }

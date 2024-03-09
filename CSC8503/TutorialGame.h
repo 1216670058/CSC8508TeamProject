@@ -61,13 +61,15 @@ namespace NCL {
 
             PlankObject* AddPlankToWorld(const Vector3& position, bool network = false, int id = 0);
             StoneObject* AddStoneToWorld(const Vector3& position, bool network = false, int id = 0);
-            RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0);
+            RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0, bool placed = false);
 
             void InitGameWorld(bool networked = false) { InitCamera(); InitWorld(networked); }
             bool IsExitGame() { return isExit; }
             float GetPlayTime() { return playtime; };
             TrainObject* GetTrain() const { return train; };
             PlayerObject* GetPlayer() const { return player; }
+            MaterialCarriage* GetMaterialCarriage() { return carriage1; }
+            ProduceCarriage* GetProduceCarriage() { return carriage2; }
             WaterCarriage* GetWaterCarriage() { return carriage3; }
 
         protected:
@@ -143,7 +145,6 @@ namespace NCL {
             PhysicsSystem* physics;
             GameWorld* world;
             Audio* audio;
-            std::vector<GameObject*> scene;
             KeyboardMouseController controller;
 
             Vector3 ObjectPos;
@@ -186,9 +187,9 @@ namespace NCL {
             Mesh* plankMesh = nullptr;
             Mesh* stoneMesh = nullptr;
             Mesh* railMesh = nullptr;
+            Mesh* railTurnMesh = nullptr;
 
             OBJMesh* trainMesh = nullptr;
-            OBJMesh* creeperMesh = nullptr;
 
             Texture* basicTex = nullptr;
             Texture* woodTex = nullptr;
@@ -204,6 +205,7 @@ namespace NCL {
             Texture* plankTex = nullptr;
             Texture* stoneTex = nullptr;
             Texture* railTex = nullptr;
+            Texture* railTurnTex = nullptr;
 
             Texture* rockBumpTex = nullptr;
             Texture* lightBumpTex = nullptr;
@@ -213,6 +215,7 @@ namespace NCL {
             Texture* plankBumpTex = nullptr;
             Texture* stoneBumpTex = nullptr;
             Texture* railBumpTex = nullptr;
+            Texture* railTurnBumpTex = nullptr;
 
             Texture* lightSpecTex = nullptr;
 
@@ -248,8 +251,6 @@ namespace NCL {
             AnimationObject* mooseAnimation = nullptr;
             AnimationObject* robotAnimation = nullptr;
             AnimationObject* droneAnimation = nullptr;
-
-
 
             Shader* basicDayShader = nullptr;
             Shader* bumpDayShader = nullptr;

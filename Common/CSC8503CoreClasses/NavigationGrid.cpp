@@ -32,15 +32,16 @@ NavigationGrid::NavigationGrid(const std::string &filename) : NavigationGrid() {
 
     for (int y = 0; y < gridHeight; ++y) {
         for (int x = 0; x < gridWidth; ++x) {
-            GridNode &n = allNodes[(gridWidth * y) + x];
+            GridNode& n = allNodes[(gridWidth * y) + x];
             char type = 0;
             infile >> type;
-            if (type == 1)n.type = 12345;
-            if (type == 2)n.type = 10086;
-            if (type == 3)n.type = 10010;
-            if (type == 4)n.type = 10000;
-            if (type == 5)n.type = 114514;
-            if (type == 0)n.type = 134;
+            if (type == '1')n.type = 12345;
+            if (type == '2')n.type = 10086;
+            if (type == '3')n.type = 10010;
+            if (type == '4')n.type = 10000;
+            if (type == '5')n.type = 114514;
+            if (type == '6')n.type = 7;
+            if (type == '0')n.type = 0;
             n.position = Vector3((float) (x * nodeSize), 7, (float) (y * nodeSize));
         }
     }

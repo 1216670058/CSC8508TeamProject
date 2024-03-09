@@ -3,6 +3,7 @@
 #include <string>
 namespace NCL {
 	namespace CSC8503 {
+		class RailObject;
 		struct GridNode {
 			GridNode* parent;
 
@@ -15,6 +16,8 @@ namespace NCL {
 			float g;
 
 			int type;
+
+			RailObject* rail;
 
 			GridNode() {
 				for (int i = 0; i < 4; ++i) {
@@ -30,6 +33,13 @@ namespace NCL {
 
 			void SetType(int t) {
 				type = t;
+			}
+
+			void SetRail(RailObject* r) {
+				rail = r;
+			}
+			RailObject* GetRail() const {
+				return rail;
 			}
 		};
 

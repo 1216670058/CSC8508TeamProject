@@ -313,8 +313,6 @@ void TutorialGame::InitWorld(bool networked) {
     world->ClearAndErase();
     physics->Clear();
 
-    //InitMixedGridWorld(15, 15, 3.5f, 3.5f);
-    //AddSceneToWorld();
     InitGameExamples(networked);
     InitDefaultFloor();
 
@@ -327,7 +325,7 @@ void TutorialGame::InitDefaultFloor() {
 
 void TutorialGame::InitGameExamples(bool networked) {
     player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
-    train = AddTrainToWorld(Vector3(70, 5, 100), !networked);
+    train = AddTrainToWorld(Vector3(70, 4.5f, 100), !networked);
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
         carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
