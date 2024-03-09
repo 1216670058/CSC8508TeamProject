@@ -31,7 +31,7 @@ NetworkedGame::NetworkedGame()	{
 	networkInstance = this;
 }
 
-NetworkedGame::~NetworkedGame()	{
+NetworkedGame::~NetworkedGame()	{ 
 	delete thisServer;
 	delete thisClient;
 }

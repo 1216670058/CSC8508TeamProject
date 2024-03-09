@@ -4,7 +4,7 @@
 #include "NavigationGrid.h"
 #include "Window.h"
 
-using namespace NCL::CSC8503;
+using namespace NCL::CSC8503; 
 
 void RailObject::OnCollisionBegin(GameObject* otherObject) {
     if (!TutorialGame::GetGame()->IsNetworked() || NetworkedGame::GetNetworkedGame()->IsServer()) {

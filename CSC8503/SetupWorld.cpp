@@ -8,7 +8,7 @@
 #include "PositionConstraint.h"
 #include "StateGameObject.h"
 
-void TutorialGame::AssetsLoading() {
+void TutorialGame::AssetsLoading() { 
     switch (assetsLoadedStep)
     {
     case 0:

@@ -3,7 +3,7 @@
 #include "CollectableObject.h"
 
 namespace NCL::CSC8503 {
-	class RailObject :public CollectableObject {
+	class RailObject :public CollectableObject { 
 	public:
 		RailObject(GameWorld* world) {
 			this->world = world;

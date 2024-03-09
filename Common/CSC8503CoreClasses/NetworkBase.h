@@ -2,7 +2,7 @@
 //#include "./enet/enet.h"
 struct _ENetHost;
 struct _ENetPeer;
-struct _ENetEvent;
+struct _ENetEvent; 
 
 enum BasicNetworkMessages {
 	None,

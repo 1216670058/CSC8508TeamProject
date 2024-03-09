@@ -6,7 +6,7 @@ namespace NCL {
 	namespace CSC8503 {
 		class GameServer;
 		class GameClient;
-		class NetworkPlayer;
+		class NetworkPlayer; 
 
 		class NetworkedGame : public TutorialGame, public PacketReceiver {
 		public:
