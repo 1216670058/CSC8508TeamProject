@@ -10,7 +10,7 @@ TrainObject::TrainObject() {
 TrainObject::~TrainObject() {
 
 }
-
+ 
 TrainObject::TrainObject(GameWorld* w) {
 
     path.push_back(Vector3(90, 4.5f, 100));
