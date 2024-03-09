@@ -88,7 +88,7 @@ namespace NCL {
 
             void UpdateLoading(float dt);
             void UpdatePlaying(float dt);
-            void UpdatePaused(float dt);
+            virtual void UpdatePaused(float dt);
             void UpdateMenu(float dt);
 
             /*

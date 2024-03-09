@@ -19,6 +19,7 @@ namespace NCL {
 			void UpdateGame(float dt) override;
 
 			void UpdateNetworkedPlaying(float dt);
+			void UpdatePaused(float dt) override;
 
 			void UpdateKeys();
 
