@@ -32,6 +32,7 @@ bool NetworkObject::ReadClientPacket(ClientPacket& p) {
     object.SetButton(4, p.buttonstates[4]);
     object.SetButton(5, p.buttonstates[5]);
     object.SetButton(6, p.buttonstates[6]);
+    object.SetButton(7, p.buttonstates[7]);
     return true;
 }
 
@@ -107,11 +108,13 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
 
             if (object.GetTypeID() == 1) {
                 object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+                object.SetSlot(lastFullState.slot);
+                object.SetSlotNum(lastFullState.slotNum);
             }
             else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
             }
-            else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
+            else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
                 object.GetTransform().SetScale(lastFullState.scale);
             }
         }
@@ -192,13 +195,13 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
 
         if (object.GetTypeID() == 1) {
             fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
+            fp->fullState.slot = object.GetSlot();
+            fp->fullState.slotNum = object.GetSlotNum();
         }
-
         else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
         }
-
-        else if (object.GetTypeID() == 5 || object.GetTypeID() == 6) {
+        else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
             fp->fullState.scale = object.GetTransform().GetScale();
         }
 

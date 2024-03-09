@@ -26,6 +26,8 @@ namespace NCL {
 
 			void SpawnCarriage();
 
+			void SynchronizeGameObjects();
+
 			void UpdateGameObjects();
 
 			void SpawnGameObjects();
@@ -71,6 +73,12 @@ namespace NCL {
 			void SetProduceRailFlag(bool f) {
 				railProduced = f;
 			}
+			bool GetUpdateRailFlag() const {
+				return updateRail;
+			}
+			void SetUpdateRailFlag(bool f) {
+				updateRail = f;
+			}
 
 			void SetTreeCutTag(int t) {
 				treeCutTag = t;
@@ -109,6 +117,13 @@ namespace NCL {
 				railNetworkID = id;
 			}
 
+			void SetUpdateRailTag(int t) {
+				updateRailTag = t;
+			}
+			void SetUpdateRailNetworkID(int id) {
+				updateRailNetworkID = id;
+			}
+
 			static NetworkedGame* GetNetworkedGame() {
 				return networkInstance;
 			};
@@ -145,6 +160,7 @@ namespace NCL {
 			bool rockDug = false;
 			bool materialUpdating = false;
 			bool railProduced = false;
+			bool updateRail = false;
 
 			int treeCutTag = 0;
 			int plankNetworkID;
@@ -160,6 +176,9 @@ namespace NCL {
 
 			int railProducedTag = 0;
 			int railNetworkID;
+
+			int updateRailTag = 0;
+			int updateRailNetworkID;
 
 			int newObjectTag = 0;
 			vector<int> objectType;

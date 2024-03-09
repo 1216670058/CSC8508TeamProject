@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderObject.h"
 
 namespace NCL {
 	using namespace Maths;
@@ -9,12 +10,14 @@ namespace NCL {
 			NetworkState();
 			virtual ~NetworkState();
 
-			Vector3		position;
-			Quaternion	orientation;
-			Vector3     scale;
-			Vector4     colour;
-			int         currentFrame;
-			int			stateID;
+			Vector3		   position;
+			Quaternion	   orientation;
+			Vector3        scale;
+			Vector4        colour;
+			int            currentFrame;
+			int			   stateID;
+			int            slot;
+			int            slotNum;
 		};
 	}
 }
