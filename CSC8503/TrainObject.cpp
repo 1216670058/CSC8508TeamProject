@@ -4,8 +4,7 @@
 using namespace NCL::CSC8503;
 
 TrainObject::TrainObject() {
-    path.push_back({ Vector3(10, 5, 60), 4 });
-    // path.push_back({Vector3(60, 0, 60), 1});
+
 }
 
 TrainObject::~TrainObject() {
@@ -14,8 +13,8 @@ TrainObject::~TrainObject() {
 
 TrainObject::TrainObject(GameWorld* w) {
 
-    path.push_back({ Vector3(300, 5, 100), 4 });
-    path.push_back({ Vector3(300, 5, 0), 1 });
+    path.push_back(Vector3(90, 4.5f, 100));
+    //path.push_back({ Vector3(300, 5, 0), 1 });
     world = w;
     trainCarriage = new TrainCarriage[trainMaxIndex];
     trainIndex = 0;
@@ -43,15 +42,11 @@ void TrainObject::UpdateOrientation(Vector3 direction) {
 
 void TrainObject::Update(float dt) {
     if (path.size() == 0) return;
-    auto it = path.begin();
-    auto itt = it->first;
-    int flag = it->second;
-
-    Vector3 target = itt;
-    Vector3 dir = (target - this->GetTransform().GetPosition());
-    dir = Vector3(dir.x, 0, dir.z);
-    force = 30.0f;
-    GetPhysicsObject()->SetLinearVelocity(dir.Normalised() * force * dt);
+    Vector3 target = path[0];
+    direction = (target - this->GetTransform().GetPosition());
+    direction = Vector3(direction.x, 0, direction.z);
+    force = 20.0f;
+    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 
     //std::cout << GetPhysicsObject()->GetInverseMass() << std::endl;
     float dtdist = (lastpos - curpos).Length();
@@ -66,18 +61,26 @@ void TrainObject::Update(float dt) {
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5f) {
-        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
-        path.erase(it);
+        if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+        physicsObject->SetLinearVelocity(Vector3());
+        path.erase(path.begin());
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
-    //std::cout << "Dir: " << dir.x << " " << dir.y << " " << dir.z << std::endl;
-    UpdateOrientation(dir);
+    //std::cout << "Position: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
+    //std::cout << "Target: " << target.x << " " << target.y << " " << target.z << std::endl;
+    UpdateOrientation(direction);
 }
 
-void TrainObject::UpdatePath(std::pair<Vector3, int> p) {
+void TrainObject::AddPath(Vector3 p) {
     path.push_back(p);
+}
+
+void TrainObject::AddCarriagePath(Vector3 p) {
+    TutorialGame::GetGame()->GetMaterialCarriage()->AddPath(p);
+    TutorialGame::GetGame()->GetProduceCarriage()->AddPath(p);
+    TutorialGame::GetGame()->GetWaterCarriage()->AddPath(p);
 }
 
 void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader) {
@@ -95,20 +98,12 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
 
     Vector3 nextPos;
 
-
-    if (path.front().second <= 1) {
-        nextPos = nowPos;
-        nextPos.z -= 10;
-    }
-    else {
-        nextPos = nowPos;
-        nextPos.x -= 10;
-
-    }
+    nextPos = nowPos;
+    nextPos.x -= 10;
 
     if (id == 21) {
         MaterialCarriage* carriage = new MaterialCarriage(world);
-        carriage->path = path;
+        carriage->SetPath(path);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -136,7 +131,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     }
     if (id == 22) {
         ProduceCarriage* carriage = new ProduceCarriage(world);
-        carriage->path = path;
+        carriage->SetPath(path);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -166,7 +161,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     }
     if (id == 23) {
         WaterCarriage* carriage = new WaterCarriage(world);
-        carriage->path = path;
+        carriage->SetPath(path);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -200,4 +195,11 @@ void TrainObject::AddConstraint(GameObject* a, GameObject* b) {
     float maxDistance = 10.0f;
     PositionConstraint* constraint = new PositionConstraint(a, b, maxDistance);
     world->AddConstraint(constraint);
+}
+
+int TrainObject::GetDirection() {
+    if (direction.x > 0) return 1;
+    else if (direction.x < 0) return 2;
+    else if (direction.z > 0) return 3;
+    else if (direction.z < 0) return 4;
 }

@@ -1,4 +1,5 @@
 #include "CollectableObject.h"
+#include "TutorialGame.h"
 #include "Window.h"
 
 using namespace NCL::CSC8503;
@@ -19,11 +20,19 @@ void CollectableObject::Update(float dt) {
             RPressed = player->GetButton(4);
         
         if (RPressed) {
-            putDown = true;
-            num = 1;
             Vector3 position = transform.GetPosition();
-            transform.SetPosition(FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f));
-            player = nullptr;
+            Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+            int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+            if (n.type != 12345 && n.type != 10000 && n.type != 10086
+                && n.type != 10010 && n.type != 114514) {
+                putDown = true;
+                num = 1;
+                transform.SetPosition(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                player->SetSlot(0);
+                player->SetSlotNum(0);
+                player = nullptr;
+            }
         }       
     }
 }

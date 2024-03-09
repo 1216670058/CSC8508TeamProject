@@ -55,6 +55,7 @@ void TutorialGame::InitMeshes() {
     plankMesh = renderer->LoadMesh("Plank.msh");
     stoneMesh = renderer->LoadMesh("Stone.msh");
     railMesh = renderer->LoadMesh("Rail.msh");
+    railTurnMesh = renderer->LoadMesh("RailTurn.msh");
     //maleMesh = renderer->LoadMesh("Male_Guard.msh");
     //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     assassinMesh = renderer->LoadMesh("Assassin.msh");
@@ -86,6 +87,7 @@ void TutorialGame::InitTextures() {
     plankTex = renderer->LoadTexture("Planks_Diff.png");
     stoneTex = renderer->LoadTexture("Stone.png");
     railTex = renderer->LoadTexture("Rail.png");
+    railTurnTex = renderer->LoadTexture("RailTurn.jpg");
 
     //floorBumpTex = renderer->LoadTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
@@ -96,6 +98,7 @@ void TutorialGame::InitTextures() {
     plankBumpTex = renderer->LoadTexture("Planks_Norm.png");
     stoneBumpTex = renderer->LoadTexture("Stone_n.png");
     railBumpTex = renderer->LoadTexture("Rail_n.png");
+    railTurnBumpTex = renderer->LoadTexture("RailTurn_n.jpg");
 
     //lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
 }
@@ -406,10 +409,15 @@ void TutorialGame::AddSceneToWorld()
             n.type = type;
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
-            if (type == '1')scene.emplace_back(AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0));    
-            if (type == '2')scene.emplace_back(AddTreeToWorld(n.position + Vector3(0, 2.5f, 0)));
-            if (type == '3')scene.emplace_back(AddRockToWorld(n.position + Vector3(0, -2.5f, 0)));
-            if (type == '4')scene.emplace_back(AddSphereToWorld(n.position, (float)nodeSize / 2, 0));
+            if (type == '1')AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0);    
+            if (type == '2')AddTreeToWorld(n.position + Vector3(0, 2.5f, 0));
+            if (type == '3')AddRockToWorld(n.position + Vector3(0, -2.5f, 0));
+            if (type == '4')AddSphereToWorld(n.position, (float)nodeSize / 2, 0);
+            if (type == '6') {
+                RailObject* rail = new RailObject(world);
+                rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
+                navGrid->GetGridNode((gridWidth * y) + x).SetRail(rail);
+            }
         }
     }
     return;
@@ -539,7 +547,7 @@ TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) 
     if (spawn)
         train->GetTransform()
         .SetScale(Vector3(10, 10, 10))
-        .SetPosition(position);
+        .SetPosition(train->FindGrid(position));
     else
         train->GetTransform()
         .SetScale(Vector3(10, 10, 10))
@@ -902,21 +910,14 @@ StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position, bool network
     return stone;
 }
 
-RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, int id)
+RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, int id, bool placed)
 {
     RailObject* rail = new RailObject(world);
 
-    std::pair<Vector3, int > path = std::make_pair(position, rail->GetRailDirection(position));
-
-    train->UpdatePath(path);
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     rail->SetBoundingVolume((CollisionVolume*)volume);
 
     //rail->SetPlayer(player);
-
-    rail->GetTransform()
-        .SetPosition(rail->FindNearestGridCenter(position))
-        .SetScale(Vector3(4, 4, 4));
 
     rail->SetRenderObject(new RenderObject(&rail->GetTransform(), railMesh, railTex, bumpShader));
     rail->GetRenderObject()->SetBumpTexture(railBumpTex);
@@ -924,17 +925,45 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
 
     rail->GetPhysicsObject()->SetGravity(false);
     rail->GetPhysicsObject()->SetResolve(false);
-    rail->GetPhysicsObject()->SetInverseMass(1);
-    rail->GetPhysicsObject()->InitCubeInertia();
 
-    world->AddGameObject(rail);
+    rail->UploadAssets(railTurnMesh, railTurnTex, railTurnBumpTex);
 
     if (!network)
         rail->SetNetworkObject(new NetworkObject(*rail, rail->GetWorldID() + 3000));
     else
         rail->SetNetworkObject(new NetworkObject(*rail, id));
 
-    return rail;
+    if (!placed) {
+        rail->GetTransform()
+            .SetPosition(position)
+            .SetScale(Vector3(4, 4, 4));
+
+        rail->GetPhysicsObject()->SetInverseMass(1);
+        rail->GetPhysicsObject()->InitCubeInertia();
+
+        world->AddGameObject(rail);
+
+        return rail;
+    }
+    else {
+        //std::pair<Vector3, int > path = std::make_pair(position, rail->GetRailDirection(position));
+        //train->UpdatePath(path);
+
+        rail->GetTransform()
+            .SetPosition(rail->FindGrid(position))
+            .SetScale(Vector3(10, 10, 10));
+
+        rail->GetPhysicsObject()->SetInverseMass(0);
+        rail->GetPhysicsObject()->InitCubeInertia();
+        rail->SetInCarriage(false);
+        rail->SetPlaced(true);
+
+        rail->SetDirection(3);
+
+        world->AddGameObject(rail);
+
+        return rail;
+    }
 }
 
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {

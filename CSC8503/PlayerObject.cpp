@@ -8,20 +8,10 @@ using namespace NCL::CSC8503;
 
 void PlayerObject::Update(float dt) {
     if (NetworkedGame::GetNetworkedGame()->IsServer() || !TutorialGame::GetGame()->IsNetworked()) {
-        bool RPressed = false;
-        if (networkObject->GetNetworkID() == 1)
-            RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
-        else
-            RPressed = buttonStates[4];
 
         if (renderObject->GetAnimationObject())
             UpdateAnimation(dt);
         PlayerMovement(dt);
-
-        if (RPressed) {
-            slot = 0;
-            slotNum = 0;
-        }
 
         doing = false;
         cutting = false;
@@ -32,6 +22,12 @@ void PlayerObject::Update(float dt) {
         ScoopWater();
         UseWater();
         LoadMaterial();
+
+        //Vector3 position = transform.GetPosition();
+        //Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
+        //int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+        //std::cout << "Index: " << index << std::endl;
+        //std::cout << "Type: " << TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type << std::endl;
     }
 }
 
@@ -258,6 +254,10 @@ void PlayerObject::CutTree() {
                 closest->SetFlag1(true);
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
+                    Vector3 position = FindGrid(closest->GetTransform().GetPosition());
+                    int index = position.x / 10 + (position.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+                    GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+                    n.SetType(0);
                     closest->SetFlag1(false);
                     if (TutorialGame::GetGame()->IsNetworked()) {                       
                         worldID1 = closest->GetWorldID();
@@ -296,6 +296,10 @@ void PlayerObject::DigRock() {
                 closest->SetFlag1(true);
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
+                    Vector3 position = FindGrid(closest->GetTransform().GetPosition());
+                    int index = position.x / 10 + (position.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+                    GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+                    n.SetType(0);
                     closest->SetFlag1(false);
                     if (TutorialGame::GetGame()->IsNetworked()) {                       
                         worldID1 = closest->GetWorldID();

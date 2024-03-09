@@ -39,11 +39,7 @@ int TrainCarriage::GetDirection() {
 
 void TrainCarriage::Update(float dt) {
     if (path.size() == 0) return;
-    auto it = path.begin();
-    auto itt = it->first;
-    int flag = it->second;
-
-    Vector3 target = itt;
+    Vector3 target = path[0];
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
     GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
@@ -51,30 +47,33 @@ void TrainCarriage::Update(float dt) {
 
     float mm = (this->GetTransform().GetPosition() - target).Length();
     if (mm < 0.5) {
-        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
-        path.erase(it);
+        if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+        physicsObject->SetLinearVelocity(Vector3());
+        path.erase(path.begin());
     }
 }
 
+void TrainCarriage::AddPath(Vector3 p) {
+    this->path.push_back(p);
+}
+
 void MaterialCarriage::Update(float dt) {
-    if (path.size() == 0) return;
-    auto it = path.begin();
-    auto itt = it->first;
-    int flag = it->second;
+    if (path.size() != 0) {
+        Vector3 target = path[0];
+        direction = (target - this->GetTransform().GetPosition());
+        direction = Vector3(direction.x, 0, direction.z);
+        //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+        GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
+        UpdateOrientation();
 
-    Vector3 target = itt;
-    direction = (target - this->GetTransform().GetPosition());
-    direction = Vector3(direction.x, 0, direction.z);
-    //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
-    UpdateOrientation();
-
-    float mm = (this->GetTransform().GetPosition() - target).Length();
-    if (mm < 0.5) {
-        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
-        path.erase(it);
+        float mm = (this->GetTransform().GetPosition() - target).Length();
+        if (mm < 0.5) {
+            if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+            else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+            physicsObject->SetLinearVelocity(Vector3());
+            path.erase(path.begin());
+        }
     }
 
     if (produceCarriage->Finished()) {
@@ -154,22 +153,21 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
 }
 
 void ProduceCarriage::Update(float dt) {
-    if (path.size() == 0) return;
-    auto it = path.begin();
-    auto itt = it->first;
-    int flag = it->second;
+    if (path.size() != 0) {
+        Vector3 target = path[0];
+        direction = (target - this->GetTransform().GetPosition());
+        direction = Vector3(direction.x, 0, direction.z);
+        //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+        GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
+        UpdateOrientation();
 
-    Vector3 target = itt;
-    direction = (target - this->GetTransform().GetPosition());
-    direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
-    UpdateOrientation();
-
-    float mm = (this->GetTransform().GetPosition() - target).Length();
-    if (mm < 0.5) {
-        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
-        path.erase(it);
+        float mm = (this->GetTransform().GetPosition() - target).Length();
+        if (mm < 0.5) {
+            if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+            else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+            physicsObject->SetLinearVelocity(Vector3());
+            path.erase(path.begin());
+        }
     }
 
     if (finish && materialCarriage->IsReady()) {
@@ -197,22 +195,21 @@ void ProduceCarriage::Update(float dt) {
     }
 }
 void WaterCarriage::Update(float dt) {
-    if (path.size() == 0) return;
-    auto it = path.begin();
-    auto itt = it->first;
-    int flag = it->second;
+    if (path.size() != 0) {
+        Vector3 target = path[0];
+        direction = (target - this->GetTransform().GetPosition());
+        direction = Vector3(direction.x, 0, direction.z);
+        //std::cout << "Dir: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+        GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
+        UpdateOrientation();
 
-    Vector3 target = itt;
-    direction = (target - this->GetTransform().GetPosition());
-    direction = Vector3(direction.x, 0, direction.z);
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
-    UpdateOrientation();
-
-    float mm = (this->GetTransform().GetPosition() - target).Length();
-    if (mm < 0.5) {
-        if (flag > 2) transform.SetPosition(Vector3(itt.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, itt.z));
-        path.erase(it);
+        float mm = (this->GetTransform().GetPosition() - target).Length();
+        if (mm < 0.5) {
+            if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+            else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+            physicsObject->SetLinearVelocity(Vector3());
+            path.erase(path.begin());
+        }
     }
 
     float speed = 3.0f;

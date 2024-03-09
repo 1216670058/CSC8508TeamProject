@@ -358,6 +358,16 @@ void UI::DrawPlayingUI(float dt)
     spdbuf << speed;
     string spd = "Speed: " + spdbuf.str() + "m/s";
     ImGui::Text(spd.c_str());
+    std::stringstream posxbuf, posybuf, poszbuf;
+    Vector3 position = TutorialGame::GetGame()->GetPlayer()->GetTransform().GetPosition();
+    posxbuf.precision(0); posxbuf.setf(std::ios::fixed);
+    posybuf.precision(0); posybuf.setf(std::ios::fixed);
+    poszbuf.precision(0); poszbuf.setf(std::ios::fixed);
+    posxbuf << position.x;
+    posybuf << position.y;
+    poszbuf << position.z;
+    string pos = "Position: " + posxbuf.str() + ", " + posybuf.str() + ", " + poszbuf.str();
+    ImGui::Text(pos.c_str());
     ImGui::PopFont();
     ImGui::PopStyleVar();
     ImGui::End();
