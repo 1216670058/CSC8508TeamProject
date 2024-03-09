@@ -126,17 +126,52 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
 void NetworkedGame::UpdateKeys() {
 	if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
 		if (world->GetGameState() == GameState::SERVERPLAYING ||
-			world->GetGameState() == GameState::CLIENTPLAYING)
+			world->GetGameState() == GameState::CLIENTPLAYING||
+			world->GetGameState() == GameState::PLAYING)
 			world->SetGameState(GameState::PAUSED);
 		else if (world->GetGameState() == GameState::PAUSED) {
 			if (IsServer())
 				world->SetGameState(GameState::SERVERPLAYING);
 			else if (IsClient())
 				world->SetGameState(GameState::CLIENTPLAYING);
+			else
+				world->SetGameState(GameState::PLAYING);
 			Window::GetWindow()->ShowOSPointer(false);
 			Window::GetWindow()->LockMouseToWindow(true);
 		}
 	}
+}
+
+void NetworkedGame::UpdatePaused(float dt)
+{
+	timeToNextPacket -= dt;
+	if (timeToNextPacket < 0) {
+		if (thisServer) {
+			UpdateAsServer(dt);
+		}
+		else if (thisClient) {
+			UpdateAsClient(dt);
+		}
+		timeToNextPacket += 1.0f / 20.0f; //20hz server/client update
+	}
+
+	if (!inSelectionMode) {
+		if (cameraMode == 1) {
+			CameraUpdate();
+		}
+		else {
+			world->GetMainCamera().UpdateCamera(dt);
+		}
+	}
+
+	UpdateKeys();
+	audio->Update();
+
+	renderer->Update(dt);
+	renderer->GetUI()->Update(dt); //UI
+	physics->Update(dt);
+	renderer->Render();
+	Debug::UpdateRenderables(dt);
 }
 
 void NetworkedGame::UpdateAsServer(float dt) {
