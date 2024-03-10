@@ -4,6 +4,7 @@
 #include "CollisionDetection.h"
 #include "Camera.h"
 #include "NetworkObject.h"
+#include "Window.h"
 
 using namespace NCL;
 using namespace NCL::CSC8503;
@@ -96,7 +97,7 @@ void GameWorld::UpdateWorld(float dt) {
 	if (shuffleConstraints) {
 		std::shuffle(constraints.begin(), constraints.end(), e);
 	}
-
+    
 	for (auto& i : gameObjects) {
 		if (i->IsActive()) {
 				i->Update(dt);
