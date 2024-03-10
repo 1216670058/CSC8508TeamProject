@@ -3,191 +3,193 @@
 #include "NetworkBase.h"
 
 namespace NCL {
-	namespace CSC8503 {
-		class GameServer;
-		class GameClient;
-		class NetworkPlayer; 
+    namespace CSC8503 {
+        class GameServer;
+        class GameClient;
+        class NetworkPlayer;
 
-		class NetworkedGame : public TutorialGame, public PacketReceiver {
-		public:
-			NetworkedGame();
-			~NetworkedGame();
+        class NetworkedGame : public TutorialGame, public PacketReceiver {
+        public:
+            NetworkedGame();
+            ~NetworkedGame();
 
-			void StartAsServer();
-			void StartAsClient(char a, char b, char c, char d);
+            void StartAsServer();
+            void StartAsClient(char a, char b, char c, char d);
 
-			void UpdateGame(float dt) override;
+            void UpdateGame(float dt) override;
 
-			void UpdateNetworkedPlaying(float dt);
-			void UpdatePaused(float dt) override;
+            void UpdateNetworkedPlaying(float dt);
+            void UpdatePaused(float dt) override;
 
-			void UpdateKeys();
+            void UpdateKeys();
 
-			void SpawnPlayer();
+            void SpawnPlayer();
 
-			void SpawnCarriage();
+            void SpawnCarriage();
 
-			void SynchronizeGameObjects();
+            void SynchronizeGameObjects();
 
-			void UpdateGameObjects();
+            void UpdateGameObjects();
 
-			void SpawnGameObjects();
+            void SpawnGameObjects();
 
-			void StartLevel();
+            void StartLevel();
 
-			void ReceivePacket(int type, GamePacket* payload, int source) override;
+            void ReceivePacket(int type, GamePacket* payload, int source) override;
 
-			void OnPlayerCollision(NetworkPlayer* a, NetworkPlayer* b);
+            void OnPlayerCollision(NetworkPlayer* a, NetworkPlayer* b);
 
-			bool IsServer() {
-				return thisServer != nullptr;
-			}
-			bool IsClient() {
-				return thisClient != nullptr;
-			}
+            bool IsServer() {
+                return thisServer != nullptr;
+            }
+            bool IsClient() {
+                return thisClient != nullptr;
+            }
 
-			PlayerObject* GetLocalPlayer() const {
-				return localPlayer;
-			}
+            PlayerObject* GetLocalPlayer() const {
+                return localPlayer;
+            }
 
-			bool GetCutTreeFlag() const {
-				return treeCut;
-			}
-			void SetCutTreeFlag(bool f) {
-				treeCut = f;
-			}
-			bool GetDigRockFlag() const {
-				return rockDug;
-			}
-			void SetDigRockFlag(bool f) {
-				rockDug = f;
-			}
-			bool GetUpdateMaterialFlag() const {
-				return materialUpdating;
-			}
-			void SetUpdateMaterialFlag(bool f) {
-				materialUpdating = f;
-			}
-			bool GetProduceRailFlag() const {
-				return railProduced;
-			}
-			void SetProduceRailFlag(bool f) {
-				railProduced = f;
-			}
-			bool GetUpdateRailFlag() const {
-				return updateRail;
-			}
-			void SetUpdateRailFlag(bool f) {
-				updateRail = f;
-			}
+            bool GetCutTreeFlag() const {
+                return treeCut;
+            }
+            void SetCutTreeFlag(bool f) {
+                treeCut = f;
+            }
+            bool GetDigRockFlag() const {
+                return rockDug;
+            }
+            void SetDigRockFlag(bool f) {
+                rockDug = f;
+            }
+            bool GetUpdateMaterialFlag() const {
+                return materialUpdating;
+            }
+            void SetUpdateMaterialFlag(bool f) {
+                materialUpdating = f;
+            }
+            bool GetProduceRailFlag() const {
+                return railProduced;
+            }
+            void SetProduceRailFlag(bool f) {
+                railProduced = f;
+            }
+            bool GetUpdateRailFlag() const {
+                return updateRail;
+            }
+            void SetUpdateRailFlag(bool f) {
+                updateRail = f;
+            }
 
-			void SetTreeCutTag(int t) {
-				treeCutTag = t;
-			}
-			void SetPlankNetworkID(int id) {
-				plankNetworkID = id;
-			}
-			void SetTreeWorldID(int id) {
-				treeWorldID = id;
-			}
+            void SetTreeCutTag(int t) {
+                treeCutTag = t;
+            }
+            void SetPlankNetworkID(int id) {
+                plankNetworkID = id;
+            }
+            void SetTreeWorldID(int id) {
+                treeWorldID = id;
+            }
 
-			void SetRockDugTag(int t) {
-				rockDugTag = t;
-			}
-			void SetStoneNetworkID(int id) {
-				stoneNetworkID = id;
-			}
-			void SetRockWorldID(int id) {
-				rockWorldID = id;
-			}
+            void SetRockDugTag(int t) {
+                rockDugTag = t;
+            }
+            void SetStoneNetworkID(int id) {
+                stoneNetworkID = id;
+            }
+            void SetRockWorldID(int id) {
+                rockWorldID = id;
+            }
 
-			void SetMaterialUpdatingTag(int t) {
-				materialUpdatingTag = t;
-			}
-			void SetRemovedPlankNetworkID(int id) {
-				removedPlankNetworkID = id;
-			}
-			void SetRemovedStoneNetworkID(int id) {
-				removedStoneNetworkID = id;
-			}
+            void SetMaterialUpdatingTag(int t) {
+                materialUpdatingTag = t;
+            }
+            void SetRemovedPlankNetworkID(int id) {
+                removedPlankNetworkID = id;
+            }
+            void SetRemovedStoneNetworkID(int id) {
+                removedStoneNetworkID = id;
+            }
 
-			void SetRailProducedTag(int t) {
-				railProducedTag = t;
-			}
-			void SetRailNetworkID(int id) {
-				railNetworkID = id;
-			}
+            void SetRailProducedTag(int t) {
+                railProducedTag = t;
+            }
+            void SetRailNetworkID(int id) {
+                railNetworkID = id;
+            }
 
-			void SetUpdateRailTag(int t) {
-				updateRailTag = t;
-			}
-			void SetUpdateRailNetworkID(int id) {
-				updateRailNetworkID = id;
-			}
+            void SetUpdateRailTag(int t) {
+                updateRailTag = t;
+            }
+            void SetUpdateRailNetworkID(int id) {
+                updateRailNetworkID = id;
+            }
 
-			static NetworkedGame* GetNetworkedGame() {
-				return networkInstance;
-			};
+            static NetworkedGame* GetNetworkedGame() {
+                return networkInstance;
+            };
 
-		protected:
-			void UpdateAsServer(float dt);
-			void UpdateAsClient(float dt);
+        protected:
+            void UpdateAsServer(float dt);
+            void UpdateAsClient(float dt);
 
-			void BroadcastSnapshot(bool deltaFrame);
-			void ClientSend(bool deltaFrame);
-			void UpdateMinimumState();
+            void BroadcastSnapshot(bool deltaFrame);
+            void ClientSend(bool deltaFrame);
+            void UpdateMinimumState();
 
-			void UpdateChooseServer(float dt);
-			std::map<int, int> stateIDs;
+            void UpdateChooseServer(float dt);
+            std::map<int, int> stateIDs;
 
-			GameServer* thisServer;
-			GameClient* thisClient;
-			float timeToNextPacket;
-			int packetsToSnapshot;
+            GameServer* thisServer;
+            GameClient* thisClient;
+            //ClientPacket clientPacket;
+            float servertimeToNextPacket;
+            float clienttimeToNextPacket;
+            int packetsToSnapshot;
 
-			std::vector<NetworkObject*> networkObjects;
+            std::vector<NetworkObject*> networkObjects;
 
-			std::map<int, GameObject*> serverPlayers;
-			PlayerObject* localPlayer;
-			int playerNum;
-			int spawnNum;
+            std::map<int, GameObject*> serverPlayers;
+            PlayerObject* localPlayer;
+            int playerNum;
+            int spawnNum;
 
-			static NetworkedGame* networkInstance;
+            static NetworkedGame* networkInstance;
 
-			bool spawn = false;
-			bool objectSpawned = false;
+            bool spawn = false;
+            bool objectSpawned = false;
 
-			bool treeCut = false;
-			bool rockDug = false;
-			bool materialUpdating = false;
-			bool railProduced = false;
-			bool updateRail = false;
+            bool treeCut = false;
+            bool rockDug = false;
+            bool materialUpdating = false;
+            bool railProduced = false;
+            bool updateRail = false;
 
-			int treeCutTag = 0;
-			int plankNetworkID;
-			int treeWorldID;
+            int treeCutTag = 0;
+            int plankNetworkID;
+            int treeWorldID;
 
-			int rockDugTag = 0;
-			int stoneNetworkID;
-			int rockWorldID;
+            int rockDugTag = 0;
+            int stoneNetworkID;
+            int rockWorldID;
 
-			int materialUpdatingTag = 0;
-			int removedPlankNetworkID;
-			int removedStoneNetworkID;
+            int materialUpdatingTag = 0;
+            int removedPlankNetworkID;
+            int removedStoneNetworkID;
 
-			int railProducedTag = 0;
-			int railNetworkID;
+            int railProducedTag = 0;
+            int railNetworkID;
 
-			int updateRailTag = 0;
-			int updateRailNetworkID;
+            int updateRailTag = 0;
+            int updateRailNetworkID;
 
-			int newObjectTag = 0;
-			vector<int> objectType;
-			vector<int> objectNetworkID;
+            int newObjectTag = 0;
+            vector<int> objectType;
+            vector<int> objectNetworkID;
 
-			int removeObjectTag = 0;
-			vector<int> removedObjectNetworkID;
-		};
-	}
+            int removeObjectTag = 0;
+            vector<int> removedObjectNetworkID;
+        };
+    }
 }
 

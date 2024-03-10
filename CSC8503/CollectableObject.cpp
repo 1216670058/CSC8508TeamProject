@@ -14,8 +14,8 @@ void CollectableObject::Update(float dt) {
         transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
 
         bool RPressed = false;
-        if (player->GetNetworkObject()->GetNetworkID() == 1)
-            RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
+        if (player->GetNetworkObject()->GetNetworkID() == 1 && Window::GetKeyboard()->KeyPressed(KeyCodes::R))
+            RPressed = true;
         else
             RPressed = player->GetButton(4);
         
