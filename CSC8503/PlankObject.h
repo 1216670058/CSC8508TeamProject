@@ -16,6 +16,8 @@ namespace NCL::CSC8503 {
 
 		void Update(float dt) override;
 
+		void CreateBridge();
+
 		void SetHeight(float h) {
 			height = h;
 		}
@@ -23,6 +25,7 @@ namespace NCL::CSC8503 {
 	protected:
 		bool inCarriage = false;
 		bool loading = false;
+		bool placed = false;
 		MaterialCarriage* carriage = nullptr;
 		float height;
 	};

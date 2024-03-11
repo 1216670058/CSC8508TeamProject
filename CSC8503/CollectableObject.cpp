@@ -28,7 +28,9 @@ void CollectableObject::Update(float dt) {
                 && n.type != 10010 && n.type != 114514) {
                 putDown = true;
                 num = 1;
-                transform.SetPosition(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                if (typeID != 3)transform.SetPosition(Vector3(position.x, 6.5f, position.z) - player->GetFace() * 5.0f);
+                else 
+                    transform.SetPosition(Vector3(position.x, 8, position.z) - player->GetFace() * 5.0f);
                 player->SetSlot(0);
                 player->SetSlotNum(0);
                 player = nullptr;

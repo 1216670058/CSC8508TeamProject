@@ -355,6 +355,10 @@ void PhysicsSystem::NarrowPhase() {
         i != broadphaseCollisions.end(); ++i) {
         CollisionDetection::CollisionInfo info = *i;
         if (CollisionDetection::ObjectIntersection(info.a, info.b, info)) {
+            //if (info.a->GetTypeID() == 1 || info.b->GetTypeID() == 1) {
+                //std::cout << " Collision between " << (info.a)->GetTypeID()
+                //    << " and " << (info.b)->GetTypeID() << std::endl;
+            //}
             info.framesLeft = numCollisionFrames;
             if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
                 ImpulseResolveCollision(*info.a, *info.b, info.point);
