@@ -143,8 +143,10 @@ void UI::Update(float dt)
     case CSC8503::GameState::PAUSED:
         DrawPausedMenu(dt);
         break;
+    case CSC8503::GameState::FAILURE:
+        DrawFailureMenu(dt);
+        break;
     default:
-
         break;
     }
 
@@ -418,21 +420,40 @@ void UI::DrawPlayingUI(float dt)
     ImGui::PopFont();
     ImGui::End();
 
-    ImVec2 barSize(35, 240);
-    ImGui::PushFont(normalfont);
-    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
-    ImGui::Begin("Water", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
-    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, IM_COL32(153, 255, 255, 255));
-    ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 200));
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 255, 255, 255));
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5f);
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 15.0f);
-    float value = TutorialGame::GetGame()->GetWaterCarriage()->GetCarriageWater() / 100.0f;
-    ImGui::VSliderFloat(" ", barSize, &value, 0.0f, 1.0f, "");
-    ImGui::PopFont();
-    ImGui::PopStyleVar(2);
-    ImGui::PopStyleColor(3);
-    ImGui::End();
+    if (!TutorialGame::GetGame()->GetTrain()->OnFire()) {
+        ImVec2 barSize(35, 240);
+        ImGui::PushFont(normalfont);
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
+        ImGui::Begin("Water", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
+        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, IM_COL32(153, 255, 255, 255));
+        ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 200));
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 255, 255, 255));
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 15.0f);
+        float value = TutorialGame::GetGame()->GetWaterCarriage()->GetCarriageWater() / 100.0f;
+        ImGui::VSliderFloat(" ", barSize, &value, 0.0f, 1.0f, "");
+        ImGui::PopFont();
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+        ImGui::End();
+    }
+    else {
+        ImVec2 barSize(35, 240);
+        ImGui::PushFont(normalfont);
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
+        ImGui::Begin("Fire", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs);
+        ImGui::PushStyleColor(ImGuiCol_PlotHistogram, IM_COL32(255, 255, 255, 255));
+        ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 200));
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(255, 0, 0, 255));
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.5f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 15.0f);
+        float value = TutorialGame::GetGame()->GetTrain()->GetFire() / 100.0f;
+        ImGui::VSliderFloat(" ", barSize, &value, 0.0f, 1.0f, "");
+        ImGui::PopFont();
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(3);
+        ImGui::End();
+    }
 }
 
 void UI::DrawPausedMenu(float dt)
@@ -484,6 +505,72 @@ void UI::DrawPausedMenu(float dt)
     }
 
     //set Exit Game
+    if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
+        world->SetGameState(GameState::EXIT);
+    }
+
+    ImGui::PopStyleColor(4);
+    ImGui::PopStyleVar(2);
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::End();
+}
+
+void UI::DrawFailureMenu(float dt)
+{
+    Window::GetWindow()->ShowOSPointer(true);
+    Window::GetWindow()->LockMouseToWindow(false);
+    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
+    if (!ImGui::Begin("Background", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::End();
+        return;
+    }
+
+    ImGui::PushFont(titlefont);
+    ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 25, 25, 255));
+    ImGui::SetCursorPos(ImVec2(main_viewport->GetCenter().x - ImGui::CalcTextSize("Train Bob").x * 0.5, main_viewport->GetCenter().y - main_viewport->GetCenter().y * 0.5));
+    ImGui::Text("You Failed!");
+    ImGui::PopFont();
+    ImGui::PopStyleColor();
+
+    ImGui::PushFont(menufont);
+    //Draw menu begin
+    ImVec2 menuSize(300, 100);
+    ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - menuSize.x / 2, main_viewport->GetCenter().y - menuSize.y / 2), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
+    ImGui::BeginChild("Fail Menu", ImVec2(300, 175), false, ImGuiWindowFlags_NoSavedSettings);
+
+    float contentWidth = ImGui::GetWindowContentRegionWidth();
+
+    ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(77, 166, 255, 255));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 25.0f);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 0, 1));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
+    if (ImGui::Button("Restart Game", ImVec2(contentWidth, 50))) {
+        if (!TutorialGame::GetGame()->IsNetworked())
+            world->SetGameState(GameState::PLAYING);
+        else if (NetworkedGame::GetNetworkedGame()->IsServer())
+            world->SetGameState(GameState::SERVERPLAYING);
+        else if (NetworkedGame::GetNetworkedGame()->IsClient())          
+            world->SetGameState(GameState::CLIENTPLAYING);
+        TutorialGame::GetGame()->InitGameWorld();
+        Window::GetWindow()->ShowOSPointer(false);
+        Window::GetWindow()->LockMouseToWindow(true);
+    }
+
+    if (ImGui::Button("Main Menu", ImVec2(contentWidth, 50))) {
+        world->SetGameState(GameState::MENU);
+        world->ClearAndErase();
+        world->GetMainCamera().InitCam();
+    }
+
     if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
     }

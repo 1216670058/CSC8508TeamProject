@@ -355,8 +355,10 @@ void PlayerObject::UseWater() {
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && TutorialGame::GetGame()->GetBucket()->GetWater() == true) {
-                WaterCarriage* watercarriage = (WaterCarriage*)closest;
-                watercarriage->SetCarriageWater(100.0f);
+                WaterCarriage* waterCarriage = (WaterCarriage*)closest;
+                waterCarriage->SetCarriageWater(100.0f);
+                TutorialGame::GetGame()->GetTrain()->SetOnFire(false);
+                TutorialGame::GetGame()->GetTrain()->SetFire(100.0f);
                 TutorialGame::GetGame()->GetBucket()->SetWater(false);
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
             }

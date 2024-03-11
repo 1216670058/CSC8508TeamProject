@@ -52,6 +52,26 @@ namespace NCL {
                 networked = n;
             }
 
+            int GetLevel() const {
+                return level;
+            }
+            void SetLevel(int l) {
+                level = l;
+            }
+
+            bool Failure() const {
+                return failure;
+            }
+            void SetFailure(bool f) {
+                failure = f;
+            }
+            bool Success() const {
+                return success;
+            }
+            void SetSuccess(bool s) {
+                success = s;
+            }
+
             BucketObject* GetBucket() const {
                 return bucket;
             }
@@ -64,7 +84,7 @@ namespace NCL {
             StoneObject* AddStoneToWorld(const Vector3& position, bool network = false, int id = 0);
             RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0, bool placed = false);
 
-            void InitGameWorld(bool networked = false) { InitCamera(); InitWorld(networked); }
+            void InitGameWorld(bool networked = false);
             bool IsExitGame() { return isExit; }
             float GetPlayTime() { return playtime; };
             TrainObject* GetTrain() const { return train; };
@@ -91,6 +111,7 @@ namespace NCL {
             void UpdatePlaying(float dt);
             virtual void UpdatePaused(float dt);
             void UpdateMenu(float dt);
+            void UpdateFailure(float dt);
 
             /*
             These are some of the world/object creation functions I created when testing the functionality
@@ -159,6 +180,10 @@ namespace NCL {
             bool useGravity;
             bool inSelectionMode;
             int cameraMode = 1;
+
+            int level = 1;
+            bool success = false;
+            bool failure = false;
 
             float		forceMagnitude;
 
