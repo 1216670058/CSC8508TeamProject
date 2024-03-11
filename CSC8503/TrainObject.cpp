@@ -61,7 +61,7 @@ void TrainObject::Update(float dt) {
     Vector3 target = path[0];
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
-    force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 20.0f;
+    force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
     GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 
     //std::cout << GetPhysicsObject()->GetInverseMass() << std::endl;

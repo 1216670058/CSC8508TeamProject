@@ -79,16 +79,22 @@ void RailObject::Update(float dt) {
                 }
             }
         }
-        PlaceRail();
+        if (!putDown && !placed && !inCarriage)
+            PlaceRail();
         if (player) {
             if (player->IsPlacing1()) {
-                if (num == 2)num = 1;
-                player->SetPlacing1(false);
+                if (num == 2) {
+                    num = 1;
+                    player->SetPlacing1(false);
+                }
             }
             if (player->IsPlacing2()) {
-                if (num == 3)num = 2;
-                player->SetPlacing2(false);
+                if (num == 3) {
+                    num = 2;
+                    player->SetPlacing2(false);
+                }
             }
+            //std::cout << "RailNum: " << num << std::endl;
         }
     }
     else if(putDown && !placed){
@@ -171,6 +177,7 @@ void RailObject::PlaceRail() {
                 n.SetType(7);
                 n.SetRail(this);
                 transform.SetPosition(position);
+                physicsObject->SetAngularVelocity(Vector3());
                 train->AddPath(position);
                 train->AddCarriagePath(position);
                 switch (connectedIndex) {

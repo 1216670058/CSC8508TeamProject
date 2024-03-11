@@ -119,6 +119,9 @@ void TutorialGame::UpdatePlaying(float dt)
 
     if (failure)
         world->SetGameState(GameState::FAILURE);
+    if (success) {
+        world->SetGameState(GameState::MENU);
+    }
 
     playtime += dt;
     UpdateKeys();
