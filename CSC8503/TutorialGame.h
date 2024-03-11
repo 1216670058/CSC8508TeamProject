@@ -15,6 +15,7 @@
 #include "PlayerObject.h"
 #include "TreeObject.h"
 #include "RockObject.h"
+#include "WaterObject.h"
 #include "PickaxeObject.h"
 #include "AxeObject.h"
 #include "BucketObject.h"
@@ -99,7 +100,6 @@ namespace NCL {
             void InitGameExamples(bool networked = false);
 
             void InitDefaultFloor();
-            //int SelectRailDir(Vector3 lastRailPosition,Vector3 RailPosition);
             bool SelectObject();
             void MoveSelectedObject();
             void LockedObjectMovement();
@@ -115,10 +115,13 @@ namespace NCL {
             GameObject* AddPlayer0ToWorld(const Vector3& position);
             GameObject* AddEnemyToWorld(const Vector3& position);
             TrainObject* AddTrainToWorld(const Vector3& position, bool spawn = true);
+            GameObject* AddStationToWorld(const Vector3& position);
             GameObject* AddTestingLightToWorld(const Vector3& position, const Vector4& colour);
             PlayerObject* AddPlayerToWorld(const Vector3& position, std::string name, int num, bool spawn = true);
             TreeObject* AddTreeToWorld(const Vector3& position);
             RockObject* AddRockToWorld(const Vector3& position);
+            GameObject* AddDesertRockToWorld(const Vector3& position);
+            WaterObject* AddWaterToWorld(const Vector3& position);
             CollectableObject* AddCollectableObjectToGround(int ID);
             PickaxeObject* AddPickaxeToWorld(const Vector3& position, bool spawn = true);
             AxeObject* AddAxeToWorld(const Vector3& position, bool spawn = true);
@@ -181,6 +184,7 @@ namespace NCL {
             Mesh* carriageMesh = nullptr;
             Mesh* treeMesh = nullptr;
             Mesh* rockMesh = nullptr;
+            Mesh* desertRockMesh = nullptr;
             Mesh* pickaxeMesh = nullptr;
             Mesh* axeMesh = nullptr;
             Mesh* bucketMesh = nullptr;
@@ -188,6 +192,7 @@ namespace NCL {
             Mesh* stoneMesh = nullptr;
             Mesh* railMesh = nullptr;
             Mesh* railTurnMesh = nullptr;
+            Mesh* stationMesh = nullptr;
 
             OBJMesh* trainMesh = nullptr;
 
@@ -198,6 +203,8 @@ namespace NCL {
             Texture* carriageTex = nullptr;
             Texture* treeTex = nullptr;
             Texture* rockTex = nullptr;
+            Texture* desertRockTex = nullptr;
+            Texture* waterTex = nullptr;
             Texture* lightTex = nullptr;
             Texture* pickaxeTex = nullptr;
             Texture* axeTex = nullptr;
@@ -207,7 +214,11 @@ namespace NCL {
             Texture* railTex = nullptr;
             Texture* railTurnTex = nullptr;
 
+            GLuint stationTex;
+
             Texture* rockBumpTex = nullptr;
+            Texture* desertRockBumpTex = nullptr;
+            Texture* waterBumpTex = nullptr;
             Texture* lightBumpTex = nullptr;
             Texture* pickaxeBumpTex = nullptr;
             Texture* axeBumpTex = nullptr;
@@ -258,6 +269,7 @@ namespace NCL {
             Shader* skinningPerPixelDayShader = nullptr;
             Shader* skinningBumpDayShader = nullptr;
             Shader* skinningBumpDayShader2 = nullptr;
+            Shader* reflectDayShader = nullptr;
 
             Shader* basicNightShader = nullptr;
             Shader* bumpNightShader = nullptr;
@@ -265,6 +277,7 @@ namespace NCL {
             Shader* skinningPerPixelNightShader = nullptr;
             Shader* skinningBumpNightShader = nullptr;
             Shader* skinningBumpNightShader2 = nullptr;
+            Shader* reflectNightShader = nullptr;
 
             ShaderGroup* basicShader = nullptr;
             ShaderGroup* bumpShader = nullptr;
@@ -272,6 +285,7 @@ namespace NCL {
             ShaderGroup* skinningPerPixelShader = nullptr;
             ShaderGroup* skinningBumpShader = nullptr;
             ShaderGroup* skinningBumpShader2 = nullptr;
+            ShaderGroup* reflectShader = nullptr;
 
             vector<Mesh*> meshes;
             vector<vector<GLuint>> textures;

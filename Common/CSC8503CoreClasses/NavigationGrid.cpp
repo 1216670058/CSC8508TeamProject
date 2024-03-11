@@ -39,7 +39,7 @@ NavigationGrid::NavigationGrid(const std::string &filename) : NavigationGrid() {
             if (type == '2')n.type = 10086;
             if (type == '3')n.type = 10010;
             if (type == '4')n.type = 10000;
-            if (type == '5')n.type = 114514;
+            if (type == '5' || type == '7')n.type = 114514;
             if (type == '6')n.type = 7;
             if (type == '0')n.type = 0;
             n.position = Vector3((float) (x * nodeSize), 7, (float) (y * nodeSize));

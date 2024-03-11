@@ -16,8 +16,6 @@
 #include "NetworkObject.h"
 #include "TrainCarriage.h"
 
-
-
 namespace NCL::CSC8503 {
     class BucketObject;
     class PlayerObject : public GameObject {
