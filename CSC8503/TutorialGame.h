@@ -222,8 +222,7 @@ namespace NCL {
             OBJMesh* trainMesh = nullptr;
 
             Texture* basicTex = nullptr;
-            Texture* woodTex = nullptr;
-            Texture* floorBumpTex = nullptr;
+            Texture* floorTex = nullptr;
             Texture* trainTex = nullptr;
             Texture* carriageTex = nullptr;
             Texture* treeTex = nullptr;
@@ -241,6 +240,7 @@ namespace NCL {
 
             GLuint stationTex;
 
+            Texture* floorBumpTex = nullptr;
             Texture* rockBumpTex = nullptr;
             Texture* desertRockBumpTex = nullptr;
             Texture* waterBumpTex = nullptr;
@@ -253,6 +253,7 @@ namespace NCL {
             Texture* railBumpTex = nullptr;
             Texture* railTurnBumpTex = nullptr;
 
+            Texture* floorSpecTex = nullptr;
             Texture* lightSpecTex = nullptr;
 
             MeshMaterial* maleMaterial = nullptr;

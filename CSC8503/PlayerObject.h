@@ -81,12 +81,20 @@ namespace NCL::CSC8503 {
         void SetPlacing2(bool p) {
             placing2 = p;
         }
-
+        bool IsBuilding() const {
+            return building;
+        }
+        void SetBuilding(bool b) {
+            building = b;
+        }
         MaterialCarriage* GetCarriage() const {
             return carriage;
         }
         void SetCarriage(MaterialCarriage* c) {
             carriage = c;
+        }
+        Vector3 GetBridgePosition() {
+            return bridgePosition;
         }
 
         void UpdateAnimation(float dt);
@@ -98,16 +106,19 @@ namespace NCL::CSC8503 {
         void DigRock();
         void ScoopWater();
         void UseWater();
+        void BuildBridge();
         void LoadMaterial();
         bool doing = false;
         bool cutting = false;
         bool digging = false;
         bool placing1 = false;
         bool placing2 = false;
+        bool building = false;
 
         int num;
         int index;
         Vector3 face;
+        Vector3 bridgePosition;
         float speed = 50.0f;
         vector<Mesh*> meshes;
         vector<vector<GLuint>> textures;

@@ -78,7 +78,7 @@ void TutorialGame::InitMeshes() {
 void TutorialGame::InitTextures() {
     std::cout << std::endl << "--------Loading Textures--------" << std::endl;
     basicTex = renderer->LoadTexture("checkerboard.png");
-    woodTex = renderer->LoadTexture("wood.png");
+    floorTex = renderer->LoadTexture("grass.jpg");
     trainTex = renderer->LoadTexture("Train.jpg");
     carriageTex = renderer->LoadTexture("CartEmpty_T.png");
     treeTex = renderer->LoadTexture("Tree.png");
@@ -96,7 +96,7 @@ void TutorialGame::InitTextures() {
 
     stationTex = renderer->LoadGLTexture("Station.png");
 
-    //floorBumpTex = renderer->LoadTexture("grassbump.png");;
+    //floorBumpTex = renderer->LoadGLTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
     desertRockBumpTex = renderer->LoadTexture("DesertRock_n.png");
     waterBumpTex = renderer->LoadTexture("waterbump.png");
@@ -109,6 +109,7 @@ void TutorialGame::InitTextures() {
     railBumpTex = renderer->LoadTexture("Rail_n.png");
     railTurnBumpTex = renderer->LoadTexture("RailTurn_n.jpg");
 
+    //floorSpecTex = renderer->LoadTexture("ground_s.dds");
     //lightSpecTex = renderer->LoadTexture("redstone_lamp_on_s.png");
 }
 
@@ -422,10 +423,10 @@ void TutorialGame::AddSceneToWorld()
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             if (type == '1')AddDesertRockToWorld(n.position);
-            if (type == '2')AddTreeToWorld(n.position + Vector3(0, 2.5f, 0));
-            if (type == '3')AddRockToWorld(n.position + Vector3(0, -2.5f, 0));
-            if (type == '4')AddWaterToWorld(n.position + Vector3(0, -2.5f, 0));
-            if (type == '5')AddStationToWorld(n.position + Vector3(0, 2.5f, 6));
+            if (type == '2')AddTreeToWorld(n.position + Vector3(0, 5.5f, 0));
+            if (type == '3')AddRockToWorld(n.position + Vector3(0, -1.5f, 0));
+            if (type == '4')AddWaterToWorld(n.position + Vector3(0, -1.5f, 0));
+            if (type == '5')AddStationToWorld(n.position + Vector3(0, -2.5f, 6));
             if (type == '6') {
                 RailObject* rail = new RailObject(world);
                 rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
@@ -440,17 +441,18 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
     GameObject* floor = new GameObject("Floor");
 
     Vector3 floorSize = Vector3(160, 2, 100);
-    AABBVolume* volume = new AABBVolume(floorSize);
+    AABBVolume* volume = new AABBVolume(Vector3(0.1f, 0.1f, 0.1f));
     floor->SetBoundingVolume((CollisionVolume*)volume);
     floor->GetTransform()
         .SetScale(floorSize * 2)
         .SetPosition(position);
 
-    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, woodTex, basicShader));
+    floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, floorTex, basicShader));
     floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
     floor->GetPhysicsObject()->SetInverseMass(0);
     floor->GetPhysicsObject()->InitCubeInertia();
+    floor->GetPhysicsObject()->SetResolve(false);
 
     world->AddGameObject(floor);
 
@@ -753,7 +755,7 @@ GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
     float inverseMass = 0;
 
     GameObject* rock = new GameObject();
-    AABBVolume* volume = new AABBVolume(Vector3(2, 1, 2) * 3);
+    AABBVolume* volume = new AABBVolume(Vector3(1.5f, 1.5f, 1.5f));
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(3, 3, 3))
@@ -775,7 +777,7 @@ GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
 
 WaterObject* TutorialGame::AddWaterToWorld(const Vector3& position) {
     WaterObject* cube = new WaterObject();
-    AABBVolume* volume = new AABBVolume(Vector3(5, 1, 5));
+    AABBVolume* volume = new AABBVolume(Vector3(5, 5, 5));
     cube->SetBoundingVolume((CollisionVolume*)volume);
     cube->GetTransform()
         .SetScale(Vector3(10, 2, 10))
@@ -794,6 +796,8 @@ WaterObject* TutorialGame::AddWaterToWorld(const Vector3& position) {
     cube->SetUpdateInClient(true);
 
     world->AddGameObject(cube);
+
+    cube->SetNetworkObject(new NetworkObject(*cube, cube->GetWorldID() + 6000));
 
     return cube;
 }
@@ -866,7 +870,7 @@ PickaxeObject* TutorialGame::AddPickaxeToWorld(const Vector3& position, bool spa
 AxeObject* TutorialGame::AddAxeToWorld(const Vector3& position, bool spawn) {
     AxeObject* axe = new AxeObject(world, "Axe");
 
-    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 0.5f, 0.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(0.5f, 4, 0.5f));
     axe->SetBoundingVolume((CollisionVolume*)volume);
 
     //axe->SetPlayer(player);

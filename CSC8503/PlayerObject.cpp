@@ -21,6 +21,7 @@ void PlayerObject::Update(float dt) {
         DigRock();
         ScoopWater();
         UseWater();
+        BuildBridge();
         LoadMaterial();
 
         //Vector3 position = transform.GetPosition();
@@ -361,6 +362,22 @@ void PlayerObject::UseWater() {
                 TutorialGame::GetGame()->GetTrain()->SetFire(100.0f);
                 TutorialGame::GetGame()->GetBucket()->SetWater(false);
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+            }
+        }
+    }
+}
+
+void PlayerObject::BuildBridge() {
+    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 5) {
+        doing = true;
+        Ray r = Ray(transform.GetPosition(), face);
+        RayCollision closestCollision;
+        if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
+            GameObject* closest = (GameObject*)closestCollision.node;
+            if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
+                bridgePosition = closest->GetTransform().GetPosition();
+                TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+                building = true;
             }
         }
     }

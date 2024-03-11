@@ -287,11 +287,11 @@ void TutorialGame::InitWorld(bool networked) {
 }
 
 void TutorialGame::InitDefaultFloor() {
-    AddFloorToWorld(Vector3(155, 0, 95));
+    AddFloorToWorld(Vector3(155, 2, 95));
 }
 
 void TutorialGame::InitGameExamples(bool networked) {
-    player = AddPlayerToWorld(Vector3(20, 5, 100), "Player1", 1, !networked);
+    player = AddPlayerToWorld(Vector3(10, 4, 100), "Player1", 1, !networked);
     train = AddTrainToWorld(Vector3(70, 4.5f, 100), !networked);
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
@@ -301,13 +301,13 @@ void TutorialGame::InitGameExamples(bool networked) {
         carriage2->SetMaterialCarriage(carriage1);
     }
     else {
-        player2 = AddPlayerToWorld(Vector3(20, 5, 110), "Player2", 2, false);
-        player3 = AddPlayerToWorld(Vector3(20, 5, 120), "Player3", 3, false);
-        player4 = AddPlayerToWorld(Vector3(20, 5, 130), "Player4", 4, false);
+        player2 = AddPlayerToWorld(Vector3(20, 4, 110), "Player2", 2, false);
+        player3 = AddPlayerToWorld(Vector3(20, 4, 120), "Player3", 3, false);
+        player4 = AddPlayerToWorld(Vector3(20, 4, 130), "Player4", 4, false);
     }
-    pickaxe = AddPickaxeToWorld(Vector3(40, 5, 90), !networked);
-    axe = AddAxeToWorld(Vector3(40, 5, 100), !networked);
-    bucket = AddBucketToWorld(Vector3(40, 5, 110), !networked);
+    pickaxe = AddPickaxeToWorld(Vector3(25, 6.5f, 90), !networked);
+    axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
+    bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
     AddSceneToWorld();
 }
 
