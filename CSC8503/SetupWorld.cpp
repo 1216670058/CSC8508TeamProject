@@ -424,8 +424,8 @@ void TutorialGame::AddSceneToWorld()
             if (type == '1')AddDesertRockToWorld(n.position);
             if (type == '2')AddTreeToWorld(n.position + Vector3(0, 2.5f, 0));
             if (type == '3')AddRockToWorld(n.position + Vector3(0, -2.5f, 0));
-            if (type == '4')AddWaterToWorld(n.position);
-            if (type == '5')AddStationToWorld(n.position + Vector3(0, -2.5f, 6));
+            if (type == '4')AddWaterToWorld(n.position + Vector3(0, -2.5f, 0));
+            if (type == '5')AddStationToWorld(n.position + Vector3(0, 2.5f, 6));
             if (type == '6') {
                 RailObject* rail = new RailObject(world);
                 rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
@@ -789,7 +789,7 @@ WaterObject* TutorialGame::AddWaterToWorld(const Vector3& position) {
     cube->GetPhysicsObject()->InitSphereInertia();
     cube->GetPhysicsObject()->SetChannel(1);
 
-    cube->SetTypeID(12345);
+    cube->SetTypeID(10000);
 
     cube->SetUpdateInClient(true);
 

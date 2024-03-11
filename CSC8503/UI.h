@@ -37,6 +37,7 @@ namespace NCL {
             void DrawPlayingUI(float dt);
             void DrawChooseServer(float dt);
             void DrawPausedMenu(float dt);
+            void DrawFailureMenu(float dt);
 
             void SetLoadingStep(int step) { loadingstep = step; };
         protected:

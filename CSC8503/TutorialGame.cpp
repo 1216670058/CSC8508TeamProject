@@ -117,58 +117,8 @@ void TutorialGame::UpdatePlaying(float dt)
         }
     }
 
-    /*if (lockedObject != nullptr) {
-        Vector3 objPos = lockedObject->GetTransform().GetPosition();
-        Vector3 camPos = objPos + lockedOffset;
-
-        Matrix4 temp = Matrix4::BuildViewMatrix(camPos, objPos, Vector3(0, 1, 0));
-
-        Matrix4 modelMat = temp.Inverse();
-
-        Quaternion q(modelMat);
-        Vector3 angles = q.ToEuler(); //nearly there now!
-
-        world->GetMainCamera().SetPosition(camPos);
-        world->GetMainCamera().SetPitch(angles.x);
-        world->GetMainCamera().SetYaw(angles.y);
-        world->GetMainCamera().SetPitch(-90);
-        world->GetMainCamera().SetYaw(0);
-    }
-
-    if (useGravity) {
-        Debug::Print("(G)ravity on", Vector2(5, 95), Debug::RED);
-    }
-    else {
-        Debug::Print("(G)ravity off", Vector2(5, 95), Debug::RED);
-    }
-
-    RayCollision closestCollision;
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::K) && selectionObject) {
-        Vector3 rayPos;
-        Vector3 rayDir;
-
-        rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);
-
-        rayPos = selectionObject->GetTransform().GetPosition();
-
-        Ray r = Ray(rayPos, rayDir);
-
-        if (world->Raycast(r, closestCollision, true, selectionObject)) {
-            if (objClosest) {
-                objClosest->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-            }
-            objClosest = (GameObject*)closestCollision.node;
-
-            objClosest->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
-        }
-    }
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(100, 0, 0), Debug::RED);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 100, 0), Debug::GREEN);
-    Debug::DrawLine(Vector3(0, 0, 0), Vector3(0, 0, 100), Debug::BLUE);
-    Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
-
-    SelectObject();
-    MoveSelectedObject();*/
+    if (failure)
+        world->SetGameState(GameState::FAILURE);
 
     playtime += dt;
     UpdateKeys();
@@ -197,7 +147,14 @@ void TutorialGame::UpdateMenu(float dt)
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     renderer->Render();
+}
 
+void TutorialGame::UpdateFailure(float dt)
+{
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
 }
 
 void TutorialGame::UpdateKeys() {
@@ -297,6 +254,13 @@ void TutorialGame::CameraUpdate() {
         world->GetMainCamera().SetPitch(-50);
         world->GetMainCamera().SetYaw(0);
     }
+}
+
+void TutorialGame::InitGameWorld(bool networked) {
+    success = false;
+    failure = false;
+    InitCamera(); 
+    InitWorld(networked);
 }
 
 void TutorialGame::InitCamera() {

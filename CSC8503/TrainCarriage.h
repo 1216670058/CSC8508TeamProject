@@ -16,6 +16,7 @@ namespace NCL::CSC8503 {
     class StoneObject;
     class PlankObject;
     class RailObject;
+    class TrainObject;
     class MaterialCarriage;
     class ProduceCarriage;
     class WaterCarriage;
@@ -40,10 +41,15 @@ namespace NCL::CSC8503 {
             path = p;
         }
 
+        void SetTrain(TrainObject* t) {
+            train = t;
+        }
+
     protected:
         Vector3 direction;
         GameWorld* world;
         std::vector<Vector3> path;
+        TrainObject* train;
     };
 
     class MaterialCarriage : public TrainCarriage {

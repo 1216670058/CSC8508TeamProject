@@ -13,12 +13,13 @@ TrainObject::~TrainObject() {
  
 TrainObject::TrainObject(GameWorld* w) {
 
-    path.push_back(Vector3(90, 4.5f, 100));
-    //path.push_back({ Vector3(300, 5, 0), 1 });
+    path.push_back(firstPath);
     world = w;
     trainCarriage = new TrainCarriage[trainMaxIndex];
     trainIndex = 0;
     name = "Train";
+    onFire = false;
+    fire = 100.0f;
 
     distance = 0.0f;
 }
@@ -41,7 +42,22 @@ void TrainObject::UpdateOrientation(Vector3 direction) {
 }
 
 void TrainObject::Update(float dt) {
-    if (path.size() == 0) return;
+    if (path.size() == 0) {
+        if (transform.GetPosition() != finishPath) {
+            TutorialGame::GetGame()->SetFailure(true);
+            return;
+        }
+        else {
+            TutorialGame::GetGame()->SetSuccess(true);
+            return;
+        }
+    }
+    if (path[0] == finalPath) {
+        if (!flag1) {
+            path.push_back(finishPath);
+            flag1 = true;
+        }
+    }
     Vector3 target = path[0];
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
@@ -71,6 +87,14 @@ void TrainObject::Update(float dt) {
     //std::cout << "Position: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
     //std::cout << "Target: " << target.x << " " << target.y << " " << target.z << std::endl;
     UpdateOrientation(direction);
+
+    if(onFire){
+        float speed = 1.0f;
+        if (fire > 0.0f)
+            fire -= dt * speed;
+        else
+            TutorialGame::GetGame()->SetFailure(true);
+    }
 }
 
 void TrainObject::AddPath(Vector3 p) {
@@ -125,6 +149,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->SetTypeID(id);
 
         trainCarriage[++trainIndex] = *carriage;
+        carriage->SetTrain(this);
         world->AddGameObject(carriage);
 
         return carriage;
@@ -155,6 +180,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->SetTypeID(id);
 
         trainCarriage[++trainIndex] = *carriage;
+        carriage->SetTrain(this);
         world->AddGameObject(carriage);
 
         return carriage;
@@ -185,6 +211,7 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
         carriage->SetTypeID(id);
 
         trainCarriage[++trainIndex] = *carriage;
+        carriage->SetTrain(this);
         world->AddGameObject(carriage);
 
         return carriage;

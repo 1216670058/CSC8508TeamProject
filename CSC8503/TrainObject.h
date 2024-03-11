@@ -40,6 +40,20 @@ namespace NCL::CSC8503 {
 
         void UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader);
 
+        bool OnFire() const {
+            return onFire;
+        }
+        void SetOnFire(bool o) {
+            onFire = o;
+        }
+
+        float GetFire() const {
+            return fire;
+        }
+        void SetFire(float f) {
+            fire = f;
+        }
+
         float GetForce() { return force; }
         float GetDistance() { return distance; }
         float GetSpeed() { return speed; }
@@ -52,6 +66,8 @@ namespace NCL::CSC8503 {
         //0  1  2 3 up down left right
         std::vector<Vector3> path;
         TrainCarriage* trainCarriage;
+        bool onFire = false;
+        float fire = 100.0f;
         int trainMaxIndex = 20;
         int trainIndex = 0;
         GameWorld* world;
@@ -59,6 +75,9 @@ namespace NCL::CSC8503 {
         Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
         Vector3 direction;
+        Vector3 firstPath = Vector3(90, 4.5f, 100);
+        Vector3 finalPath = Vector3(270, 4.5f, 50);
+        Vector3 finishPath = Vector3(290, 4.5f, 50);
 
         //UI
         float force = 10.0f;
@@ -68,7 +87,6 @@ namespace NCL::CSC8503 {
         float speed = 0.0f;
         float dist_s = 0.0f;
         float time_s = 0.0f;
-
     };
 }
 

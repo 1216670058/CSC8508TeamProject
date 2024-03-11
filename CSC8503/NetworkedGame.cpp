@@ -79,6 +79,9 @@ void NetworkedGame::UpdateGame(float dt) {
     case PAUSED:
         UpdatePaused(dt);
         break;
+    case FAILURE:
+        UpdateFailure(dt);
+        break;
     case MENU:
         UpdateMenu(dt);
         break;

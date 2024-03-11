@@ -21,6 +21,7 @@ namespace NCL {
             SERVERPLAYING,
             CLIENTPLAYING,
             PAUSED,
+            FAILURE,
             MENU,
             CHOOSESERVER,
             EXIT
