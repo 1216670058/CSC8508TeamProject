@@ -5,27 +5,28 @@
 using namespace NCL;
 using namespace CSC8503;
 
-class TreeObject : public GameObject {
+namespace NCL::CSC8503 {
+    class TreeObject : public GameObject {
 
-public:
-    TreeObject() {
-        typeID = 10086;
-        name = "Tree";
+    public:
+        TreeObject() {
+            typeID = 10086;
+            name = "Tree";
+        };
+        ~TreeObject() {};
+
+        void OnCollisionBegin(GameObject* otherObject) override {};
+
+        void OnCollisionEnd(GameObject* otherObject) override {};
+
+        void Setscale(float a) {
+            scale = a;
+        }
+        float Getscale() {
+            return scale;
+        }
+
+    protected:
+        float scale;
     };
-    ~TreeObject() {};
-
-    void OnCollisionBegin(GameObject* otherObject) override {};
-
-    void OnCollisionEnd(GameObject* otherObject) override {};
-
-    void Setscale(float a) {
-        scale = a;
-    }
-    float Getscale() {
-        return scale;
-    }
-    // void Update(float dt) override;
-
-protected:
-    float scale;
-};
+}

@@ -118,8 +118,8 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
 
     UpdateKeys();
     audio->Update();
-    if (thisServer)
-        world->UpdateWorld(dt);
+    if (thisServer) world->UpdateWorld(dt);
+    else if (thisClient) world->UpdateWorld(dt, true);
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     physics->Update(dt);
@@ -143,6 +143,14 @@ void NetworkedGame::UpdateKeys() {
             Window::GetWindow()->ShowOSPointer(false);
             Window::GetWindow()->LockMouseToWindow(true);
         }
+    }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
+        cameraMode = 1;
+    }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
+        cameraMode = 2;
     }
 }
 

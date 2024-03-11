@@ -552,7 +552,6 @@ void GameTechRenderer::RenderSkybox() {
 void GameTechRenderer::RenderCamera() {
     glBindFramebuffer(GL_FRAMEBUFFER, worldFBO);
 
-
     Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
     Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
 
@@ -615,15 +614,37 @@ void GameTechRenderer::RenderCamera() {
             Vector4 colour = i->GetColour();
             glUniform4fv(colourLocation, 1, &colour.x);
 
-            if ((*i).GetDrawMode() == 1) {
-                if ((*i).GetDefaultTexture()) {
-                    BindTextureToShader(*(OGLTexture*)(*i).GetDefaultTexture(), "mainTex", 0);
-                    if ((*i).GetBumpTexture()) BindTextureToShader(*(OGLTexture*)(*i).GetBumpTexture(), "bumpTex", 2);
-                    if ((*i).GetSpecTexture()) BindTextureToShader(*(OGLTexture*)(*i).GetSpecTexture(), "specTex", 3);
+            if ((*i).GetDrawMode() == 1 || (*i).GetDrawMode() == 4) {
+                if (!(*i).IsGL()) {
+                    if ((*i).GetDefaultTexture()) {
+                        BindTextureToShader(*(OGLTexture*)(*i).GetDefaultTexture(), "mainTex", 0);
+                        if ((*i).GetBumpTexture()) BindTextureToShader(*(OGLTexture*)(*i).GetBumpTexture(), "bumpTex", 2);
+                        if ((*i).GetSpecTexture()) BindTextureToShader(*(OGLTexture*)(*i).GetSpecTexture(), "specTex", 3);
+                    }
+                    glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
                 }
-                glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetDefaultTexture() ? 1 : 0);
+                else {
+                    if ((*i).GetGLTexture()) {
+                        BindGLuintTextureToShader((*i).GetGLTexture(), "mainTex", 0);
+                    }
+
+                    glUniform1i(hasTexLocation, (*i).GetGLTexture() ? 1 : 0);
+                }
 
                 glUniform1i(hasVColLocation, !(*i).GetMesh()->GetColourData().empty());
+
+                if ((*i).GetDrawMode() == 4) {
+                    Matrix4 textureMatrix =
+                        Matrix4::Translation(Vector3((*i).GetTextureCycle(), 0.0f, (*i).GetTextureCycle())) *
+                        Matrix4::Scale(Vector3(10, 10, 10)) *
+                        Matrix4::Rotation((*i).GetTextureRotate(), Vector3(0, 0, 1));
+
+                    glUniformMatrix4fv(glGetUniformLocation(shader->GetProgramID(), "textureMatrix"), 1, false, (float*)&textureMatrix);
+
+                    glUniform1i(glGetUniformLocation(shader->GetProgramID(), "cubeTex"), 4);
+                    glActiveTexture(GL_TEXTURE4);
+                    glBindTexture(GL_TEXTURE_CUBE_MAP, daySkyboxTex);
+                }
 
                 Draw((*i).GetMesh());
             }
@@ -632,7 +653,7 @@ void GameTechRenderer::RenderCamera() {
                     BindGLuintTextureToShader((*i).GetOBJMesh()->GetOBJTexture(), "mainTex", 0);
                 }
 
-                glUniform1i(hasTexLocation, (OGLTexture*)(*i).GetOBJMesh()->GetOBJTexture() ? 1 : 0);
+                glUniform1i(hasTexLocation, (*i).GetOBJMesh()->GetOBJTexture() ? 1 : 0);
 
                 glUniform1i(hasVColLocation, !(*i).GetOBJMesh()->GetColourData().empty());
 
@@ -1010,6 +1031,10 @@ void GameTechRenderer::NewRenderText() {
 
 Texture* GameTechRenderer::LoadTexture(const std::string& name) {
     return OGLTexture::TextureFromFile(name).release();
+}
+
+GLuint GameTechRenderer::LoadGLTexture(const std::string& name) {
+    return SOIL_load_OGL_texture(string(Assets::TEXTUREDIR + name).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_TEXTURE_REPEATS);
 }
 
 Shader* GameTechRenderer::LoadShader(const std::string& vertex, const std::string& fragment) {

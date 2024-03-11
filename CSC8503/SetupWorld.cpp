@@ -45,10 +45,11 @@ void TutorialGame::InitMeshes() {
     enemyMesh = renderer->LoadMesh("Keeper.msh");
     bonusMesh = renderer->LoadMesh("apple.msh");
     capsuleMesh = renderer->LoadMesh("capsule.msh");
-    trainMesh = renderer->LoadOBJMesh("Train.obj");
+    stationMesh = renderer->LoadMesh("Station.msh");
     carriageMesh = renderer->LoadMesh("Carriage.msh");
     treeMesh = renderer->LoadMesh("Tree.msh");
     rockMesh = renderer->LoadMesh("Rock.msh");
+    desertRockMesh = renderer->LoadMesh("DesertRock.msh");
     pickaxeMesh = renderer->LoadMesh("Pickaxe.msh");
     axeMesh = renderer->LoadMesh("Axe.msh");
     bucketMesh = renderer->LoadMesh("Bucket_Empty.msh");
@@ -65,6 +66,8 @@ void TutorialGame::InitMeshes() {
     //robotMesh = renderer->LoadMesh("Robot.msh");
     //droneMesh = renderer->LoadMesh("Drone.msh");
 
+    trainMesh = renderer->LoadOBJMesh("Train.obj");
+
     //meshes.push_back(maleMesh);
     //meshes.push_back(femaleMesh);
     //meshes.push_back(assassinMesh);
@@ -80,6 +83,8 @@ void TutorialGame::InitTextures() {
     carriageTex = renderer->LoadTexture("CartEmpty_T.png");
     treeTex = renderer->LoadTexture("Tree.png");
     rockTex = renderer->LoadTexture("Rock.png");
+    desertRockTex = renderer->LoadTexture("DesertRock.png");
+    waterTex = renderer->LoadTexture("water.tga");
     //lightTex = renderer->LoadTexture("redstone_lamp_on.png");
     pickaxeTex = renderer->LoadTexture("lowpoly_pickaxe_BaseColor.png");
     axeTex = renderer->LoadTexture("Axe_albedo.jpg");
@@ -89,8 +94,12 @@ void TutorialGame::InitTextures() {
     railTex = renderer->LoadTexture("Rail.png");
     railTurnTex = renderer->LoadTexture("RailTurn.jpg");
 
+    stationTex = renderer->LoadGLTexture("Station.png");
+
     //floorBumpTex = renderer->LoadTexture("grassbump.png");;
     rockBumpTex = renderer->LoadTexture("Rock_n.png");
+    desertRockBumpTex = renderer->LoadTexture("DesertRock_n.png");
+    waterBumpTex = renderer->LoadTexture("waterbump.png");
     //lightBumpTex = renderer->LoadTexture("redstone_lamp_on_n.png");
     pickaxeBumpTex = renderer->LoadTexture("lowpoly_pickaxe_Normal.png");
     axeBumpTex = renderer->LoadTexture("Axe_normal.png");
@@ -343,6 +352,7 @@ void TutorialGame::InitShaders() {
     skinningPerPixelDayShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelScene.frag");
     skinningBumpDayShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpScene.frag");
     skinningBumpDayShader2 = renderer->LoadShader("SkinningBump.vert", "BumpScene.frag");
+    reflectDayShader = renderer->LoadShader("Reflect.vert", "ReflectScene.frag");
 
     basicNightShader = renderer->LoadShader("PerPixel.vert", "PerPixelBuffer.frag");
     bumpNightShader = renderer->LoadShader("Bump.vert", "BumpBuffer.frag");
@@ -350,6 +360,7 @@ void TutorialGame::InitShaders() {
     skinningPerPixelNightShader = renderer->LoadShader("SkinningPerPixel.vert", "SkinningPerPixelBuffer.frag");
     skinningBumpNightShader = renderer->LoadShader("SkinningBump.vert", "SkinningBumpBuffer.frag");
     skinningBumpNightShader2 = renderer->LoadShader("SkinningBump.vert", "BumpBuffer.frag");
+    reflectNightShader = renderer->LoadShader("Reflect.vert", "ReflectBuffer.frag");
 
     basicShader = new ShaderGroup(basicDayShader, basicNightShader);
     bumpShader = new ShaderGroup(bumpDayShader, bumpNightShader);
@@ -357,6 +368,7 @@ void TutorialGame::InitShaders() {
     skinningPerPixelShader = new ShaderGroup(skinningPerPixelDayShader, skinningPerPixelNightShader);
     skinningBumpShader = new ShaderGroup(skinningBumpDayShader, skinningBumpNightShader);
     skinningBumpShader2 = new ShaderGroup(skinningBumpDayShader2, skinningBumpNightShader2);
+    reflectShader = new ShaderGroup(reflectDayShader, reflectNightShader);
 
     shaders.push_back(skinningBumpShader);
     shaders.push_back(skinningBumpShader);
@@ -409,10 +421,11 @@ void TutorialGame::AddSceneToWorld()
             n.type = type;
             n.position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
             Vector3 position = Vector3((float)(x * nodeSize), 7, (float)(y * nodeSize));
-            if (type == '1')AddCubeToWorld(n.position, { (float)nodeSize / 2,(float)nodeSize / 2,(float)nodeSize / 2 }, 0);    
+            if (type == '1')AddDesertRockToWorld(n.position);
             if (type == '2')AddTreeToWorld(n.position + Vector3(0, 2.5f, 0));
             if (type == '3')AddRockToWorld(n.position + Vector3(0, -2.5f, 0));
-            if (type == '4')AddSphereToWorld(n.position, (float)nodeSize / 2, 0);
+            if (type == '4')AddWaterToWorld(n.position);
+            if (type == '5')AddStationToWorld(n.position + Vector3(0, -2.5f, 6));
             if (type == '6') {
                 RailObject* rail = new RailObject(world);
                 rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
@@ -461,7 +474,6 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
     sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
     sphere->GetPhysicsObject()->InitSphereInertia();
     sphere->GetRenderObject()->SetColour(Vector4((float)153/(float)255, 1, 1, 1));
-    sphere->SetTypeID(10000);
     world->AddGameObject(sphere);
 
     return sphere;
@@ -566,7 +578,31 @@ TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) 
     train->UploadAssets(carriageMesh, carriageTex, basicShader);
 
     world->AddGameObject(train);
+
     return train;
+}
+
+GameObject* TutorialGame::AddStationToWorld(const Vector3& position) {
+    GameObject* station = new GameObject();
+
+    AABBVolume* volume = new AABBVolume(Vector3(7.5f, 7.5f, 7.5f));
+    station->SetBoundingVolume((CollisionVolume*)volume);
+
+    station->GetTransform()
+    .SetScale(Vector3(15, 15, 15))
+    .SetPosition(position);
+
+    station->SetRenderObject(new RenderObject(&station->GetTransform(), stationMesh, stationTex, basicShader));
+    station->SetPhysicsObject(new PhysicsObject(&station->GetTransform(), station->GetBoundingVolume()));
+
+    station->GetPhysicsObject()->SetInverseMass(0);
+    station->GetPhysicsObject()->InitSphereInertia();
+
+    station->SetTypeID(114514);
+
+    world->AddGameObject(station);
+
+    return station;
 }
 
 GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position, const Vector4& colour) {
@@ -711,6 +747,55 @@ RockObject* TutorialGame::AddRockToWorld(const Vector3& position) {
     rock->SetNetworkObject(new NetworkObject(*rock, rock->GetWorldID() + 5000));
 
     return rock;
+}
+
+GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
+    float inverseMass = 0;
+
+    GameObject* rock = new GameObject();
+    AABBVolume* volume = new AABBVolume(Vector3(2, 1, 2) * 3);
+    rock->SetBoundingVolume((CollisionVolume*)volume);
+    rock->GetTransform()
+        .SetScale(Vector3(3, 3, 3))
+        .SetPosition(rock->FindGrid(position));
+
+    rock->SetRenderObject(new RenderObject(&rock->GetTransform(), desertRockMesh, desertRockTex, bumpShader));// todo can change capsule
+    rock->GetRenderObject()->SetBumpTexture(desertRockBumpTex);
+    rock->SetPhysicsObject(new PhysicsObject(&rock->GetTransform(), rock->GetBoundingVolume()));
+
+    rock->GetPhysicsObject()->SetInverseMass(inverseMass);
+    rock->GetPhysicsObject()->InitSphereInertia();
+
+    rock->SetTypeID(12345);
+
+    world->AddGameObject(rock);
+
+    return rock;
+}
+
+WaterObject* TutorialGame::AddWaterToWorld(const Vector3& position) {
+    WaterObject* cube = new WaterObject();
+    AABBVolume* volume = new AABBVolume(Vector3(5, 1, 5));
+    cube->SetBoundingVolume((CollisionVolume*)volume);
+    cube->GetTransform()
+        .SetScale(Vector3(10, 2, 10))
+        .SetPosition(cube->FindGrid(position));
+
+    cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, waterTex, reflectShader, 4));// todo can change capsule
+    cube->GetRenderObject()->SetBumpTexture(waterBumpTex);
+    cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+    cube->GetPhysicsObject()->SetInverseMass(0);
+    cube->GetPhysicsObject()->InitSphereInertia();
+    cube->GetPhysicsObject()->SetChannel(1);
+
+    cube->SetTypeID(12345);
+
+    cube->SetUpdateInClient(true);
+
+    world->AddGameObject(cube);
+
+    return cube;
 }
 
 CollectableObject* TutorialGame::AddCollectableObjectToGround(int objectId)

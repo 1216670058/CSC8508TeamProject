@@ -71,6 +71,13 @@ namespace NCL::CSC8503 {
             spawned = s;
         }
 
+        bool UpdateInClient() const {
+            return updateInClient;
+        }
+        void SetUpdateInClient(bool u) {
+            updateInClient = u;
+        }
+
         Transform& GetTransform() {
             return transform;
         }
@@ -199,6 +206,7 @@ namespace NCL::CSC8503 {
         bool		isActive;
         bool        triggerDelete;
         bool        spawned = true;
+        bool        updateInClient = false;
         int			worldID;
         int         typeID;
         int         slot = 0;

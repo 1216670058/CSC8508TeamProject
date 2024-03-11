@@ -38,6 +38,7 @@ set(GameObjects
         "AnimalObject.h"
         "DroneObject.h"
         "RobotObject.h"
+        "WaterObject.h"
         "NetworkPlayer.h"
         "StateGameObject.h"
         "CollectableObject.cpp"
@@ -55,6 +56,7 @@ set(GameObjects
         "AnimalObject.cpp"
         "DroneObject.cpp"
         "RobotObject.cpp"
+        "WaterObject.cpp"
         "NetworkPlayer.cpp"
         "StateGameObject.cpp"
 )
