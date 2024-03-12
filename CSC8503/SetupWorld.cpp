@@ -1128,6 +1128,30 @@ DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
     return drone;
 }
 
+GameObject* TutorialGame::AddPadToWorld() {
+    GameObject* sphere = new GameObject();
+
+    Vector3 sphereSize = Vector3(3, 0.1f, 3);
+    SphereVolume* volume = new SphereVolume(0.01f);
+    sphere->SetBoundingVolume((CollisionVolume*)volume);
+
+    sphere->GetTransform()
+        .SetScale(sphereSize)
+        .SetPosition(Vector3());
+
+    sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, nullptr, basicShader));
+    sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
+
+    sphere->GetPhysicsObject()->SetInverseMass(0);
+    sphere->GetPhysicsObject()->InitSphereInertia();
+    sphere->GetPhysicsObject()->SetResolve(false);
+    sphere->GetRenderObject()->SetColour(Vector4());
+    sphere->GetRenderObject()->SetShadow(false);
+    world->AddGameObject(sphere);
+
+    return sphere;
+}
+
 //CollectableObject* TutorialGame::AddRailToWorld(int direction,Vector3 RailPosition,Vector3 lastRailPosition)
 //{
 //

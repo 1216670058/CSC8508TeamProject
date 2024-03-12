@@ -97,6 +97,7 @@ namespace NCL::CSC8503 {
             return bridgePosition;
         }
 
+        bool CanPlaceRail();
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
         void UpdateFace();

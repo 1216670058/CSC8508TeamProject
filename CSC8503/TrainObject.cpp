@@ -52,19 +52,15 @@ void TrainObject::Update(float dt) {
             return;
         }
     }
-    if (path[0] == finalPath) {
-        if (!flag1) {
-            path.push_back(finishPath);
-            flag1 = true;
-        }
-    }
+    if (path[path.size() - 1] == finalPath)
+        path.push_back(finishPath);
     Vector3 target = path[0];
     direction = (target - this->GetTransform().GetPosition());
     direction = Vector3(direction.x, 0, direction.z);
     force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
+    if (path[path.size() - 1] == finishPath) force = 500.0f;
     GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 
-    //std::cout << GetPhysicsObject()->GetInverseMass() << std::endl;
     float dtdist = (lastpos - curpos).Length();
     distance += dtdist; //run dist
     lastpos = curpos; curpos = this->GetTransform().GetPosition();

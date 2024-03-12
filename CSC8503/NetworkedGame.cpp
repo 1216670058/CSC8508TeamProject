@@ -119,6 +119,7 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
         }
     }
 
+    DrawPad();
     UpdateKeys();
     audio->Update();
     if (thisServer) world->UpdateWorld(dt);
@@ -207,6 +208,12 @@ void NetworkedGame::UpdateAsServer(float dt) {
         BroadcastSnapshot(true);
     }
     thisServer->UpdateServer();
+
+    if (failure)
+        world->SetGameState(GameState::FAILURE);
+    if (success) {
+        world->SetGameState(GameState::MENU);
+    }
 
     //std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
     //	player->GetTransform().GetPosition().y << " " <<
