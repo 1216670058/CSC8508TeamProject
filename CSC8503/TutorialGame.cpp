@@ -106,8 +106,7 @@ void TutorialGame::UpdateLoading(float dt)
     AssetsLoading();
 }
 
-void TutorialGame::UpdatePlaying(float dt)
-{
+void TutorialGame::UpdatePlaying(float dt) {
     if (!inSelectionMode) {
         if (cameraMode == 1) {
             CameraUpdate();
@@ -123,6 +122,8 @@ void TutorialGame::UpdatePlaying(float dt)
         world->SetGameState(GameState::MENU);
     }
 
+    DrawPad();
+
     playtime += dt;
     UpdateKeys();
     audio->Update();
@@ -132,7 +133,7 @@ void TutorialGame::UpdatePlaying(float dt)
     physics->Update(dt);
 
     renderer->Render();
-    //Debug::UpdateRenderables(dt);
+    Debug::UpdateRenderables(dt);
 }
 
 void TutorialGame::UpdatePaused(float dt)
@@ -160,6 +161,46 @@ void TutorialGame::UpdateFailure(float dt)
     renderer->Render();
 }
 
+void TutorialGame::DrawPad() {
+    if (usePad) {
+        if (player->GetSlot() == 0 || player->GetSlot() == 7) {
+            Vector3 position = player->GetTransform().GetPosition();
+            Vector3 p = player->FindGrid(Vector3(position.x, 4.5f, position.z));
+            int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            pad->GetTransform().SetPosition(p);
+            int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+            if (player->GetSlot() == 0) {
+                if (type >= 10000)
+                    pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+                else
+                    pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+            }
+            else if (player->GetSlot() == 7) {
+                if (!player->CanPlaceRail())
+                    pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+                else
+                    pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+            }
+        }
+        else {
+            Vector3 position = player->GetTransform().GetPosition();
+            position = Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f;
+            Vector3 p = player->FindGrid(Vector3(position.x, 4.5f, position.z));
+            int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            pad->GetTransform().SetPosition(position);
+            int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+            if (type >= 10000)
+                pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+            else
+                pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+        }
+    }
+    else {
+        pad->GetRenderObject()->SetColour(Vector4());
+        pad->GetTransform().SetPosition(Vector3());
+    }
+}
+
 void TutorialGame::UpdateKeys() {
     if (world->GetGameState() == GameState::PLAYING)
     {
@@ -179,6 +220,10 @@ void TutorialGame::UpdateKeys() {
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
             useGravity = !useGravity; //Toggle gravity!
             physics->UseGravity(useGravity);
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
+            usePad = !usePad;
         }
 
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
@@ -308,6 +353,7 @@ void TutorialGame::InitGameExamples(bool networked) {
     pickaxe = AddPickaxeToWorld(Vector3(25, 6.5f, 90), !networked);
     axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
     bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
+    pad = AddPadToWorld();
     AddSceneToWorld();
 }
 

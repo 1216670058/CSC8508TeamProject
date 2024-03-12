@@ -405,3 +405,27 @@ void PlayerObject::LoadMaterial() {
         }
     }
 }
+
+bool PlayerObject::CanPlaceRail() {
+    bool canConnect = false;
+    bool isPath = false;
+    bool notRail = false;
+    int connectedIndex;
+    Vector3 position = FindGrid(Vector3(transform.GetPosition().x, 4.5f, transform.GetPosition().z));
+    int index = position.x / 10 + (position.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+    GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+    notRail = n.type != 7 ? true : false;
+    for (int i = 0; i < 4; ++i) {
+        if (n.connected[i]) {
+            if (n.connected[i]->type == 7) {
+                canConnect = true;
+                connectedIndex = i;
+                break;
+            }
+        }
+    }
+    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - position).Length() < 14)
+        isPath = true;
+
+    return canConnect && isPath && notRail;
+}

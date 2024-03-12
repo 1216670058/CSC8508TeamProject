@@ -109,6 +109,13 @@ namespace NCL {
                 return isGL;
             }
 
+            void SetShadow(bool s) {
+                shadow = s;
+            }
+            bool HasShadow() const {
+                return shadow;
+            }
+
             void SetColour(const Vector4& c) {
                 colour = c;
             }
@@ -167,6 +174,7 @@ namespace NCL {
             int               drawMode;
             bool              emissive;
             bool              isGL = false;
+            bool              shadow = true;
             float             distanceFromCamera = 0.0f;
             float             textureRotate;
             float             textureCycle;

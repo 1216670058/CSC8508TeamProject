@@ -380,11 +380,11 @@ void GameTechRenderer::RenderFrame() {
     glDisable(GL_CULL_FACE); //Todo - text indices are going the wrong way...
 
 
-    /*glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     NewRenderLines();
-    NewRenderText();*/
+    NewRenderText();
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -434,8 +434,8 @@ void GameTechRenderer::RenderShadowMap() {
 
     glCullFace(GL_FRONT);
 
-    auto DrawShadowMap = [&](const auto& i)
-        {
+    auto DrawShadowMap = [&](const auto& i) {
+        if ((*i).HasShadow()) {
             if ((*i).GetDrawMode() != 3) {
                 BindShader(*shadowShader);
                 int mvpLocation = glGetUniformLocation(shadowShader->GetProgramID(), "mvpMatrix");
@@ -495,7 +495,8 @@ void GameTechRenderer::RenderShadowMap() {
                     DrawSubMesh(j);
                 }
             }
-        };
+        }
+    };
 
     for (const auto& i : activeObjects) {
         DrawShadowMap(i);

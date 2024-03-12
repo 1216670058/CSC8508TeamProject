@@ -554,13 +554,20 @@ void UI::DrawFailureMenu(float dt)
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
     if (ImGui::Button("Restart Game", ImVec2(contentWidth, 50))) {
-        if (!TutorialGame::GetGame()->IsNetworked())
+        if (!TutorialGame::GetGame()->IsNetworked()) {
             world->SetGameState(GameState::PLAYING);
-        else if (NetworkedGame::GetNetworkedGame()->IsServer())
+            TutorialGame::GetGame()->InitGameWorld();
+        }
+        else if (NetworkedGame::GetNetworkedGame()->IsServer()) {
             world->SetGameState(GameState::SERVERPLAYING);
-        else if (NetworkedGame::GetNetworkedGame()->IsClient())          
+            TutorialGame::GetGame()->InitGameWorld(true);
+            NetworkedGame::GetNetworkedGame()->StartLevel();
+        }
+        else if (NetworkedGame::GetNetworkedGame()->IsClient()) {
             world->SetGameState(GameState::CLIENTPLAYING);
-        TutorialGame::GetGame()->InitGameWorld();
+            TutorialGame::GetGame()->InitGameWorld(true);
+            NetworkedGame::GetNetworkedGame()->SpawnCarriage();
+        }
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);
     }

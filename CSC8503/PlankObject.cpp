@@ -129,6 +129,7 @@ void PlankObject::Update(float dt) {
         }
     }
 }
+
 void PlankObject::CreateBridge() {
     if (player->IsBuilding() && !putDown && !inCarriage && num == 1) {
         placed = true;

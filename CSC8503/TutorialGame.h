@@ -105,6 +105,8 @@ namespace NCL {
             void InitCamera();
             void InitWorld(bool networked = false);
 
+            void DrawPad();
+
             void UpdateKeys();
 
             void UpdateLoading(float dt);
@@ -150,6 +152,8 @@ namespace NCL {
             AnimalObject* AddMooseToWorld(const Vector3& position);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);
+
+            GameObject* AddPadToWorld();
 
             CollectableObject* CreateObject(int ID);
 
@@ -339,6 +343,8 @@ namespace NCL {
             PlayerObject* player3 = nullptr;
             PlayerObject* player4 = nullptr;
 
+            GameObject* pad = nullptr;
+
             CollectableObject* object = nullptr;
             CollectableObject* groundObject = nullptr;
 
@@ -351,6 +357,7 @@ namespace NCL {
 
             static TutorialGame* instance;
 
+            bool usePad = false;
             bool isExit = false;
             float playtime = 0.0f;
         };
