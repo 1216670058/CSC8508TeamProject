@@ -10,7 +10,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos) {
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
 
     GridNode n = grid->GetGridNode(rand() % this->gridSize);
-    while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 5000.0f) {
+    while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
         n = grid->GetGridNode(rand() % this->gridSize);
     }
 
@@ -25,7 +25,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos) {
             else { // if final node reached, find new path
               
                 n = grid->GetGridNode(rand() % this->gridSize);
-                while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 5000.0f) {
+                while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
                     n = grid->GetGridNode(rand() % this->gridSize);
                 }
             }
