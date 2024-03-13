@@ -342,6 +342,7 @@ void TutorialGame::InitGameExamples(bool networked) {
     axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
     bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
     pad = AddPadToWorld();
+    moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105);
     AddSceneToWorld();
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
