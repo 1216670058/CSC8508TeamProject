@@ -31,6 +31,7 @@ AnimalObject::AnimalObject(float xMin, float xMax, float zMin, float zMax) {
         //float angle = atan2(-direction.x, -direction.z);
         //float angleDegrees = Maths::RadiansToDegrees(angle);
         //GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));
+        //
 
         });
 
