@@ -54,6 +54,25 @@ namespace NCL::CSC8503 {
         }
     };
 
+    struct BoolPacket :public GamePacket {
+        bool flag;
+
+        BoolPacket() {
+            type = Default_Bool;
+            size = sizeof(FullPacket) - sizeof(GamePacket);
+        }
+    };
+
+    struct SpawnPacket :public GamePacket {
+        bool flag;
+        int num;
+
+        SpawnPacket() {
+            type = Spawn_Player;
+            size = sizeof(FullPacket) - sizeof(GamePacket);
+        }
+    };
+
     struct ClientPacket : public GamePacket {
         int		lastID;
         int     playerNum;
@@ -62,6 +81,15 @@ namespace NCL::CSC8503 {
         ClientPacket() {
             size = sizeof(ClientPacket);
             type = BasicNetworkMessages::Full_State;
+        }
+    };
+
+    struct ReceivedPacket :public GamePacket {
+        bool received;
+
+        ReceivedPacket() {
+            type = Received_State;
+            size = sizeof(FullPacket) - sizeof(GamePacket);
         }
     };
 
@@ -86,6 +114,17 @@ namespace NCL::CSC8503 {
             return object;
         }
 
+        NetworkState GetLastFullState() const {
+            return lastFullState;
+        }
+
+        bool IsUpdate() const {
+            return update;
+        }
+        void SetUpdate(bool u) {
+            update = u;
+        }
+
     protected:
 
         NetworkState& GetLatestNetworkState();
@@ -107,6 +146,7 @@ namespace NCL::CSC8503 {
         int deltaErrors;
         int fullErrors;
 
+        bool update = true;
         int networkID;
     };
 }

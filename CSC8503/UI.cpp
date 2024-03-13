@@ -537,6 +537,15 @@ void UI::DrawFailureMenu(float dt)
     ImGui::PopFont();
     ImGui::PopStyleColor();
 
+    if (NetworkedGame::GetNetworkedGame()->IsClient()) {
+        ImGui::PushFont(normalfont);
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 255, 255));
+        ImGui::SetCursorPos(ImVec2(main_viewport->GetCenter().x - ImGui::CalcTextSize("Waiting for server player to restart...").x * 0.5, main_viewport->GetCenter().y - main_viewport->GetCenter().y * 0.3));
+        ImGui::Text("Waiting for server player to restart...");
+        ImGui::PopFont();
+        ImGui::PopStyleColor();
+    }
+
     ImGui::PushFont(menufont);
     //Draw menu begin
     ImVec2 menuSize(300, 100);
@@ -553,23 +562,22 @@ void UI::DrawFailureMenu(float dt)
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 0, 1));
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(200, 200, 200, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(125, 125, 125, 1));
-    if (ImGui::Button("Restart Game", ImVec2(contentWidth, 50))) {
-        if (!TutorialGame::GetGame()->IsNetworked()) {
-            world->SetGameState(GameState::PLAYING);
-            TutorialGame::GetGame()->InitGameWorld();
+    if (!NetworkedGame::GetNetworkedGame()->IsClient()) {
+        if (ImGui::Button("Restart Game", ImVec2(contentWidth, 50))) {
+            if (!TutorialGame::GetGame()->IsNetworked()) {
+                world->SetGameState(GameState::PLAYING);
+                TutorialGame::GetGame()->InitGameWorld();
+            }
+            else if (NetworkedGame::GetNetworkedGame()->IsServer()) {
+                std::cout << "Server: Playing" << std::endl;
+                TutorialGame::GetGame()->InitGameWorld(true);
+                NetworkedGame::GetNetworkedGame()->StartLevel();
+                NetworkedGame::GetNetworkedGame()->SetRestartFlag(true);
+                world->SetGameState(GameState::SERVERPLAYING);
+            }
+            Window::GetWindow()->ShowOSPointer(false);
+            Window::GetWindow()->LockMouseToWindow(true);
         }
-        else if (NetworkedGame::GetNetworkedGame()->IsServer()) {
-            world->SetGameState(GameState::SERVERPLAYING);
-            TutorialGame::GetGame()->InitGameWorld(true);
-            NetworkedGame::GetNetworkedGame()->StartLevel();
-        }
-        else if (NetworkedGame::GetNetworkedGame()->IsClient()) {
-            world->SetGameState(GameState::CLIENTPLAYING);
-            TutorialGame::GetGame()->InitGameWorld(true);
-            NetworkedGame::GetNetworkedGame()->SpawnCarriage();
-        }
-        Window::GetWindow()->ShowOSPointer(false);
-        Window::GetWindow()->LockMouseToWindow(true);
     }
 
     if (ImGui::Button("Main Menu", ImVec2(contentWidth, 50))) {

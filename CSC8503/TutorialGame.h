@@ -52,6 +52,10 @@ namespace NCL {
                 networked = n;
             }
 
+            void SetRestartFlag(bool r) {
+                restartFlag = r;
+            }
+
             int GetLevel() const {
                 return level;
             }
@@ -107,13 +111,13 @@ namespace NCL {
 
             void DrawPad();
 
-            void UpdateKeys();
+            virtual void UpdateKeys();
 
             void UpdateLoading(float dt);
             void UpdatePlaying(float dt);
             virtual void UpdatePaused(float dt);
+            virtual void UpdateFailure(float dt);
             void UpdateMenu(float dt);
-            void UpdateFailure(float dt);
 
             /*
             These are some of the world/object creation functions I created when testing the functionality
@@ -184,6 +188,10 @@ namespace NCL {
             bool useGravity;
             bool inSelectionMode;
             int cameraMode = 1;
+
+            bool winFlag = false;
+            bool spawnFlag = false;
+            bool restartFlag = false;
 
             int level = 1;
             bool success = false;

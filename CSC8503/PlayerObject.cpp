@@ -11,7 +11,9 @@ void PlayerObject::Update(float dt) {
 
         if (renderObject->GetAnimationObject())
             UpdateAnimation(dt);
-        PlayerMovement(dt);
+        if (!TutorialGame::GetGame()->IsNetworked() || 
+            (TutorialGame::GetGame()->IsNetworked() && (TutorialGame::GetGame()->GetWorld()->GetGameState() == SERVERPLAYING || TutorialGame::GetGame()->GetWorld()->GetGameState() == CLIENTPLAYING)))
+            PlayerMovement(dt);
 
         doing = false;
         cutting = false;
@@ -136,10 +138,7 @@ void PlayerObject::UpdateAnimation(float dt) {
 
     if (renderObject->GetAnimationObject()->GetActiveAnim() != renderObject->GetAnimationObject()->GetAnim1() ||
         renderObject->GetAnimationObject()->HasIdle()) {
-        if (!TutorialGame::GetGame()->IsNetworked())
-            renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
-        else
-            renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - (dt * 4));
+        renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
         while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
             renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
                 renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameCount());
@@ -169,7 +168,7 @@ void PlayerObject::PlayerMovement(float dt) {
     }
 
     Quaternion* qq;
-    speed = TutorialGame::GetGame()->IsNetworked() ? 100 : 50;
+    speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
     //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
 
@@ -368,7 +367,14 @@ void PlayerObject::UseWater() {
 }
 
 void PlayerObject::BuildBridge() {
-    if (Window::GetKeyboard()->KeyHeld(NCL::KeyCodes::F) && slot == 5) {
+    bool FPressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        FPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F);
+    else
+        FPressed = buttonStates[7];
+
+    if (FPressed && slot == 5) {
+        int worldID1;
         doing = true;
         Ray r = Ray(transform.GetPosition(), face);
         RayCollision closestCollision;
@@ -376,8 +382,16 @@ void PlayerObject::BuildBridge() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
                 bridgePosition = closest->GetTransform().GetPosition();
+                if (TutorialGame::GetGame()->IsNetworked()) {
+                    worldID1 = closest->GetWorldID();
+                }
                 TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
                 building = true;
+                if (TutorialGame::GetGame()->IsNetworked()) {
+                    NetworkedGame::GetNetworkedGame()->SetBuildBridgeFlag(true);
+                    NetworkedGame::GetNetworkedGame()->SetBridgeBuiltTag(8);
+                    NetworkedGame::GetNetworkedGame()->SetWaterWorldID(worldID1);
+                }
             }
         }
     }

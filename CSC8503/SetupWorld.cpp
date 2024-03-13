@@ -755,7 +755,7 @@ GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
     float inverseMass = 0;
 
     GameObject* rock = new GameObject();
-    AABBVolume* volume = new AABBVolume(Vector3(1.5f, 1.5f, 1.5f));
+    AABBVolume* volume = new AABBVolume(Vector3(2.2f, 2.2f, 2.2f));
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(3, 3, 3))
@@ -798,6 +798,7 @@ WaterObject* TutorialGame::AddWaterToWorld(const Vector3& position) {
     world->AddGameObject(cube);
 
     cube->SetNetworkObject(new NetworkObject(*cube, cube->GetWorldID() + 6000));
+    cube->GetNetworkObject()->SetUpdate(false);
 
     return cube;
 }

@@ -43,6 +43,7 @@ void NetworkedGame::StartAsServer() {
     thisServer->RegisterPacketHandler(Delta_State, this);
     thisServer->RegisterPacketHandler(Full_State, this);
     thisServer->RegisterPacketHandler(Received_State, this);
+    thisServer->RegisterPacketHandler(Spawn_Player, this);
 
     StartLevel();
 }
@@ -57,6 +58,8 @@ void NetworkedGame::StartAsClient(char a, char b, char c, char d) {
     thisClient->RegisterPacketHandler(Player_Disconnected, this);
     thisClient->RegisterPacketHandler(Update_Objects, this);
     thisClient->RegisterPacketHandler(Client_Num, this);
+    thisClient->RegisterPacketHandler(Win_Lose, this);
+    thisClient->RegisterPacketHandler(Restart_Game, this);
 
     SpawnCarriage();
 }
@@ -94,6 +97,10 @@ void NetworkedGame::UpdateGame(float dt) {
     default:
         break;
     }
+    //if (thisServer)
+    //    std::cout << "Server State: " << world->GetGameState() << std::endl;
+    //else
+    //    std::cout << "Client State: " << world->GetGameState() << std::endl;
 }
 
 void NetworkedGame::UpdateNetworkedPlaying(float dt) {
@@ -121,6 +128,7 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
 
     DrawPad();
     UpdateKeys();
+
     audio->Update();
     if (thisServer) world->UpdateWorld(dt);
     else if (thisClient) world->UpdateWorld(dt, true);
@@ -156,6 +164,10 @@ void NetworkedGame::UpdateKeys() {
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
         cameraMode = 2;
     }
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
+        usePad = !usePad;
+    }
 }
 
 void NetworkedGame::UpdatePaused(float dt)
@@ -166,11 +178,11 @@ void NetworkedGame::UpdatePaused(float dt)
         clienttimeToNextPacket -= dt;
     if (thisServer && servertimeToNextPacket < 0) {
         UpdateAsServer(dt);
-        servertimeToNextPacket += 1.0f / 60.0f;
+        servertimeToNextPacket += 1.0f / 60.0f; //30hz server update
     }
     else if (thisClient && clienttimeToNextPacket < 0) {
         UpdateAsClient(dt);
-        clienttimeToNextPacket += 1.0f / 60.0f;
+        clienttimeToNextPacket += 1.0f / 60.0f; //60hz client update
     }
 
     if (!inSelectionMode) {
@@ -182,21 +194,72 @@ void NetworkedGame::UpdatePaused(float dt)
         }
     }
 
-    UpdateKeys();
     audio->Update();
-    if (thisServer)
-        world->UpdateWorld(dt);
+    if (thisServer) world->UpdateWorld(dt);
+    else if (thisClient) world->UpdateWorld(dt, true);
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
-    //physics->Update(dt);
+    physics->Update(dt);
     renderer->Render();
     Debug::UpdateRenderables(dt);
+}
+
+void NetworkedGame::UpdateFailure(float dt) {
+    if (thisServer)
+        servertimeToNextPacket -= dt;
+    else
+        clienttimeToNextPacket -= dt;
+
+    if (thisServer && servertimeToNextPacket < 0) {
+        ServerBroadcast();
+        if (!winFlag) {
+            BoolPacket losePacket;
+            losePacket.flag = false;
+            losePacket.type = Win_Lose;
+            thisServer->SendGlobalPacket(losePacket);
+            winFlag = true;
+        }
+        servertimeToNextPacket += 1.0f / 60.0f;
+    }
+    else if (thisClient && clienttimeToNextPacket < 0) {
+        thisClient->UpdateClient();
+        if (restartFlag) {
+            std::cout << "Client: Playing" << std::endl;
+            InitGameWorld(true);
+            SpawnCarriage();
+            spawn = true;
+            spawnFlag = true;
+            restartFlag = false;
+            world->SetGameState(GameState::CLIENTPLAYING);
+        }
+        clienttimeToNextPacket += 1.0f / 60.0f; //60hz client update
+    }
+
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
+    Debug::UpdateRenderables(dt);
+
+    //std::cout << "TrainLastFullID: " << train->GetNetworkObject()->GetLastFullState().GetStateID() << std::endl;
 }
 
 void NetworkedGame::UpdateAsServer(float dt) {
     if (thisServer->GetSpawnFlag()) {
         SpawnPlayer();
         SynchronizeGameObjects();
+    }
+
+    if (spawnFlag) {
+        SpawnPlayer();
+    }
+
+    if (restartFlag) {
+        BoolPacket restartPacket;
+        restartPacket.flag = true;
+        restartPacket.type = Restart_Game;
+        thisServer->SendGlobalPacket(restartPacket);
+        restartFlag = false;
     }
 
     packetsToSnapshot--;
@@ -210,14 +273,14 @@ void NetworkedGame::UpdateAsServer(float dt) {
     thisServer->UpdateServer();
 
     if (failure)
-        world->SetGameState(GameState::FAILURE);
-    if (success) {
+        world->SetGameState(GameState::FAILURE);        
+    if (success)
         world->SetGameState(GameState::MENU);
-    }
 
     //std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
     //	player->GetTransform().GetPosition().y << " " <<
     //	player->GetTransform().GetPosition().z << " " << std::endl;
+    //std::cout << "TrainLastFullID: " << train->GetNetworkObject()->GetLastFullState().GetStateID() << std::endl;
 }
 
 void NetworkedGame::UpdateAsClient(float dt) {
@@ -252,6 +315,19 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
     thisClient->UpdateClient();
 
+    if (failure)
+        world->SetGameState(GameState::FAILURE);
+    if (success) 
+        world->SetGameState(GameState::MENU);
+
+    if (spawnFlag) {
+        SpawnPacket spawnPacket;
+        spawnPacket.flag = true;
+        spawnPacket.num = spawnNum;
+        thisClient->SendPacket(spawnPacket);
+        spawnFlag = false;
+    }
+
     if (spawn)
         SpawnPlayer();
 
@@ -259,6 +335,22 @@ void NetworkedGame::UpdateAsClient(float dt) {
         SpawnGameObjects();
 
     UpdateGameObjects();
+
+    //std::cout << "TrainLastFullID: " << train->GetNetworkObject()->GetLastFullState().GetStateID() << std::endl;
+    //if (player)
+    //    std::cout << "Player: " << player->GetTransform().GetPosition().x << " " << player->GetTransform().GetPosition().y << " " << player->GetTransform().GetPosition().z << " " << std::endl;
+}
+
+void NetworkedGame::ServerBroadcast() {
+    packetsToSnapshot--;
+    if (packetsToSnapshot < 0) {
+        BroadcastSnapshot(false);
+        packetsToSnapshot = 5;
+    }
+    else {
+        BroadcastSnapshot(true);
+    }
+    thisServer->UpdateServer();
 }
 
 void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
@@ -269,7 +361,7 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
 
     for (auto i = first; i != last; ++i) {
         NetworkObject* o = (*i)->GetNetworkObject();
-        if (!o) {
+        if (!o || !o->IsUpdate()) {
             continue;
         }
         //TODO - you'll need some way of determining
@@ -327,12 +419,20 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
         thisServer->SendGlobalPacket(updatePacket);
         updateRail = false;
     }
+    if (bridgeBuilt) {
+        UpdatePacket updatePacket;
+
+        updatePacket.worldID = waterWorldID;
+        updatePacket.tag = bridgeBuiltTag;
+        thisServer->SendGlobalPacket(updatePacket);
+        bridgeBuilt = false;
+    }
 }
 
 void NetworkedGame::ClientSend(bool deltaFrame) {
     int playerState = 0;
     GamePacket* newPacket = nullptr;
-    if (player2->GetNetworkObject()->WritePacket(&newPacket, deltaFrame, playerState)) {
+    if (localPlayer->GetNetworkObject()->WritePacket(&newPacket, deltaFrame, playerState)) {
         thisClient->SendPacket(*newPacket);
         delete newPacket;
     }
@@ -364,31 +464,53 @@ void NetworkedGame::UpdateMinimumState() {
 
 void NetworkedGame::SpawnPlayer() {
     if (thisServer) {
-        if (thisServer->GetClientCount() == 1) {
-            player2->SetSpawned(true);
-            player2->GetTransform().SetPosition(Vector3(20, 5, 110));
-            thisServer->SetSpawnFlag(false);
-        }
-        else if (thisServer->GetClientCount() == 2) {
-            player3->SetSpawned(true);
-            player3->GetTransform().SetPosition(Vector3(20, 5, 120));
-            thisServer->SetSpawnFlag(false);
-        }
-        else if (thisServer->GetClientCount() == 3) {
-            player4->SetSpawned(true);
-            player4->GetTransform().SetPosition(Vector3(20, 5, 130));
-            thisServer->SetSpawnFlag(false);
-        }
+        if (!spawnFlag) {
+            if (thisServer->GetClientCount() == 1) {
+                player2->SetSpawned(true);
+                player2->GetTransform().SetPosition(Vector3(10, 4, 110));
+                thisServer->SetSpawnFlag(false);
+            }
+            else if (thisServer->GetClientCount() == 2) {
+                player3->SetSpawned(true);
+                player3->GetTransform().SetPosition(Vector3(10, 4, 120));
+                thisServer->SetSpawnFlag(false);
+            }
+            else if (thisServer->GetClientCount() == 3) {
+                player4->SetSpawned(true);
+                player4->GetTransform().SetPosition(Vector3(10, 4, 130));
+                thisServer->SetSpawnFlag(false);
+            }
 
-        NumPacket numPacket;
+            NumPacket numPacket;
 
-        numPacket.num = thisServer->GetClientCount() + 1;
-        thisServer->SendGlobalPacket(numPacket);
+            numPacket.num = thisServer->GetClientCount() + 1;
+            thisServer->SendGlobalPacket(numPacket);
+        }
+        else {
+            if (spawnNum == 2) {
+                player2->SetSpawned(true);
+                player2->GetTransform().SetPosition(Vector3(10, 4, 110));
+                spawnNum = 0;
+                spawnFlag = false;
+            }
+            if (spawnNum == 3) {
+                player3->SetSpawned(true);
+                player3->GetTransform().SetPosition(Vector3(10, 4, 120));
+                spawnNum = 0;
+                spawnFlag = false;
+            }
+            if (spawnNum == 4) {
+                player4->SetSpawned(true);
+                player4->GetTransform().SetPosition(Vector3(10, 4, 130));
+                spawnNum = 0;
+                spawnFlag = false;
+            }
+        }
     }
     else if (thisClient) {
         if (spawnNum == 2) {
             player2->SetSpawned(true);
-            player2->GetTransform().SetPosition(Vector3(20, 5, 110));
+            player2->GetTransform().SetPosition(Vector3(10, 4, 110));
             if (playerNum == -1) {
                 playerNum = 2;
                 localPlayer = player2;
@@ -397,7 +519,7 @@ void NetworkedGame::SpawnPlayer() {
         }
         if (spawnNum == 3) {
             player3->SetSpawned(true);
-            player3->GetTransform().SetPosition(Vector3(20, 5, 120));
+            player3->GetTransform().SetPosition(Vector3(10, 4, 120));
             if (playerNum == -1) {
                 playerNum = 3;
                 localPlayer = player3;
@@ -406,7 +528,7 @@ void NetworkedGame::SpawnPlayer() {
         }
         if (spawnNum == 4) {
             player4->SetSpawned(true);
-            player4->GetTransform().SetPosition(Vector3(20, 5, 130));
+            player4->GetTransform().SetPosition(Vector3(10, 4, 130));
             if (playerNum == -1) {
                 playerNum = 4;
                 localPlayer = player4;
@@ -432,7 +554,7 @@ void NetworkedGame::SynchronizeGameObjects() {
 
     for (auto i = first1; i != last1; ++i) {
         if ((*i)->GetTypeID() == 5 || (*i)->GetTypeID() == 6 ||
-            ((*i)->GetTypeID() == 7) && !(*i)->GetFlag1()) {
+            ((*i)->GetTypeID() == 7 && !(*i)->GetFlag1())) {
             UpdatePacket updatePacket;
 
             updatePacket.typeID = (*i)->GetTypeID();
@@ -519,6 +641,10 @@ void NetworkedGame::UpdateGameObjects() {
         }
         updateRailTag = 0;
     }
+    else if (bridgeBuiltTag == 8) {
+        world->RemoveGameObject(waterWorldID);
+        bridgeBuiltTag = 0;
+    }
 }
 
 void NetworkedGame::StartLevel() {
@@ -530,15 +656,15 @@ void NetworkedGame::StartLevel() {
     carriage1->SetProduceCarriage(carriage2);
     carriage2->SetMaterialCarriage(carriage1);
     player->SetSpawned(true);
-    player->GetTransform().SetPosition(Vector3(20, 5, 100));
+    player->GetTransform().SetPosition(Vector3(10, 4, 100));
     localPlayer = player;
     playerNum = 1;
     pickaxe->SetSpawned(true);
-    pickaxe->GetTransform().SetPosition(Vector3(40, 5, 90));
+    pickaxe->GetTransform().SetPosition(Vector3(25, 6.5f, 90));
     axe->SetSpawned(true);
-    axe->GetTransform().SetPosition(Vector3(40, 5, 100));
+    axe->GetTransform().SetPosition(Vector3(25, 8, 100));
     bucket->SetSpawned(true);
-    bucket->GetTransform().SetPosition(Vector3(40, 5, 110));
+    bucket->GetTransform().SetPosition(Vector3(25, 6.5f, 110));
 }
 
 void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
@@ -549,7 +675,7 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
             world->GetObjectIterators(first, last);
             for (auto i = first; i != last; ++i) {
                 NetworkObject* o = (*i)->GetNetworkObject();
-                if (!o) {
+                if (!o || !o->IsUpdate()) {
                     continue;
                 }
                 o->ReadPacket(*payload);
@@ -591,6 +717,10 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
                 updateRailTag = updatePacket->tag;
                 updateRailNetworkID = updatePacket->networkID1;
             }
+            else if (updatePacket->tag == 8) {
+                bridgeBuiltTag = updatePacket->tag;
+                waterWorldID = updatePacket->worldID;
+            }
         }
         else if (payload->type == Client_Num) {
             NumPacket* numPacket = (NumPacket*)payload;
@@ -598,19 +728,45 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
             spawnNum = numPacket->num;
             spawn = true;
         }
+        else if (payload->type == Win_Lose) {
+            BoolPacket* losePacket = (BoolPacket*)payload;
+
+            if (!losePacket->flag)
+                failure = true;
+            else
+                success = true;
+        }
+        else if (payload->type == Restart_Game) {
+            BoolPacket* restartPacket = (BoolPacket*)payload;
+
+            restartFlag = restartPacket->flag;
+        }
     }
     else if (thisServer) {
-        ClientPacket* packet = (ClientPacket*)payload;
-        switch (packet->playerNum) {
-        case 2:
-            player2->GetNetworkObject()->ReadClientPacket(*packet);
-            break;
-        case 3:
-            player3->GetNetworkObject()->ReadClientPacket(*packet);
-            break;
-        case 4:
-            player4->GetNetworkObject()->ReadClientPacket(*packet);
-            break;
+        if (payload->type == Full_State) {
+            ClientPacket* packet = (ClientPacket*)payload;
+            switch (packet->playerNum) {
+            case 2:
+                player2->GetNetworkObject()->ReadClientPacket(*packet);
+                break;
+            case 3:
+                player3->GetNetworkObject()->ReadClientPacket(*packet);
+                break;
+            case 4:
+                player4->GetNetworkObject()->ReadClientPacket(*packet);
+                break;
+            }
+        }
+        else if (payload->type == Received_State) {
+            ReceivedPacket* packet = (ReceivedPacket*)payload;
+
+            clientReceived = packet->received;
+        }
+        else if (payload->type == Spawn_Player) {
+            SpawnPacket* packet = (SpawnPacket*)payload;
+
+            spawnFlag = packet->flag;
+            spawnNum = packet->num;
         }
     }
 }
@@ -633,4 +789,44 @@ void NetworkedGame::UpdateChooseServer(float dt) {
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     renderer->Render();
+}
+
+void NetworkedGame::DrawPad() {
+    if (usePad) {
+        if (localPlayer->GetSlot() == 0 || localPlayer->GetSlot() == 7) {
+            Vector3 position = localPlayer->GetTransform().GetPosition();
+            Vector3 p = localPlayer->FindGrid(Vector3(position.x, 4.5f, position.z));
+            int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            pad->GetTransform().SetPosition(p);
+            int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+            if (localPlayer->GetSlot() == 0) {
+                if (type >= 10000)
+                    pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+                else
+                    pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+            }
+            else if (localPlayer->GetSlot() == 7) {
+                if (!localPlayer->CanPlaceRail())
+                    pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+                else
+                    pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+            }
+        }
+        else {
+            Vector3 position = localPlayer->GetTransform().GetPosition();
+            position = Vector3(position.x, 5, position.z) - localPlayer->GetFace() * 5.0f;
+            Vector3 p = localPlayer->FindGrid(Vector3(position.x, 4.5f, position.z));
+            int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+            pad->GetTransform().SetPosition(position);
+            int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+            if (type >= 10000)
+                pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+            else
+                pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+        }
+    }
+    else {
+        pad->GetRenderObject()->SetColour(Vector4());
+        pad->GetTransform().SetPosition(Vector3());
+    }
 }

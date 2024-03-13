@@ -118,14 +118,13 @@ void TutorialGame::UpdatePlaying(float dt) {
 
     if (failure)
         world->SetGameState(GameState::FAILURE);
-    if (success) {
+    if (success) 
         world->SetGameState(GameState::MENU);
-    }
 
     DrawPad();
-
-    playtime += dt;
     UpdateKeys();
+
+    playtime += dt; 
     audio->Update();
     world->UpdateWorld(dt);
     renderer->Update(dt);
@@ -307,6 +306,7 @@ void TutorialGame::CameraUpdate() {
 void TutorialGame::InitGameWorld(bool networked) {
     success = false;
     failure = false;
+    winFlag = false;
     InitCamera(); 
     InitWorld(networked);
 }
@@ -338,6 +338,11 @@ void TutorialGame::InitDefaultFloor() {
 void TutorialGame::InitGameExamples(bool networked) {
     player = AddPlayerToWorld(Vector3(10, 4, 100), "Player1", 1, !networked);
     train = AddTrainToWorld(Vector3(70, 4.5f, 100), !networked);
+    pickaxe = AddPickaxeToWorld(Vector3(25, 6.5f, 90), !networked);
+    axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
+    bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
+    pad = AddPadToWorld();
+    AddSceneToWorld();
     if (!networked) {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
         carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
@@ -346,15 +351,10 @@ void TutorialGame::InitGameExamples(bool networked) {
         carriage2->SetMaterialCarriage(carriage1);
     }
     else {
-        player2 = AddPlayerToWorld(Vector3(20, 4, 110), "Player2", 2, false);
-        player3 = AddPlayerToWorld(Vector3(20, 4, 120), "Player3", 3, false);
-        player4 = AddPlayerToWorld(Vector3(20, 4, 130), "Player4", 4, false);
+        player2 = AddPlayerToWorld(Vector3(10, 4, 110), "Player2", 2, false);
+        player3 = AddPlayerToWorld(Vector3(10, 4, 120), "Player3", 3, false);
+        player4 = AddPlayerToWorld(Vector3(10, 4, 130), "Player4", 4, false);
     }
-    pickaxe = AddPickaxeToWorld(Vector3(25, 6.5f, 90), !networked);
-    axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
-    bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
-    pad = AddPadToWorld();
-    AddSceneToWorld();
 }
 
 bool TutorialGame::SelectObject() {
