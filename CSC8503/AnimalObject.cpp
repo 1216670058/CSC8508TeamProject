@@ -2,36 +2,36 @@
 
 using namespace NCL::CSC8503;
 
-AnimalObject::AnimalObject(float xMin, float xMax, float zMin, float zMax) {
+AnimalObject::AnimalObject(string filePath, Vector3 startingPos) {
     this->typeID = 10;
     this->stateMachine = new StateMachine();
-    this->xMin = xMin;
-    this->xMax = xMax;
-    this->zMin = zMin;
-    this->zMax = zMax;
+    this->currentPos = startingPos;
+    this->grid = new NavigationGrid(filePath);
+    this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
 
-    wanderPoints.push_back(Vector3(xMin, 2.5, zMin));
-    wanderPoints.push_back(Vector3(xMax, 2.5, zMin));
-    wanderPoints.push_back(Vector3(xMax, 2.5, zMax));
-    wanderPoints.push_back(Vector3(xMin, 2.5, zMax));
+    GridNode n = grid->GetGridNode(rand() % this->gridSize);
+    while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 5000.0f) {
+        n = grid->GetGridNode(rand() % this->gridSize);
+    }
 
     State* wander = new State([&](float dt) -> void {
-        Vector3 nextWanderPointPos = wanderPoints[currentWanderIndex];
-        float speed = 10.0f;
+        Vector3 nextPathPos = wanderPathNodes[currentNodeIndex];
 
-        if ((nextWanderPointPos - currentPos).LengthSquared() < 1.0f) {
-            currentWanderIndex++;
-            currentWanderIndex %= 4;
-            nextWanderPointPos = wanderPoints[currentWanderIndex];
+        if (wanderPathNodes.empty() || (nextPathPos - currentPos).LengthSquared() < 1.0f) { // if close to current node
+            if (currentNodeIndex < (wanderPathNodes.size() - 1)) {    // if node isnt the final node, target next node
+                currentNodeIndex++;
+                nextPathPos = wanderPathNodes[currentNodeIndex];
+            }
+            else { // if final node reached, find new path
+              
+                n = grid->GetGridNode(rand() % this->gridSize);
+                while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 5000.0f) {
+                    n = grid->GetGridNode(rand() % this->gridSize);
+                }
+            }
         }
 
-        Vector3 direction = (nextWanderPointPos - currentPos).Normalised();
-        GetPhysicsObject()->SetLinearVelocity(direction * speed);
-
-        //float angle = atan2(-direction.x, -direction.z);
-        //float angleDegrees = Maths::RadiansToDegrees(angle);
-        //GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));
-        //
+        MoveToPosition(nextPathPos);  // otherwise move towards next node
 
         });
 
@@ -48,5 +48,37 @@ void AnimalObject::Update(float dt) {
     }
 
     currentPos = GetTransform().GetPosition();
+
     stateMachine->Update(dt);
+
+    for (int i = 0; i < wanderPathNodes.size() - 1; i++)
+    {
+        Debug::DrawLine(wanderPathNodes[i] + Vector3(0, 1, 0), wanderPathNodes[i + 1] + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
+    }
+}
+
+void AnimalObject::MoveToPosition(Vector3 targetPos) {
+    float speed = 10.0f;
+    Vector3 direction = (targetPos - currentPos).Normalised();
+    GetPhysicsObject()->SetLinearVelocity(Vector3(0, GetPhysicsObject()->GetLinearVelocity().y, 0) + direction * speed);
+
+    float angle = atan2(-direction.x, -direction.z);
+    float angleDegrees = Maths::RadiansToDegrees(angle);
+    GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));
+
+}
+
+bool AnimalObject::Pathfind(Vector3 targetPos) { // pathfinds to target position
+    wanderPathNodes = {};
+    currentNodeIndex = 0;
+
+    NavigationPath outPath;
+    bool foundPath = grid->FindPath(currentPos, targetPos, outPath);
+
+    Vector3 pos;
+    while (outPath.PopWaypoint(pos)) {  // converts path into Vector3 position nodes
+        wanderPathNodes.push_back(pos);
+    }
+
+    return foundPath;
 }
