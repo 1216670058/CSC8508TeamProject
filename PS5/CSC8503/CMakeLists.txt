@@ -1,0 +1,78 @@
+set(PROJECT_NAME CSC8503)
+
+################################################################################
+# Source groups
+################################################################################
+set(Header_Files
+#    "GameTechRenderer.h"
+    "NetworkedGame.h"
+    "NetworkPlayer.h"
+    "StateGameObject.h"
+    "TutorialGame.h"
+    "GameTechRendererInterface.h"
+)
+source_group("Header Files" FILES ${Header_Files})
+
+set(Source_Files
+ #   "GameTechRenderer.cpp"
+    "Main.cpp"
+    "NetworkedGame.cpp"
+    "NetworkPlayer.cpp"
+    "StateGameObject.cpp"
+    "TutorialGame.cpp"
+)
+
+source_group("Source Files" FILES ${Source_Files})
+
+set(ALL_FILES
+    ${Header_Files}
+    ${Source_Files}
+)
+################################################################################
+# Target
+################################################################################
+add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
+
+set(ROOT_NAMESPACE CSC8503)
+
+################################################################################
+# Compile definitions
+################################################################################
+if(MSVC)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "UNICODE;"
+        "_UNICODE" 
+        "WIN32_LEAN_AND_MEAN"
+        "_WINSOCKAPI_"   
+        "_WINSOCK2API_"
+        "_WINSOCK_DEPRECATED_NO_WARNINGS"
+    )
+endif()
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+    <vector>
+    <map>
+    <stack>
+    <string>
+    <list>
+    <thread>
+    <atomic>
+    <functional>
+    <iostream>
+    <set>
+	
+    "../NCLCoreClasses/Vector.h"
+    "../NCLCoreClasses/Quaternion.h"
+    "../NCLCoreClasses/Plane.h"
+    "../NCLCoreClasses/Matrix.h"
+    "../NCLCoreClasses/GameTimer.h" 	
+)
+
+################################################################################
+# Dependencies
+################################################################################
+include_directories("../OpenGLRendering/")
+include_directories("../NCLCoreClasses/")
+include_directories("../CSC8503CoreClasses/")
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${NCLCoreClasses})
