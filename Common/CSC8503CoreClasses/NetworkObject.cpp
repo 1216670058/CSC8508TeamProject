@@ -9,6 +9,7 @@ NetworkObject::NetworkObject(GameObject& o, int id) : object(o)	{
 	deltaErrors = 0;
 	fullErrors  = 0;
 	networkID   = id;
+    lastFullState.stateID = 0;
 }
 
 NetworkObject::~NetworkObject()	{
@@ -98,11 +99,16 @@ bool NetworkObject::ReadDeltaPacket(DeltaPacket& p) {
 
 bool NetworkObject::ReadFullPacket(FullPacket& p) {
     if (p.fullState.stateID < lastFullState.stateID) {
-        return false; // received an 'old' packet, ignore!
+        //std::cout << "FullState: " << p.fullState.stateID << std::endl;
+        //std::cout << "LastFullState: " << lastFullState.stateID << std::endl;
+        //std::cout << "WorldID: " << object.GetWorldID() << std::endl;
+        //std::cout << "Client: Received an 'old' packet, ignore!" << std::endl;
+        return false;
     }
     if (p.objectID == object.GetNetworkObject()->GetNetworkID()) {
         lastFullState = p.fullState;
         if (!(object.GetTypeID() == 10010) && !(object.GetTypeID() == 10086)) {
+            std::cout << "Type: " << object.GetTypeID() << std::endl;
             object.GetTransform().SetPosition(lastFullState.position);
             object.GetTransform().SetOrientation(lastFullState.orientation);
 
@@ -190,6 +196,7 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
     fp->fullState.stateID = lastFullState.stateID++;
 
     if (!(object.GetTypeID() == 10010) && !(object.GetTypeID() == 10086)) {
+        //std::cout << "Server: " << networkID <<std::endl;
         fp->fullState.position = object.GetTransform().GetPosition();
         fp->fullState.orientation = object.GetTransform().GetOrientation();
 

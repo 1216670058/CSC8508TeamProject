@@ -10,6 +10,10 @@ namespace NCL {
 			NetworkState();
 			virtual ~NetworkState();
 
+			int GetStateID() const {
+				return stateID;
+			}
+
 			Vector3		   position;
 			Quaternion	   orientation;
 			Vector3        scale;

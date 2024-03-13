@@ -20,8 +20,9 @@ namespace NCL {
 
             void UpdateNetworkedPlaying(float dt);
             void UpdatePaused(float dt) override;
+            void UpdateFailure(float dt) override;
 
-            void UpdateKeys();
+            void UpdateKeys() override;
 
             void SpawnPlayer();
 
@@ -80,6 +81,12 @@ namespace NCL {
             void SetUpdateRailFlag(bool f) {
                 updateRail = f;
             }
+            bool GetBuildBridgeFlag() {
+                return bridgeBuilt;
+            }
+            void SetBuildBridgeFlag(bool f) {
+                bridgeBuilt = f;
+            }
 
             void SetTreeCutTag(int t) {
                 treeCutTag = t;
@@ -125,6 +132,13 @@ namespace NCL {
                 updateRailNetworkID = id;
             }
 
+            void SetBridgeBuiltTag(int t) {
+                bridgeBuiltTag = t;
+            }
+            void SetWaterWorldID(int id) {
+                waterWorldID = id;
+            }
+
             static NetworkedGame* GetNetworkedGame() {
                 return networkInstance;
             };
@@ -133,11 +147,16 @@ namespace NCL {
             void UpdateAsServer(float dt);
             void UpdateAsClient(float dt);
 
+            void ServerBroadcast();
+
             void BroadcastSnapshot(bool deltaFrame);
             void ClientSend(bool deltaFrame);
             void UpdateMinimumState();
 
             void UpdateChooseServer(float dt);
+
+            void DrawPad();
+
             std::map<int, int> stateIDs;
 
             GameServer* thisServer;
@@ -155,6 +174,8 @@ namespace NCL {
             int spawnNum;
 
             static NetworkedGame* networkInstance;
+            
+            bool clientReceived = false;
 
             bool spawn = false;
             bool objectSpawned = false;
@@ -164,6 +185,7 @@ namespace NCL {
             bool materialUpdating = false;
             bool railProduced = false;
             bool updateRail = false;
+            bool bridgeBuilt = false;
 
             int treeCutTag = 0;
             int plankNetworkID;
@@ -186,6 +208,9 @@ namespace NCL {
             int newObjectTag = 0;
             vector<int> objectType;
             vector<int> objectNetworkID;
+
+            int bridgeBuiltTag = 0;
+            int waterWorldID;
 
             int removeObjectTag = 0;
             vector<int> removedObjectNetworkID;
