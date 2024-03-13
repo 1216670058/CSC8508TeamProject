@@ -18,21 +18,21 @@
 namespace NCL::CSC8503 {
 	class AnimalObject :public GameObject {
 	public:
-		AnimalObject(float xMin, float xMax, float zMin, float zMax);
+		AnimalObject(string filePath, Vector3 startingPos);
 		~AnimalObject() {};
 
 		void Update(float dt) override;
 
+		void MoveToPosition(Vector3 targetPos);
+		bool Pathfind(Vector3 targetPos);
+
 		StateMachine* stateMachine;
+		NavigationGrid* grid;
 
 		Vector3 currentPos;
+		std::vector<Vector3> wanderPathNodes = {};
+		int currentNodeIndex = 0;
 
-		float xMin;
-		float xMax;
-		float zMin;
-		float zMax;
-
-		std::vector<Vector3> wanderPoints = {};
-		int currentWanderIndex = 0;
+		int gridSize;
 	};
 }
