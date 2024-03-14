@@ -818,11 +818,13 @@ void GameTechRenderer::DrawProcess(int count) {
 
 void GameTechRenderer::ProcessCombine() {
     if (gameWorld.GetGameState() != GameState::PAUSED &&
-        gameWorld.GetGameState() != GameState::FAILURE) {
+        gameWorld.GetGameState() != GameState::FAILURE &&
+        gameWorld.GetGameState() != GameState::FINISH) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     else if (gameWorld.GetGameState() == GameState::PAUSED ||
-             gameWorld.GetGameState() == GameState::FAILURE)
+             gameWorld.GetGameState() == GameState::FAILURE ||
+             gameWorld.GetGameState() == GameState::FINISH)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pausedScreenTex, 0);
@@ -844,7 +846,8 @@ void GameTechRenderer::ProcessCombine() {
     Draw(quad, false);
 
     if (gameWorld.GetGameState() == GameState::PAUSED ||
-        gameWorld.GetGameState() == GameState::FAILURE) {
+        gameWorld.GetGameState() == GameState::FAILURE ||
+        gameWorld.GetGameState() == GameState::FINISH) {
         DrawProcess(1);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
