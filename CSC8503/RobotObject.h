@@ -20,11 +20,11 @@ namespace NCL::CSC8503 {
 	class StateMachine;
 	class RobotObject :public GameObject {
 	public:
-		RobotObject(std::string filePath, PlayerObject* player, Vector3 position)
-		{
+		RobotObject(std::string filePath, PlayerObject* player, Vector3 position);
+		RobotObject() {
 			typeID = 11;
 			name = "Robot";
-		};
+		}
 		~RobotObject() { delete grid; delete stateMachine; }
 
 		void Update(float dt) override;
