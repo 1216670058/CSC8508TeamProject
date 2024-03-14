@@ -35,11 +35,15 @@ namespace NCL {
             void DrawLoading(float dt);
             void DrawMenu(float dt);
             void DrawPlayingUI(float dt);
+            void DrawServerPlayingUI(float dt);
+            void DrawClientPlayingUI(float dt);
             void DrawChooseServer(float dt);
             void DrawPausedMenu(float dt);
             void DrawFailureMenu(float dt);
+            void DrawFinishMenu(float dt);
 
             void SetLoadingStep(int step) { loadingstep = step; };
+            void SetSuccess(bool s) { success = s; }
         protected:
             GameWorld* world;
 
@@ -55,9 +59,16 @@ namespace NCL {
             UI_Image plank;
             UI_Image stone;
             UI_Image rail;
+            UI_Image assassin;
+            UI_Image girl;
+            UI_Image evil_genius;
+            UI_Image loading;
+            UI_Image menu;
 
             int loadingstep;
+            bool success = false;
 
+            float counter = 3.0f;
         };
     }
 }

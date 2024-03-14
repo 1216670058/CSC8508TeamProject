@@ -21,6 +21,7 @@ namespace NCL {
             void UpdateNetworkedPlaying(float dt);
             void UpdatePaused(float dt) override;
             void UpdateFailure(float dt) override;
+            void UpdateFinish(float dt) override;
 
             void UpdateKeys() override;
 
@@ -49,6 +50,14 @@ namespace NCL {
 
             PlayerObject* GetLocalPlayer() const {
                 return localPlayer;
+            }
+
+            int GetPlayerNum() const {
+                return playerNum;
+            }
+
+            bool DisplayPlayerUI() const {
+                return playerUI;
             }
 
             bool GetCutTreeFlag() const {
@@ -176,6 +185,8 @@ namespace NCL {
             static NetworkedGame* networkInstance;
             
             bool clientReceived = false;
+
+            bool playerUI = true;
 
             bool spawn = false;
             bool objectSpawned = false;
