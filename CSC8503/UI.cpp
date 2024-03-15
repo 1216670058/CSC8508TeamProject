@@ -281,16 +281,19 @@ void UI::DrawMenu(float dt)
         world->SetGameState(GameState::PLAYING);
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Multiplayer
     if (ImGui::Button("Multi Player", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::CHOOSESERVER);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Exit Game
     if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
     ImGui::PopStyleColor(4);
     ImGui::PopStyleVar(2);
@@ -343,6 +346,7 @@ void UI::DrawChooseServer(float dt) {
         world->SetGameState(GameState::SERVERPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Client
@@ -354,11 +358,13 @@ void UI::DrawChooseServer(float dt) {
         world->SetGameState(GameState::CLIENTPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Exit Game
     if (ImGui::Button("Back", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::MENU);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
     ImGui::PopStyleColor(4);
     ImGui::PopStyleVar(2);
@@ -964,6 +970,7 @@ void UI::DrawPausedMenu(float dt)
             world->SetGameState(GameState::CLIENTPLAYING);
         Window::GetWindow()->ShowOSPointer(false);
         Window::GetWindow()->LockMouseToWindow(true);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Multiplayer
@@ -971,11 +978,13 @@ void UI::DrawPausedMenu(float dt)
         world->SetGameState(GameState::MENU);
         world->ClearAndErase();
         world->GetMainCamera().InitCam();
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     //set Exit Game
     if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     ImGui::PopStyleColor(4);
@@ -1045,6 +1054,7 @@ void UI::DrawFailureMenu(float dt)
             }
             Window::GetWindow()->ShowOSPointer(false);
             Window::GetWindow()->LockMouseToWindow(true);
+            TutorialGame::GetGame()->GetAudio()->playbutton();
         }
     }
 
@@ -1052,10 +1062,12 @@ void UI::DrawFailureMenu(float dt)
         world->SetGameState(GameState::MENU);
         world->ClearAndErase();
         world->GetMainCamera().InitCam();
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     ImGui::PopStyleColor(4);
@@ -1127,6 +1139,7 @@ void UI::DrawFinishMenu(float dt)
             }
             Window::GetWindow()->ShowOSPointer(false);
             Window::GetWindow()->LockMouseToWindow(true);
+            TutorialGame::GetGame()->GetAudio()->playbutton();
         }
     }
 
@@ -1134,10 +1147,12 @@ void UI::DrawFinishMenu(float dt)
         world->SetGameState(GameState::MENU);
         world->ClearAndErase();
         world->GetMainCamera().InitCam();
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     if (ImGui::Button("Exit", ImVec2(contentWidth, 50))) {
         world->SetGameState(GameState::EXIT);
+        TutorialGame::GetGame()->GetAudio()->playbutton();
     }
 
     ImGui::PopStyleColor(4);

@@ -97,6 +97,8 @@ namespace NCL {
             ProduceCarriage* GetProduceCarriage() { return carriage2; }
             WaterCarriage* GetWaterCarriage() { return carriage3; }
 
+            Audio* GetAudio() { return audio; }
+
         protected:
             void InitMeshes();
             void InitTextures();

@@ -327,7 +327,7 @@ void NetworkedGame::UpdateAsServer(float dt) {
     thisServer->UpdateServer();
 
     if (failure)
-        world->SetGameState(GameState::FAILURE);        
+        world->SetGameState(GameState::FAILURE);
     if (success) {
         if (level < 3) {
             if (!winFlag) {
@@ -346,7 +346,7 @@ void NetworkedGame::UpdateAsServer(float dt) {
             world->SetGameState(GameState::FINISH);
         }
     }
-        
+
 
     //std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
     //	player->GetTransform().GetPosition().y << " " <<
@@ -401,7 +401,7 @@ void NetworkedGame::UpdateAsClient(float dt) {
             world->SetGameState(GameState::FINISH);
         }
     }
-        
+
 
     if (spawnFlag) {
         SpawnPacket spawnPacket;

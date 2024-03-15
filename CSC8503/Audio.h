@@ -21,6 +21,7 @@ public:
     Audio(GameWorld* world);
     ~Audio();
     void Update();
+    void playbutton();
 
 private:
     GameWorld* world;
@@ -28,6 +29,11 @@ private:
     ISoundEngine* soundEngine = nullptr;
 
     ISoundSource* menubgmsource = nullptr;
-    ISound* menubgm = nullptr;
+    ISoundSource* playingbgmsource = nullptr;
+    ISoundSource* trainsource = nullptr;
 
+    ISound* menubgm = nullptr;
+    ISound* playingbgm = nullptr;
+    ISound* trainbgm = nullptr;
+    ISound* button = nullptr;
 };
