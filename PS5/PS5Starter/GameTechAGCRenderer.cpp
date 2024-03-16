@@ -234,6 +234,9 @@ void GameTechAGCRenderer::DrawObjects() {
 			instanceCount = 1;
 			startingIndex = i;
 		}
+		else {
+			instanceCount++;
+		}
 		if (i == activeObjects.size() - 1) {
 			objectMesh->BindVertexBuffers(frameContext->m_bdr.getStage(sce::Agc::ShaderType::kGs));
 
@@ -246,9 +249,6 @@ void GameTechAGCRenderer::DrawObjects() {
 			}
 
 			DrawBoundMeshInstanced(*frameContext, *objectMesh, instanceCount);
-		}
-		else {
-			instanceCount++;
 		}
 	}
 }
