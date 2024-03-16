@@ -132,6 +132,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                         }
                     }
                 }
+                TutorialGame::GetGame()->GetAudio()->PlayGet();
             }
             else if (otherObject->GetSlot() == 7 && otherObject->GetSlotNum() < 3) {
                 for (int i = 0; i < 3 - otherObject->GetSlotNum(); ++i) {
@@ -147,6 +148,7 @@ void ProduceCarriage::OnCollisionBegin(GameObject* otherObject) {
                         }
                     }
                 }
+                TutorialGame::GetGame()->GetAudio()->PlayGet();
             }
         }
     }

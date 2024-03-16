@@ -325,9 +325,10 @@ void NetworkedGame::UpdateAsServer(float dt) {
         BroadcastSnapshot(true);
     }
     thisServer->UpdateServer();
-
-    if (failure)
+    if (failure) {
         world->SetGameState(GameState::FAILURE);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
     if (success) {
         if (level < 3) {
             if (!winFlag) {
@@ -344,6 +345,7 @@ void NetworkedGame::UpdateAsServer(float dt) {
         }
         else {
             world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
         }
     }
 
@@ -386,8 +388,10 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
     thisClient->UpdateClient();
 
-    if (failure)
+    if (failure) {
         world->SetGameState(GameState::FAILURE);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
     if (success) {
         if (level < 3) {
             renderer->GetUI()->SetSuccess(true);
@@ -399,6 +403,7 @@ void NetworkedGame::UpdateAsClient(float dt) {
         }
         else {
             world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
         }
     }
 

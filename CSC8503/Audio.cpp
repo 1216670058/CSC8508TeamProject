@@ -17,7 +17,6 @@ Audio::Audio(GameWorld* world)
     menubgmsource = soundEngine->addSoundSourceFromFile((Assets::SOUNDSDIR + "Menu.mp3").c_str());
     playingbgmsource = soundEngine->addSoundSourceFromFile((Assets::SOUNDSDIR + "PlayingBGM.mp3").c_str());
     trainsource = soundEngine->addSoundSourceFromFile((Assets::SOUNDSDIR + "train.mp3").c_str());
-
 }
 
 Audio::~Audio()
@@ -86,9 +85,97 @@ void Audio::Update()
 
 }
 
-void Audio::playbutton()
+void Audio::PlayButton()
 {
     button = soundEngine->play2D((Assets::SOUNDSDIR + "Button.mp3").c_str(), false, true, true);
     button->setVolume(0.25);
-    button->setIsPaused(false);
+}
+
+void Audio::PlayGet()
+{
+    soundEngine->play2D((Assets::SOUNDSDIR + "get.wav").c_str(), false, false, false);
+}
+
+void Audio::PlayPut()
+{
+    soundEngine->play2D((Assets::SOUNDSDIR + "put.wav").c_str(), false, false, false);
+}
+
+void Audio::PlayFootstep()
+{
+    if (footstep == nullptr)
+    {
+        footstep = soundEngine->play2D((Assets::SOUNDSDIR + "footstep.mp3").c_str(), true, false, true);
+        footstep->setVolume(0.75);
+    }
+    footstep->setIsPaused(false);
+}
+
+void Audio::PauseFootstep()
+{
+    if (footstep != nullptr)
+        footstep->setIsPaused(true);
+}
+
+void Audio::PlayWaterin()
+{
+    if (waterin == nullptr)
+    {
+        waterin = soundEngine->play2D((Assets::SOUNDSDIR + "waterin.wav").c_str(), true, false, true);
+    }
+    waterin->setIsPaused(false);
+}
+
+void Audio::PauseWaterin()
+{
+    if (waterin != nullptr)
+        waterin->setIsPaused(true);
+}
+
+
+void Audio::PlayWaterout()
+{
+    soundEngine->play2D((Assets::SOUNDSDIR + "waterout.wav").c_str(), false, false, false);
+}
+
+void Audio::PlayWood()
+{
+    if (wood == nullptr)
+    {
+        wood = soundEngine->play2D((Assets::SOUNDSDIR + "wood.mp3").c_str(), true, false, true);
+        wood->setVolume(0.75);
+    }
+    wood->setIsPaused(false);
+}
+
+void Audio::PauseWood()
+{
+    if (wood != nullptr)
+        wood->setIsPaused(true);
+}
+
+void Audio::PlayIron()
+{
+    if (iron == nullptr)
+    {
+        iron = soundEngine->play2D((Assets::SOUNDSDIR + "iron.mp3").c_str(), true, false, true);
+        iron->setVolume(0.75);
+    }
+    iron->setIsPaused(false);
+}
+
+void Audio::PauseIron()
+{
+    if (iron != nullptr)
+        iron->setIsPaused(true);
+}
+
+void Audio::PlayWin()
+{
+    soundEngine->play2D((Assets::SOUNDSDIR + "win.wav").c_str(), false, false, false);
+}
+
+void Audio::PlayFailure()
+{
+    soundEngine->play2D((Assets::SOUNDSDIR + "failure.mp3").c_str(), false, false, false);
 }
