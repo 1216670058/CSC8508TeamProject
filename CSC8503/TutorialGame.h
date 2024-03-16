@@ -372,7 +372,6 @@ namespace NCL {
             Vector3 bucketPosition;
             Vector3 trainPosition;
 
-            vector<Vector3> mazeNodes;
             NavigationGrid* navGrid;
 
             static TutorialGame* instance;

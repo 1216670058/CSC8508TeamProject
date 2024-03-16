@@ -102,20 +102,20 @@ void TrainObject::InitPaths(int level) {
     switch (level) {
     case 1:
         firstPath = Vector3(50, 4.5f, 100);
-        finalPath = Vector3(70, 4.5f, 100);
-        finishPath = Vector3(80, 4.5f, 100);
+        finalPath = Vector3(270, 4.5f, 50);
+        finishPath = Vector3(290, 4.5f, 50);
         path.push_back(firstPath);
         break;
     case 2:
         firstPath = Vector3(50, 4.5f, 50);
-        finalPath = Vector3(70, 4.5f, 50);
-        finishPath = Vector3(80, 4.5f, 50);
+        finalPath = Vector3(270, 4.5f, 150);
+        finishPath = Vector3(290, 4.5f, 150);
         path.push_back(firstPath);
         break;
     case 3:
         firstPath = Vector3(50, 4.5f, 20);
-        finalPath = Vector3(70, 4.5f, 20);
-        finishPath = Vector3(80, 4.5f, 20);
+        finalPath = Vector3(270, 4.5f, 150);
+        finishPath = Vector3(290, 4.5f, 150);
         path.push_back(firstPath);
         break;
     //case 4:
