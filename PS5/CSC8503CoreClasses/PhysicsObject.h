@@ -3,11 +3,11 @@ using namespace NCL::Maths;
 
 namespace NCL {
 	class CollisionVolume;
-	
+
 	namespace CSC8503 {
 		class Transform;
 
-		class PhysicsObject	{
+		class PhysicsObject {
 		public:
 			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume);
 			~PhysicsObject();
@@ -38,7 +38,7 @@ namespace NCL {
 
 			void ApplyAngularImpulse(const Vector3& force);
 			void ApplyLinearImpulse(const Vector3& force);
-			
+
 			void AddForce(const Vector3& force);
 
 			void AddForceAtPosition(const Vector3& force, const Vector3& position);
@@ -56,10 +56,36 @@ namespace NCL {
 				angularVelocity = v;
 			}
 
-			void InitCubeInertia();
-			void InitSphereInertia();
+			int GetChannel() const {
+				return channel;
+			}
+			void SetChannel(int c) {
+				channel = c;
+			}
 
-			void UpdateInertiaTensor();
+			bool UseGravity() const {
+				return gravity;
+			}
+			void SetGravity(bool g) {
+				gravity = g;
+			}
+
+			bool UseResolve() const {
+				return resolve;
+			}
+			void SetResolve(bool r) {
+				resolve = r;
+			}
+			float GetRealDamping() {
+				return RealDamping;
+			}
+			void SetRealDamping(float damping) {
+				RealDamping = damping;
+			}
+			void InitCubeInertia() {};
+			void InitSphereInertia() {};
+
+			void UpdateInertiaTensor() {};
 
 			Matrix3 GetInertiaTensor() const {
 				return inverseInteriaTensor;
@@ -67,21 +93,26 @@ namespace NCL {
 
 		protected:
 			const CollisionVolume* volume;
-			Transform*		transform;
+			Transform* transform;
 
 			float inverseMass;
 			float elasticity;
 			float friction;
-
+			float RealDamping = 0.962f;
+			int AccelTime;
 			//linear stuff
 			Vector3 linearVelocity;
 			Vector3 force;
-			
+
 			//angular stuff
 			Vector3 angularVelocity;
 			Vector3 torque;
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
+
+			int channel;
+			bool gravity;
+			bool resolve;
 		};
 	}
 }

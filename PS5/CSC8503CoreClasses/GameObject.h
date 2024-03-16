@@ -2,93 +2,255 @@
 #include "Transform.h"
 #include "CollisionVolume.h"
 
+#include "AABBVolume.h"
+#include "OBBVolume.h"
+#include "SphereVolume.h"
+#include "CapsuleVolume.h"
+
 using std::vector;
 
 namespace NCL::CSC8503 {
-	class NetworkObject;
-	class RenderObject;
-	class PhysicsObject;
+    class NetworkObject;
+    class RenderObject;
+    class PhysicsObject;
 
-	class GameObject	{
-	public:
-		GameObject(const std::string& name = "");
-		virtual ~GameObject();
+    struct GridCenter {
+        int x;
+        int z;
+    };
 
-		void SetBoundingVolume(CollisionVolume* vol) {
-			boundingVolume = vol;
-		}
+    class GameObject {
+    public:
+        GameObject(const std::string& name = "");
+        ~GameObject();
 
-		const CollisionVolume* GetBoundingVolume() const {
-			return boundingVolume;
-		}
+        void SetBoundingVolume(CollisionVolume* vol) {
+            boundingVolume = vol;
+            Vector3 a;
+            switch (boundingVolume->type)
+            {
+            case VolumeType::AABB:
+                a = ((AABBVolume&)*vol).GetHalfDimensions();
+                SetBoundingRadius(std::max(a.x, std::max(a.y, a.z)));
+                break;
+            case VolumeType::OBB:
+                a = ((OBBVolume&)*vol).GetHalfDimensions();
+                SetBoundingRadius(std::max(a.x, std::max(a.y, a.z)));
+                break;
+            case VolumeType::Sphere:
+                SetBoundingRadius(((SphereVolume&)*vol).GetRadius());
+                break;
+            case VolumeType::Capsule:
+                SetBoundingRadius(((CapsuleVolume&)*vol).GetHalfHeight());
+                break;
+            default:
+                a = ((AABBVolume&)*vol).GetHalfDimensions();
+                SetBoundingRadius(std::max(a.x, std::max(a.y, a.z)));
+                break;
+            }
+        }
 
-		bool IsActive() const {
-			return isActive;
-		}
+        const CollisionVolume* GetBoundingVolume() const {
+            return boundingVolume;
+        }
 
-		Transform& GetTransform() {
-			return transform;
-		}
+        float GetBoundingRadius() const { return boundingRadius; }
+        void SetBoundingRadius(float f) { boundingRadius = f; }
 
-		RenderObject* GetRenderObject() const {
-			return renderObject;
-		}
+        bool IsActive() const {
+            return isActive;
+        }
+        void SetActive(bool active) {
+            isActive = active;
+        }
 
-		PhysicsObject* GetPhysicsObject() const {
-			return physicsObject;
-		}
+        bool IsSpawned() const {
+            return spawned;
+        }
+        void SetSpawned(bool s) {
+            spawned = s;
+        }
 
-		NetworkObject* GetNetworkObject() const {
-			return networkObject;
-		}
+        bool UpdateInClient() const {
+            return updateInClient;
+        }
+        void SetUpdateInClient(bool u) {
+            updateInClient = u;
+        }
 
-		void SetRenderObject(RenderObject* newObject) {
-			renderObject = newObject;
-		}
+        Transform& GetTransform() {
+            return transform;
+        }
 
-		void SetPhysicsObject(PhysicsObject* newObject) {
-			physicsObject = newObject;
-		}
+        RenderObject* GetRenderObject() const {
+            return renderObject;
+        }
 
-		const std::string& GetName() const {
-			return name;
-		}
+        PhysicsObject* GetPhysicsObject() const {
+            return physicsObject;
+        }
 
-		virtual void OnCollisionBegin(GameObject* otherObject) {
-			//std::cout << "OnCollisionBegin event occured!\n";
-		}
+        NetworkObject* GetNetworkObject() const {
+            return networkObject;
+        }
 
-		virtual void OnCollisionEnd(GameObject* otherObject) {
-			//std::cout << "OnCollisionEnd event occured!\n";
-		}
+        void SetRenderObject(RenderObject* newObject) {
+            renderObject = newObject;
+        }
 
-		virtual void Update(float dt);
+        void SetPhysicsObject(PhysicsObject* newObject) {
+            physicsObject = newObject;
+        }
 
-		bool GetBroadphaseAABB(Vector3&outsize) const;
+        void SetNetworkObject(NetworkObject* newObject) {
+            networkObject = newObject;
+        }
 
-		void UpdateBroadphaseAABB();
+        const std::string& GetName() const {
+            return name;
+        }
 
-		void SetWorldID(int newID) {
-			worldID = newID;
-		}
+        virtual void OnCollisionBegin(GameObject* otherObject) {
+            //std::cout << "OnCollisionBegin event occured!\n";
+        }
 
-		int		GetWorldID() const {
-			return worldID;
-		}
+        virtual void OnCollisionEnd(GameObject* otherObject) {
+            //std::cout << "OnCollisionEnd event occured!\n";
+        }
 
-	protected:
-		Transform			transform;
+        virtual void Update(float dt) {}
 
-		CollisionVolume*	boundingVolume;
-		PhysicsObject*		physicsObject;
-		RenderObject*		renderObject;
-		NetworkObject*		networkObject;
+        bool GetBroadphaseAABB(Vector3& outsize) const;
 
-		bool		isActive;
-		int			worldID;
-		std::string	name;
+        void UpdateBroadphaseAABB();
 
-		Vector3 broadphaseAABB;
-	};
+        void SetWorldID(int newID) {
+            worldID = newID;
+        }
+        int		GetWorldID() const {
+            return worldID;
+        }
+
+        void SetTypeID(int newID) {
+            typeID = newID;
+        }
+        int		GetTypeID() const {
+            return typeID;
+        }
+
+        void SetSlot(int s) {
+            slot = s;
+        }
+        int GetSlot() const {
+            return slot;
+        }
+
+        void SetSlotNum(int n) {
+            slotNum = n;
+        }
+        int GetSlotNum() const {
+            return slotNum;
+        }
+
+        void SetFlag1(int f) {
+            flag1 = f;
+        }
+        bool GetFlag1() const {
+            return flag1;
+        }
+        void SetFlag2(int f) {
+            flag2 = f;
+        }
+        bool GetFlag2() const {
+            return flag2;
+        }
+        void SetFlag3(int f) {
+            flag3 = f;
+        }
+        bool GetFlag3() const {
+            return flag3;
+        }
+        void SetFlag4(int f) {
+            flag4 = f;
+        }
+        bool GetFlag4() const {
+            return flag4;
+        }
+        void SetFlag5(int f) {
+            flag5 = f;
+        }
+        bool GetFlag5() const {
+            return flag5;
+        }
+
+        void SetFloat1(float f) {
+            float1 = f;
+        }
+        float GetFloat1() const {
+            return float1;
+        }
+        void SetFloat2(float f) {
+            float2 = f;
+        }
+        float GetFloat2() const {
+            return float2;
+        }
+        void SetFloat3(float f) {
+            float3 = f;
+        }
+        float GetFloat3() const {
+            return float3;
+        }
+
+        void SetButton(int index, bool state) {
+            buttonStates[index] = state;
+        }
+        bool GetButton(int index) const {
+            return buttonStates[index];
+        }
+
+        double EuclideanDistance(float x1, float y1, float x2, float y2);
+        Vector3 FindNearestGridCenter(const Vector3& position);
+        Vector3 FindGrid(const Vector3& position);
+
+    protected:
+        Transform			transform;
+
+        CollisionVolume* boundingVolume;
+        float boundingRadius = 1.0f;
+        PhysicsObject* physicsObject;
+        RenderObject* renderObject;
+        NetworkObject* networkObject;
+
+        bool		isActive;
+        bool        triggerDelete;
+        bool        spawned = true;
+        bool        updateInClient = false;
+        int			worldID;
+        int         typeID;
+        int         slot = 0;
+        int         slotNum = 0;
+        std::string	name;
+
+        int GRID_SIZE_X = 32;
+        int GRID_SIZE_Z = 20;
+        float GRID_CENTER_X = 5.0f;
+        float  GRID_CENTER_Z = 5.0f;
+        int GridSize = 10;
+
+        bool flag1 = false;
+        bool flag2 = false;
+        bool flag3 = false;
+        bool flag4 = false;
+        bool flag5 = false;
+
+        float float1 = 0.0f;
+        float float2 = 0.0f;
+        float float3 = 0.0f;
+
+        Vector3 broadphaseAABB;
+
+        bool buttonStates[8];
+    };
 }
 

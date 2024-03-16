@@ -3,6 +3,7 @@
 #include <string>
 namespace NCL {
 	namespace CSC8503 {
+		class RailObject;
 		struct GridNode {
 			GridNode* parent;
 
@@ -16,6 +17,8 @@ namespace NCL {
 
 			int type;
 
+			RailObject* rail;
+
 			GridNode() {
 				for (int i = 0; i < 4; ++i) {
 					connected[i] = nullptr;
@@ -27,19 +30,41 @@ namespace NCL {
 				parent = nullptr;
 			}
 			~GridNode() {	}
+
+			void SetType(int t) {
+				type = t;
+			}
+
+			void SetRail(RailObject* r) {
+				rail = r;
+			}
+			RailObject* GetRail() const {
+				return rail;
+			}
 		};
 
-		class NavigationGrid : public NavigationMap	{
+		class NavigationGrid : public NavigationMap {
 		public:
 			NavigationGrid();
-			NavigationGrid(const std::string&filename);
+			NavigationGrid(const std::string& filename);
 			~NavigationGrid();
 
 			bool FindPath(const Vector3& from, const Vector3& to, NavigationPath& outPath) override;
-				
+
+			GridNode& GetGridNode(int index) const {
+				return allNodes[index];
+			}
+			void SetGridNode(GridNode* g) {
+				allNodes = g;
+			}
+
+			int GetGridWidth() const {
+				return gridWidth;
+			}
+
 		protected:
 			bool		NodeInList(GridNode* n, std::vector<GridNode*>& list) const;
-			GridNode*	RemoveBestNode(std::vector<GridNode*>& list) const;
+			GridNode* RemoveBestNode(std::vector<GridNode*>& list) const;
 			float		Heuristic(GridNode* hNode, GridNode* endNode) const;
 			int nodeSize;
 			int gridWidth;

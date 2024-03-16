@@ -13,6 +13,7 @@ set(Collision_Detection
 	"SphereVolume.h"
 	"CapsuleVolume.cpp"    
 	"CollisionDetection.cpp"
+        "OcTree.h"
 )
 source_group("Collision Detection" FILES ${Collision_Detection})
 
