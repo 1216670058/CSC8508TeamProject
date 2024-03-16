@@ -4,7 +4,7 @@
 #include "NavigationGrid.h"
 #include "Window.h"
 
-using namespace NCL::CSC8503; 
+using namespace NCL::CSC8503;
 
 void RailObject::OnCollisionBegin(GameObject* otherObject) {
     if (!TutorialGame::GetGame()->IsNetworked() || NetworkedGame::GetNetworkedGame()->IsServer()) {
@@ -15,12 +15,14 @@ void RailObject::OnCollisionBegin(GameObject* otherObject) {
                     putDown = false;
                     player->SetSlot(this->GetTypeID());
                     player->SetSlotNum(player->GetSlotNum() + 1);
+                    TutorialGame::GetGame()->GetAudio()->PlayGet();
                 }
                 else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 7 && otherObject->GetSlotNum() < 3) {
                     player = (PlayerObject*)otherObject;
                     putDown = false;
                     num = player->GetSlotNum() + 1;
                     player->SetSlotNum(player->GetSlotNum() + 1);
+                    TutorialGame::GetGame()->GetAudio()->PlayGet();
                 }
             }
         }
@@ -64,6 +66,7 @@ void RailObject::Update(float dt) {
                 RPressed = player->GetButton(4);
 
             if (RPressed) {
+                TutorialGame::GetGame()->GetAudio()->PlayPut();
                 Vector3 position = transform.GetPosition();
                 Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
                 int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
@@ -97,7 +100,7 @@ void RailObject::Update(float dt) {
             //std::cout << "RailNum: " << num << std::endl;
         }
     }
-    else if(putDown && !placed){
+    else if (putDown && !placed) {
         physicsObject->SetAngularVelocity(Vector3(0, 5, 0));
     }
 }
@@ -152,6 +155,7 @@ void RailObject::PlaceRail() {
 
     if (FPressed && player->GetSlot() == 7 && num == 1) {
         if (!putDown && !inCarriage) {
+            TutorialGame::GetGame()->GetAudio()->PlayGet();
             bool canConnect = false;
             bool isPath = false;
             int connectedIndex = -1;

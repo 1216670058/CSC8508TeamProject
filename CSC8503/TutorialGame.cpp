@@ -81,9 +81,10 @@ void TutorialGame::UpdateGame(float dt) {
             world->GetMainCamera().UpdateCamera(dt);
         }
     }
-
-    if (failure)
+    if (failure) {
         world->SetGameState(GameState::FAILURE);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
     if (success) {
         if (level < 3) {
             renderer->GetUI()->SetSuccess(true);
@@ -92,9 +93,10 @@ void TutorialGame::UpdateGame(float dt) {
         }
         else {
             world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
         }
     }
-        
+
 
     DrawPad();
     TutorialGame::UpdateKeys();
@@ -241,7 +243,7 @@ void TutorialGame::UpdateKeys() {
         if (lockedObject) {
             LockedObjectMovement();
         }
-        
+
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
@@ -305,7 +307,7 @@ void TutorialGame::InitGameWorld(bool networked, int level) {
     success = false;
     failure = false;
     winFlag = false;
-    InitCamera(); 
+    InitCamera();
     InitWorld(networked, level);
 }
 
@@ -372,18 +374,18 @@ void TutorialGame::InitPositions(bool networked, int level) {
             player4Position = Vector3(35, 4, 35);
         }
         break;
-    //case 4:
-    //    player1Position = Vector3(5, 4, 65);
-    //    trainPosition = Vector3(30, 4.5f, 50);
-    //    pickaxePosition = Vector3(20, 6.5f, 40);
-    //    axePosition = Vector3(10, 8, 40);
-    //    bucketPosition = Vector3(30, 6.5f, 40);
-    //    if (networked) {
-    //        player2Position = Vector3(15, 4, 65);
-    //        player3Position = Vector3(25, 4, 65);
-    //        player4Position = Vector3(35, 4, 65);
-    //    }
-    //    break;
+        //case 4:
+        //    player1Position = Vector3(5, 4, 65);
+        //    trainPosition = Vector3(30, 4.5f, 50);
+        //    pickaxePosition = Vector3(20, 6.5f, 40);
+        //    axePosition = Vector3(10, 8, 40);
+        //    bucketPosition = Vector3(30, 6.5f, 40);
+        //    if (networked) {
+        //        player2Position = Vector3(15, 4, 65);
+        //        player3Position = Vector3(25, 4, 65);
+        //        player4Position = Vector3(35, 4, 65);
+        //    }
+        //    break;
     default:
         break;
     }

@@ -21,7 +21,21 @@ public:
     Audio(GameWorld* world);
     ~Audio();
     void Update();
-    void playbutton();
+    void PlayButton();
+    void PlayGet();
+    void PlayPut();
+    void PlayFootstep();
+    void PauseFootstep();
+    void PlayWaterin();
+    void PauseWaterin();
+    void PlayWaterout();
+    void PlayWood();
+    void PauseWood();
+    void PlayIron();
+    void PauseIron();
+
+    void PlayWin();
+    void PlayFailure();
 
 private:
     GameWorld* world;
@@ -36,4 +50,12 @@ private:
     ISound* playingbgm = nullptr;
     ISound* trainbgm = nullptr;
     ISound* button = nullptr;
+    ISound* get = nullptr;
+    ISound* put = nullptr;
+    ISound* footstep = nullptr;
+    ISound* wood = nullptr;
+    ISound* iron = nullptr;
+    ISound* waterin = nullptr;
+    ISound* waterout = nullptr;
+
 };
