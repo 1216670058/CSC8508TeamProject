@@ -64,10 +64,13 @@ namespace NCL {
             UI_Image evil_genius;
             UI_Image loading;
             UI_Image menu;
+            UI_Image fire;
 
             int loadingstep;
             bool success = false;
 
+            int fflag = 1;
+            float firealpha = 0.0f;
             float counter = 3.0f;
         };
     }

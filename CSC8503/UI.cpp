@@ -108,6 +108,7 @@ UI::UI(GameWorld* world)
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "evil_genius_head.png").c_str(), &evil_genius.img_texture, &evil_genius.img_width, &evil_genius.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "loading.png").c_str(), &loading.img_texture, &loading.img_width, &loading.img_height));
     IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "menu.jpg").c_str(), &menu.img_texture, &menu.img_width, &menu.img_height));
+    IM_ASSERT(LoadTextureFromFile((Assets::UIDIR + "fire.png").c_str(), &fire.img_texture, &fire.img_width, &fire.img_height));
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -497,6 +498,19 @@ void UI::DrawPlayingUI(float dt)
         ImGui::End();
     }
     else {
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
+        if (firealpha >= 0.8f)  fflag = -1;
+        else if (firealpha <= 0.35f) fflag = 1;
+        firealpha += fflag * dt;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+        ImGui::Begin("FireAround", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Image((void*)(intptr_t)fire.img_texture, ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, 1),
+            ImVec4(1, 1, 1, firealpha));
+        ImGui::PopStyleVar(2);
+        ImGui::End();
+
         ImVec2 barSize(35, 240);
         ImGui::PushFont(normalfont);
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
@@ -665,6 +679,19 @@ void UI::DrawServerPlayingUI(float dt)
     ImGui::End();
 
     if (!TutorialGame::GetGame()->GetTrain()->OnFire()) {
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
+        if (firealpha >= 0.8f)  fflag = -1;
+        else if (firealpha <= 0.35f) fflag = 1;
+        firealpha += fflag * dt;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+        ImGui::Begin("FireAround", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Image((void*)(intptr_t)fire.img_texture, ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, 1),
+            ImVec4(1, 1, 1, firealpha));
+        ImGui::PopStyleVar(2);
+        ImGui::End();
+
         ImVec2 barSize(35, 240);
         ImGui::PushFont(normalfont);
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
@@ -890,6 +917,19 @@ void UI::DrawClientPlayingUI(float dt)
         ImGui::End();
     }
     else {
+        ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(main_viewport->Size.x, main_viewport->Size.y), ImGuiCond_Always);
+        if (firealpha >= 0.8f)  fflag = -1;
+        else if (firealpha <= 0.35f) fflag = 1;
+        firealpha += fflag * dt;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+        ImGui::Begin("FireAround", NULL, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Image((void*)(intptr_t)fire.img_texture, ImGui::GetContentRegionAvail(), ImVec2(0, 0), ImVec2(1, 1),
+            ImVec4(1, 1, 1, firealpha));
+        ImGui::PopStyleVar(2);
+        ImGui::End();
+
         ImVec2 barSize(35, 240);
         ImGui::PushFont(normalfont);
         ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkSize.x - (barSize.x + 50.0f), main_viewport->GetCenter().y - (barSize.y / 2 + ImGui::GetFontSize())), ImGuiCond_Always);
