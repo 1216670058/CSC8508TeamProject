@@ -26,19 +26,21 @@ namespace NCL::CSC8503 {
 
         ~TrainCarriage();
 
-        //void OnCollisionBegin(GameObject* otherObject) override;
-        //
-        //void OnCollisionEnd(GameObject* otherObject) override;
-        //
-        //void Update(float dt);
-        //
-        //void UpdateOrientation();
-        //int GetDirection();
+        void OnCollisionBegin(GameObject* otherObject) override;
+        
+        void OnCollisionEnd(GameObject* otherObject) override;
+        
+        void Update(float dt);
+        
+        void UpdateOrientation();
+        int GetDirection();
         //
         //void AddPath(Vector3 p);
         //
         void SetPath(vector<Vector3> p) {
-            path = p;
+            for (int i = 0; i < p.size(); ++i) {
+                path.push_back(Vector3(p[i].x, 4.5f, p[i].z));
+            }
         }
         
         void SetTrain(TrainObject* t) {
@@ -62,7 +64,7 @@ namespace NCL::CSC8503 {
         ~MaterialCarriage() {};
 
         //void Update(float dt) override;
-        //
+        
         //vector<PlankObject*> GetPlankVector() const {
         //    return planks;
         //}
@@ -111,7 +113,7 @@ namespace NCL::CSC8503 {
         ~ProduceCarriage() {};
 
         //void OnCollisionBegin(GameObject* otherObject) override;
-        //
+        
         //void Update(float dt) override;
         
         bool Finished() const {

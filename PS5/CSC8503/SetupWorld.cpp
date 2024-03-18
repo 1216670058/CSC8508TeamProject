@@ -11,6 +11,9 @@
 
 #include <fstream>
 
+using namespace NCL;
+using namespace CSC8503;
+
 void TutorialGame::InitMeshes() {
     std::cout << std::endl << "--------Loading Meshes--------" << std::endl;
     cubeMesh = renderer.LoadMesh("cube.msh");
@@ -371,7 +374,7 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     TrainObject* train = new TrainObject(&world);
     
-    AABBVolume* volume = new AABBVolume(Vector3(5, 5, 5));
+    AABBVolume* volume = new AABBVolume(Vector3(5, 15, 5));
     train->SetBoundingVolume((CollisionVolume*)volume);    
     
     train->GetTransform()
@@ -383,7 +386,7 @@ TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position) {
     train->SetPhysicsObject(new PhysicsObject(&train->GetTransform(), train->GetBoundingVolume()));
     
     train->GetPhysicsObject()->SetInverseMass(0);
-    train->GetPhysicsObject()->InitSphereInertia();
+    train->GetPhysicsObject()->InitCubeInertia();
     train->GetPhysicsObject()->SetChannel(1);
     
     train->UploadAssets(carriageMesh, carriageTexture, basicShader);

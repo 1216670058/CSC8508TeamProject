@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "GameWorld.h"
-//#include "PlayerObject.h"
+#include "PlayerObject.h"
 #include <vector>
 
 namespace NCL::CSC8503 {
@@ -26,9 +26,9 @@ namespace NCL::CSC8503 {
 
         void OnCollisionBegin(GameObject* otherObject) override;
 
-        //void SetPlayer(PlayerObject* player) {
-        //    this->player = player;
-        //}
+        void SetPlayer(PlayerObject* player) {
+            this->player = player;
+        }
 
         void SetPutDown(bool p) {
             putDown = p;
@@ -39,7 +39,7 @@ namespace NCL::CSC8503 {
     protected:
         bool putDown;
         int num = 1;
-        //PlayerObject* player;
+        PlayerObject* player;
         GameWorld* world;
 
         float Distance(const Vector3& v1, const Vector3& v2);

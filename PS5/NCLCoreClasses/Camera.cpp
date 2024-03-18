@@ -14,8 +14,8 @@ void Camera::UpdateCamera(float dt) {
 	}
 
 	//Update the mouse by how much
-	pitch	-= activeController->GetNamedAxis("YLook");
-	yaw		-= activeController->GetNamedAxis("XLook");
+	//pitch	-= activeController->GetNamedAxis("YLook");
+	//yaw		-= activeController->GetNamedAxis("XLook");
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
 	pitch = std::min(pitch, 90.0f);

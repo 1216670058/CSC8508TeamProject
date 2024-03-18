@@ -13,47 +13,47 @@ TrainCarriage::~TrainCarriage() {
 
 }
 
-//void TrainCarriage::OnCollisionBegin(GameObject* otherObject) {
-//
-//}
-//
-//void TrainCarriage::OnCollisionEnd(GameObject* otherObject) {
-//
-//}
+void TrainCarriage::OnCollisionBegin(GameObject* otherObject) {
 
-//void TrainCarriage::UpdateOrientation() {
-//    Quaternion rotation;
-//    if (direction.x > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, -90, 0);
-//    else if (direction.x < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 90, 0);
-//    else if (direction.z > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 180, 0);
-//    else if (direction.z < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 0, 0);
-//    transform.SetOrientation(rotation);
-//}
-//
-//int TrainCarriage::GetDirection() {
-//    if (direction.x > 0) return 1;
-//    else if (direction.x < 0) return 2;
-//    else if (direction.z > 0) return 3;
-//    else if (direction.z < 0) return 4;
-//}
-//
-//void TrainCarriage::Update(float dt) {
-//    if (path.size() == 0) return;
-//    Vector3 target = path[0];
-//    direction = (target - this->GetTransform().GetPosition());
-//    direction = Vector3(direction.x, 0, direction.z);
-//    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
-//    UpdateOrientation();
-//
-//    float mm = (this->GetTransform().GetPosition() - target).Length();
-//    if (mm < 0.5) {
-//        if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
-//        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
-//        physicsObject->SetLinearVelocity(Vector3());
-//        path.erase(path.begin());
-//    }
-//}
-//
+}
+
+void TrainCarriage::OnCollisionEnd(GameObject* otherObject) {
+
+}
+
+void TrainCarriage::UpdateOrientation() {
+    Quaternion rotation;
+    if (direction.x > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, -90, 0);
+    else if (direction.x < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 90, 0);
+    else if (direction.z > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 180, 0);
+    else if (direction.z < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 0, 0);
+    transform.SetOrientation(rotation);
+}
+
+int TrainCarriage::GetDirection() {
+    if (direction.x > 0) return 1;
+    else if (direction.x < 0) return 2;
+    else if (direction.z > 0) return 3;
+    else if (direction.z < 0) return 4;
+}
+
+void TrainCarriage::Update(float dt) {
+    if (path.size() == 0) return;
+    Vector3 target = path[0];
+    direction = (target - this->GetTransform().GetPosition());
+    direction = Vector3(direction.x, 0, direction.z);
+    GetPhysicsObject()->SetLinearVelocity(Maths::Vector::Normalise(direction) * TutorialGame::GetGame()->GetTrain()->GetForce() * dt);
+    UpdateOrientation();
+
+    float mm = Maths::Vector::Length(this->GetTransform().GetPosition() - target);
+    if (mm < 0.5) {
+        if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+        physicsObject->SetLinearVelocity(Vector3());
+        path.erase(path.begin());
+    }
+}
+
 //void TrainCarriage::AddPath(Vector3 p) {
 //    this->path.push_back(p);
 //}

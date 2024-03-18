@@ -32,6 +32,8 @@ TutorialGame::TutorialGame(GameWorld& inWorld, GameTechRendererInterface& inRend
 	
 	world.GetMainCamera().SetController(*w->GetController());
 
+	controller = w->GetController();
+
 	instance = this;
 }
 
@@ -250,21 +252,21 @@ void TutorialGame::InitPositions() {
 	switch (level) {
 	case 1:
 		playerPosition = Vector3(5, 4, 110);
-		trainPosition = Vector3(30, 3.5f, 100);
+		trainPosition = Vector3(30, -2.5f, 100);
 		pickaxePosition = Vector3(25, 6.5f, 120);
 		axePosition = Vector3(15, 8, 120);
 		bucketPosition = Vector3(35, 6.5f, 120);
 		break;
 	case 2:
 		playerPosition = Vector3(5, 4, 65);
-		trainPosition = Vector3(30, 3.5f, 50);
+		trainPosition = Vector3(30, -2.5f, 50);
 		pickaxePosition = Vector3(20, 6.5f, 75);
 		axePosition = Vector3(10, 8, 75);
 		bucketPosition = Vector3(30, 6.5f, 75);
 		break;
 	case 3:
 		playerPosition = Vector3(5, 4, 35);
-		trainPosition = Vector3(30, 3.5f, 20);
+		trainPosition = Vector3(30, -2.5f, 20);
 		pickaxePosition = Vector3(20, 6.5f, 45);
 		axePosition = Vector3(10, 8, 45);
 		bucketPosition = Vector3(30, 6.5f, 45);

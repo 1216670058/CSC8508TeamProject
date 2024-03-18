@@ -22,11 +22,11 @@ namespace NCL::CSC8503 {
         TrainObject(GameWorld* w);
         ~TrainObject();
 
-        //void OnCollisionBegin(GameObject* otherObject) override;
-        //
-        //void OnCollisionEnd(GameObject* otherObject) override;
-        //
-        //void Update(float dt);
+        void OnCollisionBegin(GameObject* otherObject) override;
+        
+        void OnCollisionEnd(GameObject* otherObject) override;
+        
+        void Update(float dt) override;
         
         void InitPaths(int level);
         
@@ -35,11 +35,9 @@ namespace NCL::CSC8503 {
         //void AddCarriagePath(Vector3 p);
         
         TrainCarriage* AddCarriage(int id);
+
+        void UpdateOrientation(Vector3 direction);
         
-        //void AddConstraint(GameObject* a, GameObject* b);
-        //
-        //void UpdateOrientation(Vector3 direction);
-        //
         void UploadAssets(Mesh* mesh, Texture* texture, Shader* shader);
         //
         //bool OnFire() const {
@@ -63,7 +61,7 @@ namespace NCL::CSC8503 {
         void SetInitPos(Vector3 pos1) { lastpos = curpos = pos1; }
 
     protected:
-        //int GetDirection();
+        int GetDirection();
 
         //0  1  2 3 up down left right
         std::vector<Vector3> path;

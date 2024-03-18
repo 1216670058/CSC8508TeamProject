@@ -32,11 +32,19 @@ namespace NCL {
 				return instance;
 			};
 
-			RailObject* AddRailToWorld(const Vector3& position, bool placed = false);
-
 			Controller* GetController() const {
 				return controller;
 			}
+
+			NavigationGrid* GetNavigationGrid()const {
+				return navGrid;
+			}
+
+			TrainObject* GetTrain() const{
+				return train;
+			}
+
+			RailObject* AddRailToWorld(const Vector3& position, bool placed = false);
 
 		protected:
 			void InitialiseAssets();
