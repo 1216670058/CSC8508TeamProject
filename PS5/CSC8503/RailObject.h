@@ -40,9 +40,9 @@ namespace NCL::CSC8503 {
 	    }
 	    
 		//void OnCollisionBegin(GameObject* otherObject) override;
-		//
-		//void Update(float dt) override;
-		//
+		
+		void Update(float dt) override;
+		
 		void UploadAssets(Mesh* m, Texture* t);
 		//
 		////int GetDirection(Vector3 point1, Vector3 point2);

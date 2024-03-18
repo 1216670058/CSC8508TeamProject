@@ -65,6 +65,9 @@ namespace NCL {
 			}
 
 			void SetAnimation(MeshAnimation& inAnim);
+			MeshAnimation* GetAnimation() const {
+				return anim;
+			}
 
 			void UpdateAnimation(float dt);
 

@@ -26,83 +26,78 @@
 //    }
 //}
 //
-//void RailObject::Update(float dt) {
-//    if (inCarriage) {
-//        Vector3 carriagePosition = carriage->GetTransform().GetPosition();
-//        switch (carriage->GetDirection()) {
-//        case 1:
-//            transform.SetPosition(Vector3(carriagePosition.x - 1, height, carriagePosition.z));
-//            break;
-//        case 2:
-//            transform.SetPosition(Vector3(carriagePosition.x + 1, height, carriagePosition.z));
-//            break;
-//        case 3:
-//            transform.SetPosition(Vector3(carriagePosition.x, height, carriagePosition.z - 1));
-//            break;
-//        case 4:
-//            transform.SetPosition(Vector3(carriagePosition.x, height, carriagePosition.z + 1));
-//            break;
-//        default:
-//            break;
-//        }
-//    }
-//    else if (!putDown) {
-//        Vector3 playerPosition = player->GetTransform().GetPosition();
-//        if (num == 1) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 10, playerPosition.z));
-//        if (num == 2) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 11, playerPosition.z));
-//        if (num == 3) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 12, playerPosition.z));
-//        transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
-//        physicsObject->ClearForces();
-//        //std::cout << "Num: " << num << std::endl;
-//
-//        if (!inCarriage) {
-//            bool RPressed = false;
-//            if (player->GetNetworkObject()->GetNetworkID() == 1)
-//                RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
-//            else
-//                RPressed = player->GetButton(4);
-//
-//            if (RPressed) {
-//                Vector3 position = transform.GetPosition();
-//                Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
-//                int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
-//                GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
-//                if (n.type != 12345 && n.type != 10000 && n.type != 10086
-//                    && n.type != 10010 && n.type != 114514) {
-//                    putDown = true;
-//                    num = 1;
-//                    transform.SetPosition(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
-//                    player->SetSlot(0);
-//                    player->SetSlotNum(0);
-//                    player = nullptr;
-//                }
-//            }
-//        }
-//        if (!putDown && !placed && !inCarriage)
-//            PlaceRail();
-//        if (player) {
-//            if (player->IsPlacing1()) {
-//                if (num == 2) {
-//                    num = 1;
-//                    player->SetPlacing1(false);
-//                }
-//            }
-//            if (player->IsPlacing2()) {
-//                if (num == 3) {
-//                    num = 2;
-//                    player->SetPlacing2(false);
-//                }
-//            }
-//            //std::cout << "RailNum: " << num << std::endl;
-//        }
-//    }
-//    else if(putDown && !placed){
-//        physicsObject->SetAngularVelocity(Vector3(0, 5, 0));
-//    }
-//}
-//
-////1 ×ó,2 ÓÒ,3 Ç°,4 ºó
-//
+void RailObject::Update(float dt) {
+    if (inCarriage) {
+        Vector3 carriagePosition = carriage->GetTransform().GetPosition();
+        switch (carriage->GetDirection()) {
+        case 1:
+            transform.SetPosition(Vector3(carriagePosition.x - 1, height, carriagePosition.z));
+            break;
+        case 2:
+            transform.SetPosition(Vector3(carriagePosition.x + 1, height, carriagePosition.z));
+            break;
+        case 3:
+            transform.SetPosition(Vector3(carriagePosition.x, height, carriagePosition.z - 1));
+            break;
+        case 4:
+            transform.SetPosition(Vector3(carriagePosition.x, height, carriagePosition.z + 1));
+            break;
+        default:
+            break;
+        }
+    }
+    else if (!putDown) {
+        Vector3 playerPosition = player->GetTransform().GetPosition();
+        if (num == 1) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 10, playerPosition.z));
+        if (num == 2) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 11, playerPosition.z));
+        if (num == 3) transform.SetPosition(Vector3(playerPosition.x, playerPosition.y + 12, playerPosition.z));
+        transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
+        physicsObject->ClearForces();
+        //std::cout << "Num: " << num << std::endl;
+
+        if (!inCarriage) {
+            bool RPressed = false;
+                RPressed = Window::GetKeyboard()->KeyPressed(KeyCodes::R);
+
+            if (RPressed) {
+                Vector3 position = transform.GetPosition();
+                Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+                GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+                if (n.type != 12345 && n.type != 10000 && n.type != 10086
+                    && n.type != 10010 && n.type != 114514) {
+                    putDown = true;
+                    num = 1;
+                    transform.SetPosition(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
+                    player->SetSlot(0);
+                    player->SetSlotNum(0);
+                    player = nullptr;
+                }
+            }
+        }
+        //if (!putDown && !placed && !inCarriage)
+        //    //PlaceRail();
+        //if (player) {
+        //    if (player->IsPlacing1()) {
+        //        if (num == 2) {
+        //            num = 1;
+        //            player->SetPlacing1(false);
+        //        }
+        //    }
+        //    if (player->IsPlacing2()) {
+        //        if (num == 3) {
+        //            num = 2;
+        //            player->SetPlacing2(false);
+        //        }
+        //    }
+        //    //std::cout << "RailNum: " << num << std::endl;
+        //}
+    }
+    else if(putDown && !placed){
+        physicsObject->SetAngularVelocity(Vector3(0, 5, 0));
+    }
+}
+
 ////int GetDirection(Vector3 point1, Vector3 point2)
 ////{
 ////    float deltaX = point2.x - point1.x;

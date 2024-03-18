@@ -14,6 +14,7 @@
 #include "RenderObject.h"
 #include "NetworkObject.h"
 #include "TrainCarriage.h"
+#include "Controller.h"
 
 namespace NCL::CSC8503 {
     class BucketObject;
@@ -64,9 +65,9 @@ namespace NCL::CSC8503 {
         //float GetSpeed() const {
         //    return speed;
         //}
-        //Vector3 GetFace() const {
-        //    return face;
-        //}
+        Vector3 GetFace() const {
+            return face;
+        }
         //
         //bool IsPlacing1() const {
         //    return placing1;
@@ -96,8 +97,12 @@ namespace NCL::CSC8503 {
         //    return bridgePosition;
         //}
 
+        void SetController(const Controller& c) {
+            activeController = &c;
+        }
+
         //bool CanPlaceRail();
-        //void UpdateAnimation(float dt);
+        void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
         //void UpdateFace();
 
@@ -126,5 +131,10 @@ namespace NCL::CSC8503 {
         //vector<AnimationObject*> animations;
         //vector<ShaderGroup*> shaders;
         MaterialCarriage* carriage;
+
+        float currentFrame = 0;
+        float frameTime = 0.0f;
+
+        const Controller* activeController = nullptr;
     };
 }

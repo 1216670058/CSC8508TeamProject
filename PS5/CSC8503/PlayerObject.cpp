@@ -3,6 +3,8 @@
 #include "NavigationGrid.h"
 #include "Window.h"
 
+#include <stdlib.h>
+
 using namespace NCL::CSC8503;
 
 void PlayerObject::Update(float dt) {
@@ -11,7 +13,7 @@ void PlayerObject::Update(float dt) {
         //if (renderObject->GetAnimationObject())
         //    UpdateAnimation(dt);
 
-        //PlayerMovement(dt);
+        PlayerMovement(dt);
 
         doing = false;
         cutting = false;
@@ -36,149 +38,72 @@ void PlayerObject::Update(float dt) {
 //
 //}
 //static float a = 0;
-//
-//void PlayerObject::UpdateAnimation(float dt) {
-//    bool WHeld = false;
-//    bool DHeld = false;
-//    bool AHeld = false;
-//    bool SHeld = false;
-//
-//    if (networkObject->GetNetworkID() == 1) {
-//        WHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::W);
-//        DHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::D);
-//        AHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::A);
-//        SHeld = Window::GetKeyboard()->KeyHeld(KeyCodes::S);
-//    }
-//    else {
-//        WHeld = buttonStates[0];
-//        SHeld = buttonStates[1];
-//        AHeld = buttonStates[2];
-//        DHeld = buttonStates[3];
-//    }
-//
-//    if (!doing) {
-//        if (WHeld && renderObject->GetAnimationObject()->GetAnim2()) {
-//            if (renderObject->GetAnimationObject()->GetFlag2()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim2());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(2);
-//            }
-//        }
-//        else if (DHeld && renderObject->GetAnimationObject()->GetAnim3()) {
-//            if (renderObject->GetAnimationObject()->GetFlag3()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim3());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(3);
-//            }
-//        }
-//        else if (AHeld && renderObject->GetAnimationObject()->GetAnim4()) {
-//            if (renderObject->GetAnimationObject()->GetFlag4()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim4());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(4);
-//            }
-//        }
-//        else if (SHeld && renderObject->GetAnimationObject()->GetAnim5()) {
-//            if (renderObject->GetAnimationObject()->GetFlag5()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim5());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(5);
-//            }
-//        }
-//        else if (Window::GetKeyboard()->KeyHeld(KeyCodes::NUM3) && renderObject->GetAnimationObject()->GetAnim8()) {
-//            if (renderObject->GetAnimationObject()->GetFlag8()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim8());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(8);
-//            }
-//        }
-//        else {
-//            if (renderObject->GetAnimationObject()->GetFlag1()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim1());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(1);
-//            }
-//        }
-//    }
-//
-//    else {
-//        if (cutting && renderObject->GetAnimationObject()->GetAnim6()) {
-//            if (renderObject->GetAnimationObject()->GetFlag6()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim6());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(6);
-//            }
-//        }
-//        else if (digging && renderObject->GetAnimationObject()->GetAnim7()) {
-//            if (renderObject->GetAnimationObject()->GetFlag7()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim7());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(7);
-//            }
-//        }
-//        else {
-//            if (renderObject->GetAnimationObject()->GetFlag1()) {
-//                renderObject->GetAnimationObject()->SetActiveAnim(renderObject->GetAnimationObject()->GetAnim1());
-//                renderObject->GetAnimationObject()->SetCurrentFrame(0);
-//                renderObject->GetAnimationObject()->SetFrameTime(0.0f);
-//                renderObject->GetAnimationObject()->UpdateFlags(1);
-//            }
-//        }
-//    }
-//
-//    if (renderObject->GetAnimationObject()->GetActiveAnim() != renderObject->GetAnimationObject()->GetAnim1() ||
-//        renderObject->GetAnimationObject()->HasIdle()) {
-//        renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
-//        while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
-//            renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
-//                renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameCount());
-//            renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() + 1.0f /
-//                renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
-//        }
-//    }
-//}
-//
+
+void PlayerObject::UpdateAnimation(float dt) {
+    float LeftX = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftX");
+    float LeftY = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftY");
+
+    if (LeftX != 0 && LeftY != 0)
+        renderObject->UpdateAnimation(dt);
+}
+
 void PlayerObject::PlayerMovement(float dt) {
-    Quaternion* qq;
+    Quaternion* qq = new Quaternion();
     speed = 50;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
     //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
+    float LeftX = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftX");
+    float LeftY = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftY");
+    //Debug::Print("LeftX: " + std::to_string(LeftX), Vector2(20, 20), Debug::BLUE);
+    //Debug::Print("LeftY: " + std::to_string(LeftY), Vector2(20, 30), Debug::BLUE);
 
-    if (TutorialGame::GetGame()->GetController()->GetAxis(0)) {
-        face = Vector3(0, 0, -1);
-        physicsObject->SetRealDamping(0.962f);
-        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
+    Vector3 dir = Vector3(LeftX, 0, LeftY);
+    physicsObject->SetRealDamping(0.962f);
+    physicsObject->AddForce(dir * speed);
+    if (LeftX != 0 && LeftY != 0) {
+        if (abs(LeftX) > abs(LeftY)) {
+            if (LeftX > 0) {
+                face = Vector3(1, 0, 0);
+                transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
+            }
+            else {
+                face = Vector3(-1, 0, 0);
+                transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
+            }
+        }
+        else {
+            if (LeftY > 0) {
+                face = Vector3(0, 0, 1);
+                transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 0, 0));
+            }
+            else {
+                face = Vector3(0, 0, -1);
+                transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
+            }
+        }
     }
-    else if (TutorialGame::GetGame()->GetController()->GetAxis(2)) {
-        face = Vector3(-1, 0, 0);
-        physicsObject->SetRealDamping(0.962f);
-        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
-    }
-    else if (TutorialGame::GetGame()->GetController()->GetAxis(3)) {
-        face = Vector3(0, 0, 1);
-        physicsObject->SetRealDamping(0.962f);
-        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
-    }
-    else if (TutorialGame::GetGame()->GetController()->GetAxis(4)) {
-        face = Vector3(1, 0, 0);
-        physicsObject->SetRealDamping(0.962f);
-        physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
-        transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
-    }
-    else {
-        physicsObject->SetRealDamping(0.858f);
-    }
+
+    //else if (TutorialGame::GetGame()->GetController()->GetAxis(2)) {
+    //    face = Vector3(-1, 0, 0);
+    //    physicsObject->SetRealDamping(0.962f);
+    //    physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+    //    transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 90, 0));
+    //}
+    //else if (TutorialGame::GetGame()->GetController()->GetAxis(3)) {
+    //    face = Vector3(0, 0, 1);
+    //    physicsObject->SetRealDamping(0.962f);
+    //    physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+    //    transform.SetOrientation(qq->EulerAnglesToQuaternion(0, 180, 0));
+    //}
+    //else if (TutorialGame::GetGame()->GetController()->GetAxis(4)) {
+    //    face = Vector3(1, 0, 0);
+    //    physicsObject->SetRealDamping(0.962f);
+    //    physicsObject->AddForceAtPosition(face * speed, transform.GetPosition());
+    //    transform.SetOrientation(qq->EulerAnglesToQuaternion(0, -90, 0));
+    //}
+    //else {
+    //    physicsObject->SetRealDamping(0.858f);
+    //}
     //std::cout << "Player: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
 
 //else {
