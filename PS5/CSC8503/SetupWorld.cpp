@@ -32,8 +32,8 @@ void TutorialGame::InitMeshes() {
     pickaxeMesh = renderer.LoadMesh("Pickaxe.msh");
     bucketMesh = renderer.LoadMesh("Bucket_Empty.msh");
     trainMesh = renderer.LoadMesh("Train.msh");
-    //plankMesh = renderer->LoadMesh("Plank.msh");
-    //stoneMesh = renderer->LoadMesh("Stone.msh");
+    plankMesh = renderer.LoadMesh("Plank.msh");
+    stoneMesh = renderer.LoadMesh("Stone.msh");
     railMesh = renderer.LoadMesh("Rail.msh");
     railTurnMesh = renderer.LoadMesh("RailTurn.msh");
     //maleMesh = renderer->LoadMesh("Male_Guard.msh");
@@ -62,8 +62,8 @@ void TutorialGame::InitTextures() {
     pickaxeTexture = renderer.LoadTexture("lowpoly_pickaxe_BaseColor.png");
     bucketTexture = renderer.LoadTexture("lambert2_Base_Color.png");
     trainTexture = renderer.LoadTexture("ColourPal.png");
-    //plankTex = renderer->LoadTexture("Planks_Diff.png");
-    //stoneTex = renderer->LoadTexture("Stone.png");
+    plankTexture = renderer.LoadTexture("Planks_Diff.png");
+    stoneTexture = renderer.LoadTexture("Stone.png");
     railTexture = renderer.LoadTexture("Rail.png");
     railTurnTexture = renderer.LoadTexture("RailTurn.jpg");
     //robotTexture = renderer.LoadTexture("Robot.png");
@@ -694,6 +694,54 @@ BucketObject* TutorialGame::AddBucketToWorld(const Vector3& position) {
     //return stone;
 //}
 
+PlankObject* TutorialGame::AddPlankToWorld(const Vector3& position) {
+    PlankObject* plank = new PlankObject(&world);
+
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
+    plank->SetBoundingVolume((CollisionVolume*)volume);
+
+    plank->SetPlayer(player);
+
+    plank->GetTransform()
+        .SetPosition(plank->FindNearestGridCenter(position))
+        .SetScale(Vector3(4, 4, 4));
+
+    plank->SetRenderObject(new RenderObject(&plank->GetTransform(), plankMesh, plankTexture, basicShader));
+    plank->SetPhysicsObject(new PhysicsObject(&plank->GetTransform(), plank->GetBoundingVolume()));
+
+    plank->GetPhysicsObject()->SetResolve(false);
+    plank->GetPhysicsObject()->SetInverseMass(1);
+    plank->GetPhysicsObject()->InitCubeInertia();
+
+    world.AddGameObject(plank);
+
+    return plank;
+}
+
+StoneObject* TutorialGame::AddStoneToWorld(const Vector3& position) {
+    StoneObject* stone = new StoneObject(&world);
+
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
+    stone->SetBoundingVolume((CollisionVolume*)volume);
+
+    stone->SetPlayer(player);
+
+    stone->GetTransform()
+        .SetPosition(stone->FindNearestGridCenter(position))
+        .SetScale(Vector3(4, 4, 4));
+
+    stone->SetRenderObject(new RenderObject(&stone->GetTransform(), stoneMesh, stoneTexture, basicShader));
+    stone->SetPhysicsObject(new PhysicsObject(&stone->GetTransform(), stone->GetBoundingVolume()));
+
+    stone->GetPhysicsObject()->SetResolve(false);
+    stone->GetPhysicsObject()->SetInverseMass(1);
+    stone->GetPhysicsObject()->InitCubeInertia();
+
+    world.AddGameObject(stone);
+
+    return stone;
+}
+
 RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool placed)
 {
     RailObject* rail = new RailObject(&world);
@@ -823,7 +871,7 @@ GameObject* TutorialGame::AddPadToWorld() {
         .SetScale(sphereSize)
         .SetPosition(Vector3());
 
-    sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, nullptr, basicShader));
+    sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
     sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
     sphere->GetPhysicsObject()->SetInverseMass(0);

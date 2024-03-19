@@ -38,6 +38,7 @@ void CollectableObject::OnCollisionBegin(GameObject* otherObject) {
         player = (PlayerObject*)otherObject;
         putDown = false;
         player->SetSlot(this->GetTypeID());
+        player->SetSlotNum(1);
     }
 }
 

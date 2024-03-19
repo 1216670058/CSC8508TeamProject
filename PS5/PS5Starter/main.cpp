@@ -32,6 +32,13 @@ int main() {
 	c->MapButton(1, "Circle");	
 	c->MapButton(2, "Cross");
 	c->MapButton(3, "Square");
+	c->MapButton(4, "L2");
+	c->MapButton(5, "R2");
+	c->MapButton(6, "L1");
+	c->MapButton(7, "R1");
+	c->MapButton(8, "L3");
+	c->MapButton(9, "R3");
+	c->MapButton(10, "Options");
 
 	//These are the axis/button aliases the inbuilt camera class reads from:
 	c->MapAxis(0, "XLook");
@@ -58,7 +65,7 @@ int main() {
 
 	TutorialGame* g = new TutorialGame(*world , *renderer, *physics);
 
-	while (w->UpdateWindow()) {
+	while (w->UpdateWindow() && !g->IsExit()) {
 		float dt = w->GetTimer().GetTimeDeltaSeconds();
 		if (dt > 0.1f) {
 			std::cout << "Skipping large time delta" << std::endl;
@@ -67,6 +74,7 @@ int main() {
 		g->UpdateGame(dt);
 		renderer->Update(dt);
 		renderer->Render();
+		Debug::UpdateRenderables(dt);
 	}
 
 	delete physics;

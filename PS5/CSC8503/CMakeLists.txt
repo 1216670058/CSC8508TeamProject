@@ -23,6 +23,10 @@ set(GameObjects
     "RailObject.cpp"
     "TreeObject.h"
     "RockObject.h"
+    "PlankObject.h"
+    "PlankObject.cpp"
+    "StoneObject.h"
+    "StoneObject.cpp"
 )
 source_group("GameObjects" FILES ${GameObjects})
 

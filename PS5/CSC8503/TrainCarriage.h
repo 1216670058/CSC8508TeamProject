@@ -13,8 +13,8 @@
 #include "RenderObject.h"
 
 namespace NCL::CSC8503 {
-    //class StoneObject;
-    //class PlankObject;
+    class StoneObject;
+    class PlankObject;
     class RailObject;
     class TrainObject;
     class MaterialCarriage;
@@ -34,9 +34,9 @@ namespace NCL::CSC8503 {
         
         void UpdateOrientation();
         int GetDirection();
-        //
-        //void AddPath(Vector3 p);
-        //
+        
+        void AddPath(Vector3 p);
+        
         void SetPath(vector<Vector3> p) {
             for (int i = 0; i < p.size(); ++i) {
                 path.push_back(Vector3(p[i].x, 4.5f, p[i].z));
@@ -63,22 +63,22 @@ namespace NCL::CSC8503 {
 
         ~MaterialCarriage() {};
 
-        //void Update(float dt) override;
+        void Update(float dt) override;
         
-        //vector<PlankObject*> GetPlankVector() const {
-        //    return planks;
-        //}
-        //vector<StoneObject*> GetStoneVector() const {
-        //    return stones;
-        //}
-        //
-        //void AddStone(StoneObject* stone) {
-        //    stones.push_back(stone);
-        //}
-        //void AddPlank(PlankObject* plank) {
-        //    planks.push_back(plank);
-        //}
-        //
+        vector<PlankObject*> GetPlankVector() const {
+            return planks;
+        }
+        vector<StoneObject*> GetStoneVector() const {
+            return stones;
+        }
+        
+        void AddStone(StoneObject* stone) {
+            stones.push_back(stone);
+        }
+        void AddPlank(PlankObject* plank) {
+            planks.push_back(plank);
+        }
+        
         bool IsReady() const {
             return ready;
         }
@@ -93,11 +93,11 @@ namespace NCL::CSC8503 {
             produceCarriage = c;
         }
         
-        //void UpdateMaterial();
+        void UpdateMaterial();
 
     protected:
-        //vector<PlankObject*> planks;
-        //vector<StoneObject*> stones;
+        vector<PlankObject*> planks;
+        vector<StoneObject*> stones;
         bool ready = false;
 
         ProduceCarriage* produceCarriage;
@@ -112,9 +112,9 @@ namespace NCL::CSC8503 {
 
         ~ProduceCarriage() {};
 
-        //void OnCollisionBegin(GameObject* otherObject) override;
-        
-        //void Update(float dt) override;
+        void OnCollisionBegin(GameObject* otherObject) override;
+       
+        void Update(float dt) override;
         
         bool Finished() const {
             return finish;
@@ -146,7 +146,7 @@ namespace NCL::CSC8503 {
 
         ~WaterCarriage() {};
 
-        //void Update(float dt) override;
+        void Update(float dt) override;
         void SetCarriageWater(float w) {
             water = w;
         }

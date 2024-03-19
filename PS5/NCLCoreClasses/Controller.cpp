@@ -43,3 +43,15 @@ bool	Controller::GetNamedButton(const std::string& button) const {
 	}
 	return false;
 }
+
+bool Controller::ButtonPressed(const std::string& button) {
+	auto a = buttonMappings.find(button);
+	if (a != buttonMappings.end()) {
+		int index = a->second;
+		if(counter[index] <= 0) {
+			counter[index] = 7.0f;
+			return GetNamedButton(button);
+		}
+	}
+	return false;
+}
