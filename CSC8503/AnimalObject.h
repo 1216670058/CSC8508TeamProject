@@ -23,7 +23,7 @@ namespace NCL::CSC8503 {
 
 		void Update(float dt) override;
 
-		void MoveToPosition(Vector3 targetPos);
+		void MoveToPosition(Vector3 targetPos, float speed);
 		bool Pathfind(Vector3 targetPos);
 
 		StateMachine* stateMachine;
@@ -31,11 +31,14 @@ namespace NCL::CSC8503 {
 		GameWorld* world;
 
 		Vector3 currentPos;
+		//Vector3 scaredPos;
 		std::vector<Vector3> wanderPathNodes = {};
 		int currentNodeIndex = 0;
 
 		float timer = 0;
+		float stateCooldown = 0;
 
 		int gridSize;
+		bool noLongerScared = false;
 	};
 }
