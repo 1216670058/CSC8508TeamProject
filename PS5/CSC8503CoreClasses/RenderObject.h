@@ -47,6 +47,9 @@ namespace NCL {
 			Mesh*	GetMesh() const {
 				return mesh;
 			}
+			void SetMesh(Mesh* m) {
+				mesh = m;
+			}
 
 			Transform*		GetTransform() const {
 				return transform;

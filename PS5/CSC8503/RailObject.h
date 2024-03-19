@@ -39,16 +39,16 @@ namespace NCL::CSC8503 {
 	    	num = n;
 	    }
 	    
-		//void OnCollisionBegin(GameObject* otherObject) override;
+		void OnCollisionBegin(GameObject* otherObject) override;
 		
 		void Update(float dt) override;
 		
 		void UploadAssets(Mesh* m, Texture* t);
-		//
-		////int GetDirection(Vector3 point1, Vector3 point2);
-		//
-		////int GetRailDirection(const Vector3& position);
-		//
+		
+		//int GetDirection(Vector3 point1, Vector3 point2);
+		
+		//int GetRailDirection(const Vector3& position);
+		
 		int GetDirection() const {
 			return direction;
 		}
@@ -57,7 +57,7 @@ namespace NCL::CSC8503 {
 		}
 
 	protected:
-		//void PlaceRail();
+		void PlaceRail();
 
 		bool inCarriage = true;
 		bool placed = false;

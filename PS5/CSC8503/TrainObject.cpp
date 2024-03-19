@@ -43,11 +43,11 @@ void TrainObject::UpdateOrientation(Vector3 direction) {
 void TrainObject::Update(float dt) {
     if (path.size() == 0) {
         if (transform.GetPosition() != finishPath) {
-            //TutorialGame::GetGame()->SetFailure(true);
+            TutorialGame::GetGame()->SetFailure(true);
             return;
         }
         else {
-            //TutorialGame::GetGame()->SetSuccess(true);
+            TutorialGame::GetGame()->SetSuccess(true);
             return;
         }
     }
@@ -61,17 +61,16 @@ void TrainObject::Update(float dt) {
         if (path[path.size() - 1] == finishPath) force = 800.0f;
         GetPhysicsObject()->SetLinearVelocity(Maths::Vector::Normalise(direction) * force * dt);
 
-        //float dtdist = (lastpos - curpos).Length();
-        //distance += dtdist; //run dist
-        //lastpos = curpos; curpos = this->GetTransform().GetPosition();
-        //time_s += dt;
-        //dist_s += dtdist;
-        //if (time_s >= 1.0f) {
-        //    speed = dist_s / time_s;
-        //    dist_s = time_s = 0.0f;
-        //}
-        //float2 = distance;
-        //float3 = speed;
+        float dtdist = Maths::Vector::Length(lastpos - curpos);
+        distance += dtdist; //run dist
+        lastpos = curpos; 
+        curpos = this->GetTransform().GetPosition();
+        time_s += dt;
+        dist_s += dtdist;
+        if (time_s >= 1.0f) {
+            speed = dist_s / time_s;
+            dist_s = time_s = 0.0f;
+        }
 
         float mm = Maths::Vector::Length(this->GetTransform().GetPosition() - target);
         if (mm < 0.5f) {
@@ -87,35 +86,35 @@ void TrainObject::Update(float dt) {
     //std::cout << "Target: " << target.x << " " << target.y << " " << target.z << std::endl;
     UpdateOrientation(direction);
 
-    //flag1 = onFire;
-    //if (onFire) {
-    //    float1 = fire;
-    //    float speed = 1.0f;
-    //    if (fire > 0.0f)
-    //        fire -= dt * speed;
-    //    else
-    //        TutorialGame::GetGame()->SetFailure(true);
-    //}
+    flag1 = onFire;
+    if (onFire) {
+        float1 = fire;
+        float speed = 1.0f;
+        if (fire > 0.0f)
+            fire -= dt * speed;
+        else
+            TutorialGame::GetGame()->SetFailure(true);
+    }
 }
-//
+
 void TrainObject::InitPaths(int level) {
     switch (level) {
     case 1:
-        firstPath = Vector3(200, -2.5f, 100);
-        finalPath = Vector3(210, -2.5f, 100);
-        finishPath = Vector3(220, -2.5f, 100);
+        firstPath = Vector3(50, -2.5f, 100);
+        finalPath = Vector3(270, -2.5f, 50);
+        finishPath = Vector3(290, -2.5f, 50);
         path.push_back(firstPath);
         break;
     case 2:
         firstPath = Vector3(50, -2.5f, 50);
-        finalPath = Vector3(70, -2.5f, 50);
-        finishPath = Vector3(80, -2.5f, 50);
+        finalPath = Vector3(270, -2.5f, 150);
+        finishPath = Vector3(290, -2.5f, 150);
         path.push_back(firstPath);
         break;
     case 3:
         firstPath = Vector3(50, -2.5f, 20);
-        finalPath = Vector3(70, -2.5f, 20);
-        finishPath = Vector3(80, -2.5f, 20);
+        finalPath = Vector3(270, -2.5f, 150);
+        finishPath = Vector3(290, -2.5f, 150);
         path.push_back(firstPath);
         break;
     //case 4:
@@ -129,16 +128,16 @@ void TrainObject::InitPaths(int level) {
     }
 }
 
-//void TrainObject::AddPath(Vector3 p) {
-//    path.push_back(p);
-//}
-//
-//void TrainObject::AddCarriagePath(Vector3 p) {
-//    TutorialGame::GetGame()->GetMaterialCarriage()->AddPath(p);
-//    TutorialGame::GetGame()->GetProduceCarriage()->AddPath(p);
-//    TutorialGame::GetGame()->GetWaterCarriage()->AddPath(p);
-//}
-//
+void TrainObject::AddPath(Vector3 p) {
+    path.push_back(Vector3(p.x, -2.5f, p.z));
+}
+
+void TrainObject::AddCarriagePath(Vector3 p) {
+    TutorialGame::GetGame()->GetMaterialCarriage()->AddPath(p);
+    TutorialGame::GetGame()->GetProduceCarriage()->AddPath(p);
+    TutorialGame::GetGame()->GetWaterCarriage()->AddPath(p);
+}
+
 void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, Shader* shader) {
     carriageMesh = mesh;
     carriageTex = texture;

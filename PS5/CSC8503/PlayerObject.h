@@ -27,10 +27,10 @@ namespace NCL::CSC8503 {
         };
         ~PlayerObject() {};
 
-        //void OnCollisionBegin(GameObject* otherObject) override;
-        //
-        //void OnCollisionEnd(GameObject* otherObject) override {};
-        //
+        void OnCollisionBegin(GameObject* otherObject) override;
+        
+        void OnCollisionEnd(GameObject* otherObject) override {};
+        
         void Update(float dt) override;
         //
         //void SetPlayerMeshes(vector<Mesh*> m) {
@@ -48,71 +48,70 @@ namespace NCL::CSC8503 {
         //void SetPlayerShaders(vector<ShaderGroup*> s) {
         //    shaders = s;
         //}
-        //
-        //int GetNum() const {
-        //    return num;
-        //}
-        //void SetNum(int n) {
-        //    num = n;
-        //}
-        //
-        //void SetFace(Vector3 a) {
-        //    face = a;
-        //}
-        //void SetSpeed(float a) {
-        //    speed = a;
-        //}
-        //float GetSpeed() const {
-        //    return speed;
-        //}
+        
+        int GetNum() const {
+            return num;
+        }
+        void SetNum(int n) {
+            num = n;
+        }
+        
+        void SetSpeed(float a) {
+            speed = a;
+        }
+        float GetSpeed() const {
+            return speed;
+        }
+        void SetFace(Vector3 a) {
+            face = a;
+        }
         Vector3 GetFace() const {
             return face;
         }
-        //
-        //bool IsPlacing1() const {
-        //    return placing1;
-        //}
-        //void SetPlacing1(bool p) {
-        //    placing1 = p;
-        //}
-        //bool IsPlacing2() const {
-        //    return placing2;
-        //}
-        //void SetPlacing2(bool p) {
-        //    placing2 = p;
-        //}
-        //bool IsBuilding() const {
-        //    return building;
-        //}
-        //void SetBuilding(bool b) {
-        //    building = b;
-        //}
-        //MaterialCarriage* GetCarriage() const {
-        //    return carriage;
-        //}
-        //void SetCarriage(MaterialCarriage* c) {
-        //    carriage = c;
-        //}
-        //Vector3 GetBridgePosition() {
-        //    return bridgePosition;
-        //}
+        
+        bool IsPlacing1() const {
+            return placing1;
+        }
+        void SetPlacing1(bool p) {
+            placing1 = p;
+        }
+        bool IsPlacing2() const {
+            return placing2;
+        }
+        void SetPlacing2(bool p) {
+            placing2 = p;
+        }
+        bool IsBuilding() const {
+            return building;
+        }
+        void SetBuilding(bool b) {
+            building = b;
+        }
+        MaterialCarriage* GetCarriage() const {
+            return carriage;
+        }
+        void SetCarriage(MaterialCarriage* c) {
+            carriage = c;
+        }
+        Vector3 GetBridgePosition() {
+            return bridgePosition;
+        }
 
         void SetController(const Controller& c) {
             activeController = &c;
         }
 
-        //bool CanPlaceRail();
+        bool CanPlaceRail();
         void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
-        //void UpdateFace();
 
     protected:
-        //void CutTree();
-        //void DigRock();
-        //void ScoopWater();
-        //void UseWater();
-        //void BuildBridge();
-        //void LoadMaterial();
+        void CutTree();
+        void DigRock();
+        void ScoopWater();
+        void UseWater();
+        void BuildBridge();
+        void LoadMaterial();
         bool doing = false;
         bool cutting = false;
         bool digging = false;
@@ -130,7 +129,7 @@ namespace NCL::CSC8503 {
         //vector<vector<GLuint>> bumpTextures;
         //vector<AnimationObject*> animations;
         //vector<ShaderGroup*> shaders;
-        MaterialCarriage* carriage;
+        MaterialCarriage* carriage = nullptr;
 
         float currentFrame = 0;
         float frameTime = 0.0f;

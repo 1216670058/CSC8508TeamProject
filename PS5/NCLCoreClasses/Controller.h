@@ -25,6 +25,7 @@ public:
 	virtual float	GetNamedAxis(const std::string& axis) const;
 	virtual float	GetNamedButtonAnalogue(const std::string& button) const;
 	virtual bool	GetNamedButton(const std::string& button) const;
+	virtual bool    ButtonPressed(const std::string& button);
 
 	void MapAxis(uint32_t axis, const std::string& name);
 	void MapButton(uint32_t axis, const std::string& name);
@@ -37,4 +38,6 @@ protected:
 	std::map<std::string, uint32_t> buttonMappings;
 	std::map<std::string, uint32_t> analogueMappings;
 	std::map<std::string, uint32_t> axisMappings;
+
+	float counter[16];
 };

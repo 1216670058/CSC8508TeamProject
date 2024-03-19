@@ -26,13 +26,15 @@ TutorialGame::TutorialGame(GameWorld& inWorld, GameTechRendererInterface& inRend
 	useGravity		= false;
 	inSelectionMode = false;
 
-	InitialiseAssets();
-
 	NCL::PS5::PS5Window* w = (NCL::PS5::PS5Window*)Window::GetWindow();
 	
 	world.GetMainCamera().SetController(*w->GetController());
 
 	controller = w->GetController();
+
+	InitialiseAssets();
+
+	world.SetGameState(GameState::START);
 
 	instance = this;
 }
@@ -64,55 +66,134 @@ TutorialGame::~TutorialGame()	{
 }
 
 void TutorialGame::UpdateGame(float dt) {
-	if (!inSelectionMode) {
+	switch (world.GetGameState())
+	{
+	case START:
+		UpdateStart(dt);
+		break;
+	case PLAYING:
+		UpdatePlaying(dt);
+		break;
+	case PAUSED:
+		UpdatePaused(dt);
+		break;
+	case FAILURE:
+		UpdateFailure(dt);
+		break;
+	case FINISH:
+		UpdateFinished(dt);
+		break;
+	case EXIT:
+		isExit = true;
+		break;
+	default:
+		break;
+	}
+}
+
+void TutorialGame::UpdateStart(float dt) {
+	Debug::Print("Train Bob", Vector2(45, 20), Debug::RED);
+	Debug::Print("Press X to start", Vector2(40, 30), Debug::BLUE);
+	if (TutorialGame::GetGame()->GetController()->GetNamedButton("Cross"))
+		world.SetGameState(GameState::PLAYING);
+}
+
+void TutorialGame::UpdatePlaying(float dt) {
+	if (!lockedCamera)
 		world.GetMainCamera().UpdateCamera(dt);
-	}
-	if (lockedObject != nullptr) {
-		Vector3 objPos = lockedObject->GetTransform().GetPosition();
-		Vector3 camPos = objPos + lockedOffset;
-
-		Matrix4 temp = Matrix::View(camPos, objPos, Vector3(0,1,0));
-
-		Matrix4 modelMat = Matrix::Inverse(temp);
-
-		Quaternion q(modelMat);
-		Vector3 angles = q.ToEuler(); //nearly there now!
-
-		world.GetMainCamera().SetPosition(camPos);
-		world.GetMainCamera().SetPitch(angles.x);
-		world.GetMainCamera().SetYaw(angles.y);
-	}
+	else
+		CameraUpdate();
 
 	UpdateKeys();
+	DrawPad();
 
-	RayCollision closestCollision;
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::K) && selectionObject) {
-		Vector3 rayPos;
-		Vector3 rayDir;
-
-		rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);
-
-		rayPos = selectionObject->GetTransform().GetPosition();
-
-		Ray r = Ray(rayPos, rayDir);
-
-		if (world.Raycast(r, closestCollision, true, selectionObject)) {
-			if (objClosest) {
-				objClosest->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-			}
-			objClosest = (GameObject*)closestCollision.node;
-
-			objClosest->GetRenderObject()->SetColour(Vector4(1, 0, 1, 1));
+	if (failure) {
+		world.SetGameState(GameState::FAILURE);
+	}
+	else if (success) {
+		if (level < 3) {
+			infoString = "You Win!!!";
+			infoCounter = 3.0f;
+			infoPos = Vector2(40, 80);
+			infoColour = Debug::CYAN;
+			level++;
+			InitGameWorld(level);
+		}
+		else {
+			world.SetGameState(GameState::FINISH);
+		}
+	}
+	else {
+		if (showInfo) {
+			Debug::Print("Level: " + std::to_string(level), Vector2(0, 5), Vector4(1, 1, 1, 0.5f));
+			ConvertTime(playTime, hours, minutes, seconds);
+			Debug::Print("Time: " + std::to_string(hours) + ":" + std::to_string(minutes) + ":" + std::to_string(seconds), Vector2(0, 10), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Distance: " + std::to_string((int)train->GetDistance()), Vector2(0, 15), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Speed: " + std::to_string(train->GetSpeed()), Vector2(0, 20), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Position: " + std::to_string((int)player->GetTransform().GetPosition().x) + "," + std::to_string((int)player->GetTransform().GetPosition().y) + "," + std::to_string((int)player->GetTransform().GetPosition().z), Vector2(0, 25), Vector4(1, 1, 1, 0.5f));
+			UpdateSlotString();
+			Debug::Print("Inventory: " + slotString, Vector2(0, 30), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Item Quantity: " + std::to_string(player->GetSlotNum()), Vector2(0, 35), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press R1 to hide information", Vector2(0, 40), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press Options to pause", Vector2(0, 45), Vector4(1, 1, 1, 0.5f));
+		}
+		else {
+			Debug::Print("Level: " + std::to_string(level), Vector2(0, 5), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press R1 to show more information", Vector2(0, 10), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press Options to pause", Vector2(0, 15), Vector4(1, 1, 1, 0.5f));
 		}
 	}
 
-	//bucket->GetPhysicsObject()->AddForce(Vector3(0, 20, 0));
+	if (infoCounter > 0) {
+		infoCounter -= dt;
+		if (infoCounter <= 0) {
+			infoString = "";
+			infoCounter = 0.0f;
+		}
+	}
 
-	SelectObject();
-	MoveSelectedObject();
+	Debug::Print(infoString, infoPos, infoColour);
 
+	playTime += dt;
 	world.UpdateWorld(dt);
 	physics.Update(dt);
+}
+
+void TutorialGame::UpdatePaused(float dt) {
+	Debug::Print("Press X to continue", Vector2(30, 40), Debug::BLUE);
+	Debug::Print("Press O to exit", Vector2(35, 60), Debug::RED);
+	if (TutorialGame::GetGame()->GetController()->GetNamedButton("Cross")) {
+		world.SetGameState(GameState::PLAYING);
+	}
+	else if (TutorialGame::GetGame()->GetController()->GetNamedButton("Circle")) {
+		world.SetGameState(GameState::EXIT);
+	}
+}
+
+void TutorialGame::UpdateFailure(float dt) {
+	Debug::Print("You Lose!", Vector2(37, 40), Debug::RED);
+	Debug::Print("Press X to restart", Vector2(30, 50), Debug::BLUE);
+	Debug::Print("Press O to exit", Vector2(35, 60), Debug::RED);
+	if (TutorialGame::GetGame()->GetController()->GetNamedButton("Cross")) {
+		InitGameWorld(level);
+		world.SetGameState(GameState::PLAYING);
+	}
+	else if (TutorialGame::GetGame()->GetController()->GetNamedButton("Circle")) {
+		world.SetGameState(GameState::EXIT);
+	}
+}
+
+void TutorialGame::UpdateFinished(float dt) {
+	Debug::Print("You Win!!!", Vector2(37, 40), Debug::CYAN);
+	Debug::Print("Press X to restart", Vector2(30, 50), Debug::BLUE);
+	Debug::Print("Press O to exit", Vector2(35, 60), Debug::RED);
+	if (TutorialGame::GetGame()->GetController()->GetNamedButton("Cross")) {
+		InitGameWorld(1);
+		world.SetGameState(GameState::PLAYING);
+	}
+	else if (TutorialGame::GetGame()->GetController()->GetNamedButton("Circle")) {
+		world.SetGameState(GameState::EXIT);
+	}
 }
 
 void TutorialGame::UpdateKeys() {
@@ -125,33 +206,32 @@ void TutorialGame::UpdateKeys() {
 		InitCamera(); //F2 will reset the camera to a specific default place
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
-		useGravity = !useGravity; //Toggle gravity!
-		physics.UseGravity(useGravity);
-	}
-	//Running certain physics updates in a consistent order might cause some
-	//bias in the calculations - the same objects might keep 'winning' the constraint
-	//allowing the other one to stretch too much etc. Shuffling the order so that it
-	//is random every frame can help reduce such bias.
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
-		world.ShuffleConstraints(true);
-	}
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
-		world.ShuffleConstraints(false);
+	if (TutorialGame::GetGame()->GetController()->ButtonPressed("L1")) {
+		lockedCamera = !lockedCamera;
 	}
 
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F7)) {
-		world.ShuffleObjects(true);
-	}
-	if (Window::GetKeyboard()->KeyPressed(KeyCodes::F8)) {
-		world.ShuffleObjects(false);
+	if (TutorialGame::GetGame()->GetController()->GetNamedButton("Options")) {
+		world.SetGameState(GameState::PAUSED);
 	}
 
-	if (lockedObject) {
-		LockedObjectMovement();
+	if (TutorialGame::GetGame()->GetController()->ButtonPressed("R1")) {
+		showInfo = !showInfo;
 	}
-	else {
-		DebugObjectMovement();
+
+	if (TutorialGame::GetGame()->GetController()->ButtonPressed("Triangle")) {
+		usePad = !usePad;
+	}
+}
+
+void TutorialGame::CameraUpdate() {
+	if (train) {
+		Vector3 objPos = train->GetTransform().GetPosition();
+		Vector3 camPos = Vector3(objPos.x + 30, objPos.y + 130, objPos.z + 135);
+		if (camPos.z > 270) camPos.z = 270;
+
+		world.GetMainCamera().SetPosition(camPos);
+		world.GetMainCamera().SetPitch(-50);
+		world.GetMainCamera().SetYaw(0);
 	}
 }
 
@@ -220,9 +300,11 @@ void TutorialGame::DebugObjectMovement() {
 	}
 }
 
-void TutorialGame::InitGameWorld() {
+void TutorialGame::InitGameWorld(int level) {
+	success = false;
+	failure = false;
 	InitCamera();
-	InitWorld();
+	InitWorld(level);
 }
 
 void TutorialGame::InitCamera() {
@@ -234,21 +316,21 @@ void TutorialGame::InitCamera() {
 	lockedObject = nullptr;
 }
 
-void TutorialGame::InitWorld() {
+void TutorialGame::InitWorld(int level) {
 	std::cout << std::endl << "--------Initialising Game Objects--------" << std::endl;
 	world.ClearAndErase();
 	physics.Clear();
 
-	InitPositions();
+	InitPositions(level);
 	InitDefaultFloor();
-	InitGameExamples();	
+	InitGameExamples(level);	
 }
 
 void TutorialGame::InitDefaultFloor() {
 	AddFloorToWorld(Vector3(150, 2, 95));
 }
 
-void TutorialGame::InitPositions() {
+void TutorialGame::InitPositions(int level) {
 	switch (level) {
 	case 1:
 		playerPosition = Vector3(5, 4, 110);
@@ -283,20 +365,20 @@ void TutorialGame::InitPositions() {
 	}
 }
 
-void TutorialGame::InitGameExamples() {
+void TutorialGame::InitGameExamples(int level) {
 	axe = AddAxeToWorld(axePosition);
 	pickaxe = AddPickaxeToWorld(pickaxePosition);
 	bucket = AddBucketToWorld(bucketPosition);
 	player = AddPlayerToWorld(playerPosition);
 	train = AddTrainToWorld(trainPosition);
-	train->InitPaths(1);
+	train->InitPaths(level);
 	carriage1 = (MaterialCarriage*)(train->AddCarriage(21));
 	carriage2 = (ProduceCarriage*)(train->AddCarriage(22));
 	carriage3 = (WaterCarriage*)(train->AddCarriage(23));
 	carriage1->SetProduceCarriage(carriage2);
 	carriage2->SetMaterialCarriage(carriage1);
 	pad = AddPadToWorld();
-	AddSceneToWorld(1);
+	AddSceneToWorld(level);
 }
 
 /*
@@ -381,5 +463,84 @@ void TutorialGame::MoveSelectedObject() {
 				selectionObject->GetPhysicsObject()->AddForceAtPosition(ray.GetDirection() * forceMagnitude, closestCollision.collidedAt);
 			}
 		}
+	}
+}
+
+void TutorialGame::DrawPad() {
+	if (usePad) {
+		if (player->GetSlot() == 0 || player->GetSlot() == 7) {
+			Vector3 position = player->GetTransform().GetPosition();
+			Vector3 p = player->FindGrid(Vector3(position.x, 4.5f, position.z));
+			int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+			pad->GetTransform().SetPosition(p);
+			int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+			if (player->GetSlot() == 0) {
+				if (type >= 10000)
+					pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+				else
+					pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+			}
+			else if (player->GetSlot() == 7) {
+				if (!player->CanPlaceRail())
+					pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+				else
+					pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+			}
+		}
+		else {
+			Vector3 position = player->GetTransform().GetPosition();
+			position = Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f;
+			Vector3 p = player->FindGrid(Vector3(position.x, 4.5f, position.z));
+			int index = p.x / 10 + (p.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+			pad->GetTransform().SetPosition(position);
+			int type = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index).type;
+			if (type >= 10000)
+				pad->GetRenderObject()->SetColour(Vector4(1, 0, 0, 0.4f));
+			else
+				pad->GetRenderObject()->SetColour(Vector4(1, 1, 0, 0.4f));
+		}
+	}
+	else {
+		pad->GetRenderObject()->SetColour(Vector4());
+		pad->GetTransform().SetPosition(Vector3());
+	}
+}
+
+void TutorialGame::ConvertTime(float seconds, int& hours, int& minutes, int& remainingSeconds) {
+	hours = static_cast<int>(seconds / 3600);
+	int remainingTime = static_cast<int>(seconds) % 3600;
+	minutes = remainingTime / 60;
+	remainingSeconds = remainingTime % 60;
+}
+
+void TutorialGame::UpdateSlotString() {
+	switch (player->GetSlot()) {
+	case 0:
+		slotString = "Empty";
+		break;
+	case 2:
+		slotString = "Pickaxe";
+		break;
+	case 3:
+		slotString = "Axe";
+		break;
+	case 4:
+		if (bucket->GetWater())
+			slotString = "Bucket(Full)";
+		else
+			slotString = "Bucket(Empty)";
+		break;
+	case 5:
+		slotString = "Plank";
+		break;
+	case 6:
+		slotString = "Stone";
+		break;
+	case 7:
+		slotString = "Rail";
+		break;
+	default:
+		slotString = "Empty";
+		break;
 	}
 }

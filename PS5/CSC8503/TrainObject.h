@@ -31,28 +31,28 @@ namespace NCL::CSC8503 {
         void InitPaths(int level);
         
         void AddPath(Vector3 p);
-        //
-        //void AddCarriagePath(Vector3 p);
+        
+        void AddCarriagePath(Vector3 p);
         
         TrainCarriage* AddCarriage(int id);
 
         void UpdateOrientation(Vector3 direction);
         
         void UploadAssets(Mesh* mesh, Texture* texture, Shader* shader);
-        //
-        //bool OnFire() const {
-        //    return onFire;
-        //}
-        //void SetOnFire(bool o) {
-        //    onFire = o;
-        //}
-        //
-        //float GetFire() const {
-        //    return fire;
-        //}
-        //void SetFire(float f) {
-        //    fire = f;
-        //}
+        
+        bool OnFire() const {
+            return onFire;
+        }
+        void SetOnFire(bool o) {
+            onFire = o;
+        }
+        
+        float GetFire() const {
+            return fire;
+        }
+        void SetFire(float f) {
+            fire = f;
+        }
         
         float GetForce() { return force; }
         float GetDistance() { return distance; }
