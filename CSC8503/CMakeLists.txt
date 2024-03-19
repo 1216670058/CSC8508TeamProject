@@ -9,6 +9,7 @@ set(Header_Files
         "TutorialGame.h"
         "Audio.h"
         "UI.h"
+    "Particle.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -19,7 +20,8 @@ set(Source_Files
         "TutorialGame.cpp"
         "Audio.cpp"
         "SetupWorld.cpp"
-        "UI.cpp"
+        "UI.cpp"        
+    "Particle.cpp"
 )
 
 set(GameObjects

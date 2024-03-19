@@ -104,6 +104,8 @@ void TutorialGame::UpdateGame(float dt) {
     playtime += dt;
     audio->Update();
     world->UpdateWorld(dt);
+    float cv = carriage3->GetBoundingRadius();
+    renderer->GetParticle()->Update(dt, carriage3, 2, Vector3(cv, cv, cv));
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
     physics->Update(dt);
