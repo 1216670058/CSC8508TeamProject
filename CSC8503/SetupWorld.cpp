@@ -1079,6 +1079,12 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin,
 
     world->AddGameObject(moose);
 
+    GameObject* viewcone = AddSphereToWorld(position, 25.0f);
+    viewcone->GetRenderObject()->SetColour(Vector4(0, 0, 0, 0));
+    ((CollisionVolume*)viewcone->GetBoundingVolume())->SetIsTrigger(true);
+    PositionConstraint* constraint = new PositionConstraint(moose, viewcone, 0.01f);
+    world->AddConstraint(constraint);
+
     return moose;
 }
 

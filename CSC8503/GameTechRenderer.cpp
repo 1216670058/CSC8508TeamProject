@@ -401,7 +401,7 @@ void GameTechRenderer::BuildObjectList() {
     gameWorld.OperateOnContents(
         [&](GameObject* o) {
             if (frameFrustum.InsideFrustum(o->GetTransform().GetPosition(), o->GetBoundingRadius())
-                && o->IsActive()) {
+                && o->IsActive() && !o->GetBoundingVolume()->isTrigger) {
                 RenderObject* g = o->GetRenderObject();
                 Vector3 dir = o->GetTransform().GetPosition() - gameWorld.GetMainCamera().GetPosition();
                 g->SetCameraDistance(Vector3::Dot(dir, dir));
