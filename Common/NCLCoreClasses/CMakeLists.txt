@@ -58,7 +58,7 @@ set(Rendering
     "Mesh.cpp"
     "Mesh.h"
 	
-	"MshLoader.cpp"
+    "MshLoader.cpp"
     "MshLoader.h"
 
     "common.h"
