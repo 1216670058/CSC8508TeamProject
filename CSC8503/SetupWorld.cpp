@@ -1060,7 +1060,7 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
 }
 
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax) {
-    AnimalObject* moose = new AnimalObject("map.txt", position);
+    AnimalObject* moose = new AnimalObject("map.txt", position, world);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 

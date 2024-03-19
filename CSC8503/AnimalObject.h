@@ -18,7 +18,7 @@
 namespace NCL::CSC8503 {
 	class AnimalObject :public GameObject {
 	public:
-		AnimalObject(string filePath, Vector3 startingPos);
+		AnimalObject(string filePath, Vector3 startingPos, GameWorld* world);
 		~AnimalObject() {};
 
 		void Update(float dt) override;
@@ -28,10 +28,13 @@ namespace NCL::CSC8503 {
 
 		StateMachine* stateMachine;
 		NavigationGrid* grid;
+		GameWorld* world;
 
 		Vector3 currentPos;
 		std::vector<Vector3> wanderPathNodes = {};
 		int currentNodeIndex = 0;
+
+		float timer = 0;
 
 		int gridSize;
 	};
