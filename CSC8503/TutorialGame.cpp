@@ -342,7 +342,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
     switch (level) {
     case 1:
         player1Position = Vector3(5, 4, 110);
-        trainPosition = Vector3(30, 4.5f, 100);
+        trainPosition = Vector3(30, 8.0f, 100);
         pickaxePosition = Vector3(25, 6.5f, 120);
         axePosition = Vector3(15, 8, 120);
         bucketPosition = Vector3(35, 6.5f, 120);
@@ -355,7 +355,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         break;
     case 2:
         player1Position = Vector3(5, 4, 65);
-        trainPosition = Vector3(30, 4.5f, 50);
+        trainPosition = Vector3(30, 8.0f, 50);
         pickaxePosition = Vector3(20, 6.5f, 75);
         axePosition = Vector3(10, 8, 75);
         bucketPosition = Vector3(30, 6.5f, 75);
@@ -368,7 +368,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         break;
     case 3:
         player1Position = Vector3(5, 4, 35);
-        trainPosition = Vector3(30, 4.5f, 20);
+        trainPosition = Vector3(30, 8.0f, 20);
         pickaxePosition = Vector3(20, 6.5f, 45);
         axePosition = Vector3(10, 8, 45);
         bucketPosition = Vector3(30, 6.5f, 45);
@@ -400,6 +400,8 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     player = AddPlayerToWorld(player1Position, "Player1", 1, !networked);
     train = AddTrainToWorld(trainPosition, !networked);
     train->InitPaths(level);
+    AddTestingLightToWorld(Vector3(280, 6, 45), Vector4(1, 1, 0, 10));
+    //AddTestingLightToWorld(Vector3(300, 6, 45), Vector4(1, 1, 0, 10));
     pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
     axe = AddAxeToWorld(axePosition, !networked);
     bucket = AddBucketToWorld(bucketPosition, !networked);

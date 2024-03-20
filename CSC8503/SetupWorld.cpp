@@ -85,7 +85,7 @@ void TutorialGame::InitTextures() {
     rockTex = renderer->LoadTexture("Rock.png");
     desertRockTex = renderer->LoadTexture("DesertRock.png");
     waterTex = renderer->LoadTexture("water.tga");
-    //lightTex = renderer->LoadTexture("redstone_lamp_on.png");
+    lightTex = renderer->LoadTexture("redstone_lamp_on.png");
     pickaxeTex = renderer->LoadTexture("lowpoly_pickaxe_BaseColor.png");
     axeTex = renderer->LoadTexture("Axe_albedo.jpg");
     bucketTex = renderer->LoadTexture("lambert2_Base_Color.png");
@@ -590,11 +590,11 @@ TrainObject* TutorialGame::AddTrainToWorld(const Vector3& position, bool spawn) 
 
     if (spawn)
         train->GetTransform()
-        .SetScale(Vector3(10, 10, 10))
+        .SetScale(Vector3(18, 15, 12))
         .SetPosition(train->FindGrid(position));
     else
         train->GetTransform()
-        .SetScale(Vector3(10, 10, 10))
+        .SetScale(Vector3(18, 15, 12))
         .SetPosition(Vector3(100, -1000, 0));
 
     train->SetInitPos(position);

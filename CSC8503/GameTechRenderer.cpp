@@ -5,6 +5,8 @@
 #include "TextureLoader.h"
 #include "MshLoader.h"
 #include "Assets.h"
+#include "TutorialGame.h"
+
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -39,8 +41,11 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
     std::cout << std::endl << "--------Initialising Lights--------" << std::endl;
     sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(2.0f, 2.0f, 2.0f, 1.0f), 1000.0f);
     redstoneLight1 = new Light(Vector3(10, 20, 0), Vector4(1, 1, 0, 1), 50.0f);
-    redstoneLight2 = new Light(Vector3(30, 20, 40), Vector4(1, 0, 0, 1), 30.0f);
+    redstoneLight2 = new Light(Vector3(280, 6, 45), Vector4(1, 1, 0, 10), 30.0f);
     redstoneLight3 = new Light(Vector3(60, 20, 20), Vector4(0, 1, 0, 1), 40.0f);
+    playerLight = new Light(Vector3(20, 20, 20), Vector4(1, 1, 0, 10), 40.0f);
+    trainLight = new Light(Vector3(20, 20, 20), Vector4(1, 1, 0, 10), 40.0f);
+
     sphere = LoadMesh("sphere.msh");
     quad = OGLMesh::GenerateQuad();
 
@@ -86,6 +91,13 @@ GameTechRenderer::~GameTechRenderer() {
     glDeleteFramebuffers(1, &skyboxFBO);
     glDeleteFramebuffers(1, &combinedFBO);
     glDeleteFramebuffers(1, &processFBO);
+}
+
+void GameTechRenderer::Update(float dt) {
+    if (TutorialGame::GetGame()->GetPlayer())
+        playerLight->SetPosition(TutorialGame::GetGame()->GetPlayer()->GetTransform().GetPosition() + Vector3(0, 10, 0));
+    if(TutorialGame::GetGame()->GetTrain())
+        trainLight->SetPosition(TutorialGame::GetGame()->GetTrain()->GetTransform().GetPosition() + Vector3(0, 10, 0));
 }
 
 void GameTechRenderer::InitBuffers() {
@@ -772,14 +784,17 @@ void GameTechRenderer::DrawPointLights() {
     glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
     glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-    SetShaderLight(*redstoneLight1);
+    SetShaderLight(*playerLight);
     Draw(sphere);
+
+    SetShaderLight(*trainLight);
+    Draw(sphere); 
 
     SetShaderLight(*redstoneLight2);
     Draw(sphere);
-
-    SetShaderLight(*redstoneLight3);
-    Draw(sphere);
+    //
+    //SetShaderLight(*redstoneLight3);
+    //Draw(sphere);
 }
 
 void GameTechRenderer::DrawParticle()
