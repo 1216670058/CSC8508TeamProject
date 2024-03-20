@@ -10,7 +10,7 @@ TrainObject::TrainObject() {
 TrainObject::~TrainObject() {
 
 }
- 
+
 TrainObject::TrainObject(GameWorld* w) {
     world = w;
     typeID = 20;
@@ -101,36 +101,36 @@ void TrainObject::Update(float dt) {
 void TrainObject::InitPaths(int level) {
     switch (level) {
     case 1:
-        firstPath = Vector3(50, 4.5f, 100);
-        finalPath = Vector3(270, 4.5f, 50);
-        finishPath = Vector3(290, 4.5f, 50);
+        firstPath = Vector3(50, 8.0f, 100);
+        finalPath = Vector3(270, 8.0f, 50);
+        finishPath = Vector3(290, 8.0f, 50);
         path.push_back(firstPath);
         break;
     case 2:
-        firstPath = Vector3(50, 4.5f, 50);
-        finalPath = Vector3(270, 4.5f, 150);
-        finishPath = Vector3(290, 4.5f, 150);
+        firstPath = Vector3(50, 8.0f, 50);
+        finalPath = Vector3(270, 8.0f, 150);
+        finishPath = Vector3(290, 8.0f, 150);
         path.push_back(firstPath);
         break;
     case 3:
-        firstPath = Vector3(50, 4.5f, 20);
-        finalPath = Vector3(270, 4.5f, 150);
-        finishPath = Vector3(290, 4.5f, 150);
+        firstPath = Vector3(50, 8.0f, 20);
+        finalPath = Vector3(270, 8.0f, 150);
+        finishPath = Vector3(290, 8.0f, 150);
         path.push_back(firstPath);
         break;
-    //case 4:
-    //    firstPath = Vector3(50, 4.5f, 50);
-    //    finalPath = Vector3(270, 4.5f, 150);
-    //    finishPath = Vector3(290, 4.5f, 150);
-    //    path.push_back(firstPath);
-    //    break;
+        //case 4:
+        //    firstPath = Vector3(50, 4.5f, 50);
+        //    finalPath = Vector3(270, 4.5f, 150);
+        //    finishPath = Vector3(290, 4.5f, 150);
+        //    path.push_back(firstPath);
+        //    break;
     default:
         break;
     }
 }
 
 void TrainObject::AddPath(Vector3 p) {
-    path.push_back(p);
+    path.push_back(Vector3(p.x,8.0,p.z));
 }
 
 void TrainObject::AddCarriagePath(Vector3 p) {
@@ -159,7 +159,9 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
 
     if (id == 21) {
         MaterialCarriage* carriage = new MaterialCarriage(world);
-        carriage->SetPath(path);
+        std::vector<Vector3> carriagePath;
+        carriagePath.push_back(Vector3(path[0].x, 4.5f, path[0].z));
+        carriage->SetPath(carriagePath);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -188,7 +190,9 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     }
     if (id == 22) {
         ProduceCarriage* carriage = new ProduceCarriage(world);
-        carriage->SetPath(path);
+        std::vector<Vector3> carriagePath;
+        carriagePath.push_back(Vector3(path[0].x, 4.5f, path[0].z));
+        carriage->SetPath(carriagePath);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -219,7 +223,9 @@ TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     }
     if (id == 23) {
         WaterCarriage* carriage = new WaterCarriage(world);
-        carriage->SetPath(path);
+        std::vector<Vector3> carriagePath;
+        carriagePath.push_back(Vector3(path[0].x, 4.5f, path[0].z));
+        carriage->SetPath(carriagePath);
         AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
         carriage->SetBoundingVolume((CollisionVolume*)volume);
 

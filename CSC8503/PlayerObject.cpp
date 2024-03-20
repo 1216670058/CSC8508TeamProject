@@ -498,7 +498,7 @@ bool PlayerObject::CanPlaceRail() {
             }
         }
     }
-    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - position).Length() < 14)
+    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - Vector3(0, 4.5f, 0) - position).Length() < 14)
         isPath = true;
 
     return canConnect && isPath && notRail;
