@@ -25,6 +25,7 @@ void PlayerObject::Update(float dt) {
         UseWater();
         BuildBridge();
         LoadMaterial();
+        UseRobot();
 
         //Vector3 position = transform.GetPosition();
         //Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
@@ -500,4 +501,34 @@ bool PlayerObject::CanPlaceRail() {
         isPath = true;
 
     return canConnect && isPath && notRail;
+}
+
+void PlayerObject::UseRobot() {
+    bool FPressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        FPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F);
+    else
+        FPressed = buttonStates[7];
+
+    if (FPressed) {
+        if (slot == 2 || slot == 3) {
+            Ray r = Ray(transform.GetPosition(), face);
+            RayCollision closestCollision;
+            if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
+                GameObject* closest = (GameObject*)closestCollision.node;
+                if (closest->GetTypeID() == 11 && closestCollision.rayDistance < 5.0f) {
+                    TutorialGame::GetGame()->GetAudio()->PlayGet();
+                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                    if (slot == 2) robotDig = true;
+                    if (slot == 3) robotCut = true;
+                }
+                else {
+                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                }
+            }
+            else {
+                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            }
+        }
+    }
 }
