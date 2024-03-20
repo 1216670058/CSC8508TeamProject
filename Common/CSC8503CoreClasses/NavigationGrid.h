@@ -61,6 +61,10 @@ namespace NCL {
 			int GetGridWidth() const {
 				return gridWidth;
 			}
+
+			int GetGridHeight() const {
+				return gridHeight;
+			}
 				
 		protected:
 			bool		NodeInList(GridNode* n, std::vector<GridNode*>& list) const;

@@ -62,7 +62,7 @@ void TutorialGame::InitMeshes() {
     assassinMesh = renderer->LoadMesh("Assassin.msh");
     girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
-    //mooseMesh = renderer->LoadMesh("Moose.msh");
+    mooseMesh = renderer->LoadMesh("Moose.msh");
     //robotMesh = renderer->LoadMesh("Robot.msh");
     //droneMesh = renderer->LoadMesh("Drone.msh");
 
@@ -205,18 +205,18 @@ void TutorialGame::InitMaterials() {
     //    smurfBumpTextures.emplace_back(texID2);
     //}
 
-    //mooseMaterial = new MeshMaterial("Moose.mat");
-    //for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        mooseMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    mooseTextures.emplace_back(texID);
-    //}
+    mooseMaterial = new MeshMaterial("Moose.mat");
+    for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            mooseMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        mooseTextures.emplace_back(texID);
+    }
     
     //robotMaterial = new MeshMaterial("Robot.mat");
     //for (int i = 0; i < robotMesh->GetSubMeshCount(); ++i) {
@@ -314,14 +314,14 @@ void TutorialGame::InitAnimations() {
     //smurfAnimation->SetActiveAnim(smurfAnimation->GetAnim1());
     //smurfAnimation->SetIdle(false);
 
-    //mooseAnimation = new AnimationObject();
-    //mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim2(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim3(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim4(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
-    //mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
-    //
+    mooseAnimation = new AnimationObject();
+    mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim2(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim3(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim4(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
+    mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
+    
     //robotAnimation = new AnimationObject();
     //robotAnimation->SetAnim1(new MeshAnimation("Robot.anm"));
     //robotAnimation->SetAnim2(new MeshAnimation("Robot.anm"));
@@ -1087,8 +1087,34 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
     }
 }
 
-AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
-    AnimalObject* moose = new AnimalObject();
+DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal) {
+    DetectionSphereObject* sphere = new DetectionSphereObject(animal);
+
+    Vector3 sphereSize = Vector3(radius, radius, radius);
+    SphereVolume* volume = new SphereVolume(radius);
+    sphere->SetBoundingVolume((CollisionVolume*)volume);
+
+    sphere->GetTransform()
+        .SetScale(sphereSize)
+        .SetPosition(position);
+
+    sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
+    sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
+
+    sphere->GetPhysicsObject()->SetInverseMass(10.0f);
+    sphere->GetPhysicsObject()->InitSphereInertia();
+    sphere->GetRenderObject()->SetColour(Vector4(0, 0, 0, 0));
+    world->AddGameObject(sphere);
+
+    ((CollisionVolume*)sphere->GetBoundingVolume())->SetIsTrigger(true);
+    PositionConstraint* constraint = new PositionConstraint(animal, sphere, 0.01f);
+    world->AddConstraint(constraint);
+
+    return sphere;
+}
+
+AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax) {
+    AnimalObject* moose = new AnimalObject("map.txt", position, world);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1106,6 +1132,8 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
     moose->GetPhysicsObject()->InitCubeInertia();
 
     world->AddGameObject(moose);
+
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 25.0f, moose);
 
     return moose;
 }
