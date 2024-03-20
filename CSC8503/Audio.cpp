@@ -48,6 +48,8 @@ void Audio::Update()
 		}
 		break;
 	case GameState::PLAYING:
+	case GameState::SERVERPLAYING:
+	case GameState::CLIENTPLAYING:
 		lp = TutorialGame::GetGame()->GetPlayer()->GetTransform().GetPosition();
 		lposition = vec3df(lp.x, lp.y, lp.z);  // position of the listener
 		forward = TutorialGame::GetGame()->GetPlayer()->GetFace();
