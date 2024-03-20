@@ -23,10 +23,12 @@
 namespace NCL::CSC8503 {
 	class DroneObject :public AnimalObject {
 	public:
-		DroneObject(NavigationGrid* grid, GameWorld* world);
+		DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world);
 		~DroneObject() {};
 
 		void Update(float dt) override;
+
+		void DetectThreat(GameObject* object) override;
 
 	protected:
 		BehaviourState currentState = Ongoing;
@@ -43,6 +45,9 @@ namespace NCL::CSC8503 {
 
 		BehaviourSequence* patrolSequence;
 		BehaviourAction* moveOnPatrol;
-		BehaviourAction* pathfindForPatrol;
+		//BehaviourAction* pathfindForPatrol;
+
+		bool itemDetected = false;
+		GameObject* item = nullptr;
 	};
 }

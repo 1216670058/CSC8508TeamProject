@@ -2,21 +2,37 @@
 
 using namespace NCL::CSC8503;
 
-DroneObject::DroneObject(NavigationGrid* grid, GameWorld* world) {
+DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world) {
     typeID = 12;
     name = "Drone";
-    this->grid = grid;
+    this->currentPos = startingPos;
+    this->grid = navGrid;
+    this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
 
 
     detectPlayer = new BehaviourAction("Detect Player", [&](float dt, BehaviourState state)->BehaviourState {
         // if player in collider then success, else fail
-        return Success;
+        if (threatDetected) {
+            std::cout << "threat detected\n";
+            return Success;
+        }
+        else return Failure;
         }
     );
 
     moveAwayPlayer = new BehaviourAction("Move Away Player", [&](float dt, BehaviourState state)->BehaviourState {
         // always ongoing, success for error
+        // same code as animal scared state, clean up + make function
+        wanderPathNodes.clear();
+        float speed = 20.0f;
+        Vector3 direction = (currentPos - threat->GetTransform().GetPosition()).Normalised();
+        direction = Vector3(direction.x, 0, direction.z);
+        GetPhysicsObject()->SetLinearVelocity(direction * speed);
+
+        float angle = atan2(-direction.x, -direction.z);
+        float angleDegrees = Maths::RadiansToDegrees(angle);
+        GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));
         return Ongoing;
         }
     );
@@ -24,7 +40,11 @@ DroneObject::DroneObject(NavigationGrid* grid, GameWorld* world) {
 
     detectItem = new BehaviourAction("Detect Item", [&](float dt, BehaviourState state)->BehaviourState {
         // if item in collider then success, else fail
-        return Success;
+        if (itemDetected) {
+            std::cout << "item detected\n";
+            return Success;
+        }
+        else return Failure;
         }
     );
 
@@ -42,16 +62,43 @@ DroneObject::DroneObject(NavigationGrid* grid, GameWorld* world) {
 
 
     moveOnPatrol = new BehaviourAction("Move On Patrol", [&](float dt, BehaviourState state)->BehaviourState {
-        // ongoing, success if new path needed
+        // ongoing, success for error
+        // same code as animal wander state, clean up + make function
+        GridNode n;
+        if (wanderPathNodes.empty()) {
+            n = this->grid->GetGridNode(rand() % this->gridSize);
+            while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
+                n = grid->GetGridNode(rand() % this->gridSize);
+            }
+        }
+
+        Vector3 nextPathPos = wanderPathNodes[currentNodeIndex];
+
+        if ((nextPathPos - currentPos).LengthSquared() < 100.0f) { // if close to current node
+            if (currentNodeIndex < (wanderPathNodes.size() - 1)) {    // if node isnt the final node, target next node
+                currentNodeIndex++;
+                nextPathPos = wanderPathNodes[currentNodeIndex];
+                timer = 0;
+            }
+            else { // if final node reached, find new path
+
+                n = grid->GetGridNode(rand() % this->gridSize);
+                while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
+                    n = grid->GetGridNode(rand() % this->gridSize);
+                }
+            }
+        }
+
+        MoveToPosition(nextPathPos, 10.0f);  // otherwise move towards next node
         return Ongoing;
         }
     );
 
-    pathfindForPatrol = new BehaviourAction("Pathfind For Patrol", [&](float dt, BehaviourState state)->BehaviourState {
+    /*pathfindForPatrol = new BehaviourAction("Pathfind For Patrol", [&](float dt, BehaviourState state)->BehaviourState {
         // always ongoing, success for error
         return Ongoing;
         }
-    );
+    );*/
 
 
     playerSequence = new BehaviourSequence("Player Sequence");  // ongoing if player detected, fail if not, success=error
@@ -65,7 +112,7 @@ DroneObject::DroneObject(NavigationGrid* grid, GameWorld* world) {
 
     patrolSequence = new BehaviourSequence("Patrol Sequence");  // always ongoing, success=error
     patrolSequence->AddChild(moveOnPatrol);
-    patrolSequence->AddChild(pathfindForPatrol);
+    //patrolSequence->AddChild(pathfindForPatrol);
 
     rootSelector = new BehaviourSelector("Root Selector");  // always ongoing, success=error
     rootSelector->AddChild(playerSequence);
@@ -87,4 +134,16 @@ void DroneObject::Update(float dt) {
 
     if (currentState == Ongoing || currentState == Success) currentState = rootSelector->Execute(dt);   // root selector - do until succeed/ongoing
     if (currentState == Success) std::cout << "Behaviour Tree Error\n";    // error
+}
+
+void DroneObject::DetectThreat(GameObject* object) {
+    //std::cout << "drone detect threat\n";
+    if (object->GetTypeID() == 1 || object->GetTypeID() == 11) { // player, teammate
+        threatDetected = true;
+        threat = object;
+    }
+    else if (object->GetTypeID() == 5 || object->GetTypeID() == 6) { // plank, stone
+        itemDetected = true;
+        item = object;
+    }
 }

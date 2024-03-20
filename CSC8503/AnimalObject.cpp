@@ -161,11 +161,3 @@ void AnimalObject::StopDetectThreat(GameObject* object) {
         threatDetected = false;
     }
 }
-
-
-
-
-
-DetectionSphereObject::DetectionSphereObject(AnimalObject* animal) {
-    this->animal = animal;
-}
