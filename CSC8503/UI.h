@@ -44,6 +44,8 @@ namespace NCL {
 
             void SetLoadingStep(int step) { loadingstep = step; };
             void SetSuccess(bool s) { success = s; }
+
+            float GetPlayTime() { return playtime; };
         protected:
             GameWorld* world;
 
@@ -69,6 +71,7 @@ namespace NCL {
             int loadingstep;
             bool success = false;
 
+            float playtime;
             int fflag = 1;
             float firealpha = 0.0f;
             float counter = 3.0f;
