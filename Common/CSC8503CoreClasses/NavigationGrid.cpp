@@ -69,6 +69,9 @@ NavigationGrid::NavigationGrid(const std::string &filename) : NavigationGrid() {
                     if (n.connected[i]->type == 0 || n.connected[i]->type == 7) {
                         n.costs[i] = 1;
                     }
+                    else {
+                        n.costs[i] == 10;
+                    }
                     //if (n.connected[i]->type == 'x') {
                     //    n.connected[i] = nullptr; //actually a wall, disconnect!
                     //}
@@ -128,7 +131,8 @@ bool NavigationGrid::FindPath(const Vector3 &from, const Vector3 &to, Navigation
         else {
             for (int i = 0; i < 4; ++i) {
                 GridNode *neighbour = currentBestNode->connected[i];
-                if (!neighbour || (neighbour != endNode && (neighbour->type != 0 && neighbour->type != 7))) { //might not be connected...
+                //if (!neighbour || (neighbour != endNode && (neighbour->type != 0 && neighbour->type != 7))) { //might not be connected...
+                if (!neighbour) { //might not be connected...
                     continue;
                 }
                 bool inClosed = NodeInList(neighbour, closedList);
@@ -206,7 +210,8 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, float& out
         else {
             for (int i = 0; i < 4; ++i) {
                 GridNode* neighbour = currentBestNode->connected[i];
-                if (!neighbour || (neighbour != endNode && (neighbour->type != 0 && neighbour->type != 7))) { //might not be connected...
+                //if (!neighbour || (neighbour != endNode && (neighbour->type != 0 && neighbour->type != 7))) { //might not be connected...
+                if (!neighbour) { //might not be connected...
                     continue;
                 }
                 bool inClosed = NodeInList(neighbour, closedList);
