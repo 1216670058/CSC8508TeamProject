@@ -34,7 +34,6 @@ namespace NCL::CSC8503 {
 		GameWorld* world;
 
 		Vector3 currentPos;
-		//Vector3 scaredPos;
 		std::vector<Vector3> wanderPathNodes = {};
 		int currentNodeIndex = 0;
 
@@ -42,7 +41,7 @@ namespace NCL::CSC8503 {
 		float stateCooldown = 0;
 
 		int gridSize;
-		bool noLongerScared = false;
+		//bool noLongerScared = false;
 
 		bool threatDetected = false;
 		GameObject* threat;
@@ -58,10 +57,6 @@ namespace NCL::CSC8503 {
 			//std::cout << "DETECTION COL BEGIN\n";
 			animal->DetectThreat(otherObject);
 		}
-
-		/*void OnCollisionStay(GameObject* otherObject) override {
-			std::cout << "DETECTION COL STAY\n";
-		}*/
 
 		void OnCollisionEnd(GameObject* otherObject) override {
 			//std::cout << "DETECTION COL END\n";
