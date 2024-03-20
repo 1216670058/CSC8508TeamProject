@@ -372,6 +372,7 @@ void GameTechRenderer::RenderFrame() {
     RenderSkybox();
     RenderCamera();
     DrawParticle();
+    isNight = (int)(ui->GetPlayTime() / 5) % 2 == 1 ? 1 : 0;
     if (isNight) {
         DrawLightBuffer();
         CombineBuffers();
@@ -546,6 +547,9 @@ void GameTechRenderer::RenderSkybox() {
     glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
         (float)((int)ui->GetPlayTime() % 11) / 10.0f);
 
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), ui->GetPlayTime());
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
+        (float)((int)ui->GetPlayTime() % 11) / 10.0f);
     glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
     glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
