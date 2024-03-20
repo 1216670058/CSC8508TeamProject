@@ -43,6 +43,9 @@ namespace NCL::CSC8503 {
 
 		int gridSize;
 		bool noLongerScared = false;
+
+		bool threatDetected = false;
+		GameObject* threat;
 	};
 
 
