@@ -26,8 +26,8 @@ void main(void) {
     //    timeBasedColor = mix(timeBasedColor, sunColor, sunIntensity * 0.1);
     //}
 	//
-    fragColour.a = 1.0;
 
 	vec4 samp = texture(cubeTex,normalize(IN.viewDir));
 	fragColour = pow(samp, vec4(2.2f));
+	fragColour.a = gradientFactor;
 }
