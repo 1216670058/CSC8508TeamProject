@@ -279,3 +279,16 @@ Vector3 NavigationGrid::FindNearestTree(const Vector3& position) {
 
     return min_number != 50000.0f ? allNodes[index].position : position;
 }
+
+GridNode* NavigationGrid::GetGridNodeAtPosition(Vector3& position) {
+    int fromX = ((int)position.x / nodeSize);
+    int fromZ = ((int)position.z / nodeSize);
+
+    if (fromX < 0 || fromX > gridWidth - 1 ||
+        fromZ < 0 || fromZ > gridHeight - 1) {
+        return nullptr; //outside of map region!
+    }
+
+    GridNode* thisNode = &allNodes[(fromZ * gridWidth) + fromX];
+    return thisNode;
+}

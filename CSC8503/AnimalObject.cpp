@@ -51,14 +51,46 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
 
     State* scared = new State([&](float dt) -> void {
-        float speed = 20.0f;
+        /*float speed = 20.0f;
         Vector3 direction = (currentPos - threat->GetTransform().GetPosition()).Normalised();
         direction = Vector3(direction.x, 0, direction.z);
         GetPhysicsObject()->SetLinearVelocity(direction * speed);
 
         float angle = atan2(-direction.x, -direction.z);
         float angleDegrees = Maths::RadiansToDegrees(angle);
-        GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));
+        GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), angleDegrees));*/
+
+        if (wanderPathNodes.empty()) {
+            Vector3 threatPos = threat->GetTransform().GetPosition();
+            Vector3 tp = (threatPos - currentPos).Normalised() * 10;
+            GridNode* n = grid->GetGridNodeAtPosition(tp);
+            while (n != nullptr && (n->type != 0 || !Pathfind(n->position) || (n->position - currentPos).LengthSquared() > 6000.0f)) {
+                tp *= 2;
+                n = grid->GetGridNodeAtPosition(tp);
+            }
+        }
+
+        Vector3 nextPathPos = wanderPathNodes[currentNodeIndex];
+
+        if ((nextPathPos - currentPos).LengthSquared() < 100.0f) { 
+            if (currentNodeIndex < (wanderPathNodes.size() - 1)) { 
+                currentNodeIndex++;
+                nextPathPos = wanderPathNodes[currentNodeIndex];
+                timer = 0;
+            }
+            else {
+
+                Vector3 threatPos = threat->GetTransform().GetPosition();
+                Vector3 tp = (threatPos - currentPos).Normalised() * 10;
+                GridNode* n = grid->GetGridNodeAtPosition(tp);
+                while (n != nullptr && (n->type != 0 || !Pathfind(n->position) || (n->position - currentPos).LengthSquared() > 6000.0f)) {
+                    tp *= 2;
+                    n = grid->GetGridNodeAtPosition(tp);
+                }
+            }
+        }
+
+        MoveToPosition(nextPathPos, 20.0f);  
 
         });
 
@@ -68,10 +100,20 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
 
     stateMachine->AddTransition(new StateTransition(wander, scared, [&]() -> bool { // transition to scared state if runs into player/enemy/etc
+        
 
         if (threatDetected && stateCooldown > 1.0) {
-            //std::cout << "entering scared state\n";
+            std::cout << "maybe entering scared state\n";
             stateCooldown = 0;
+
+            Vector3 threatPos = threat->GetTransform().GetPosition();
+            Vector3 tp = (threatPos - currentPos).Normalised() * 10;
+            GridNode* n = grid->GetGridNodeAtPosition(tp);
+            while (n != nullptr && (n->type != 0 || !Pathfind(n->position) || (n->position - currentPos).LengthSquared() > 6000.0f)) {
+                tp *= 2;
+                n = grid->GetGridNodeAtPosition(tp);
+            }
+
             return true;
         }
         return false;
@@ -86,10 +128,25 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
             stateCooldown = 0;
             threat = nullptr;
 
+            /*GridNode* currentNode = grid->GetGridNodeAtPosition(currentPos);
+            if (currentNode == nullptr || (currentNode->type != 1 && currentNode->type != 7)) {
+                std::cout << "current node isnt valid\n";
+                return true;
+            }*/
+
             GridNode n = grid->GetGridNode(rand() % this->gridSize);
             while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
                 n = grid->GetGridNode(rand() % this->gridSize);
             }
+            /*int count = 0;
+            while (count < 10 && (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f)) {
+                n = grid->GetGridNode(rand() % this->gridSize);
+                count++;
+            }
+
+            if (count >= 10) {
+                std::cout << "count maxed out\n";
+            }*/
 
             return true;
         }
@@ -115,11 +172,11 @@ void AnimalObject::Update(float dt) {
 
     stateMachine->Update(dt);
 
-    /*if (wanderPathNodes.empty()) return;
+    if (wanderPathNodes.empty()) return;
     for (int i = 0; i < wanderPathNodes.size() - 1; i++)
     {
         Debug::DrawLine(wanderPathNodes[i] + Vector3(0, 1, 0), wanderPathNodes[i + 1] + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
-    }*/
+    }
 }
 
 void AnimalObject::MoveToPosition(Vector3 targetPos, float speed) {
