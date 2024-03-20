@@ -87,6 +87,20 @@ namespace NCL::CSC8503 {
         void SetBuilding(bool b) {
             building = b;
         }
+
+        bool RobotCut() const {
+            return robotCut;
+        }
+        void SetRobotCut(bool c) {
+            robotCut = c;
+        }
+        bool RobotDig() const {
+            return robotDig;
+        }
+        void SetRobotDig(bool d) {
+            robotDig = d;
+        }
+
         MaterialCarriage* GetCarriage() const {
             return carriage;
         }
@@ -109,12 +123,16 @@ namespace NCL::CSC8503 {
         void UseWater();
         void BuildBridge();
         void LoadMaterial();
+        void UseRobot();
         bool doing = false;
         bool cutting = false;
         bool digging = false;
         bool placing1 = false;
         bool placing2 = false;
         bool building = false;
+
+        bool robotCut = false;
+        bool robotDig = false;
 
         int num;
         int index;

@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GameWorld.h"
 #include "PlayerObject.h"
+#include "RobotObject.h"
 #include <vector>
 
 namespace NCL::CSC8503 {
@@ -13,6 +14,7 @@ namespace NCL::CSC8503 {
             this->world = world;
             putDown = true;
             player = nullptr;
+            robot = nullptr;
             triggerDelete = true;
         };
         CollectableObject() {
@@ -40,6 +42,7 @@ namespace NCL::CSC8503 {
         bool putDown;
         int num = 1;
         PlayerObject* player;
+        RobotObject* robot;
         GameWorld* world;
 
         float Distance(const Vector3& v1, const Vector3& v2);

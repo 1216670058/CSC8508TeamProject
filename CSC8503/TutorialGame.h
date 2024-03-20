@@ -80,6 +80,10 @@ namespace NCL {
                 return bucket;
             }
 
+            RobotObject* GetRobot() const {
+                return robot;
+            }
+
             NavigationGrid* GetNavigationGrid()const {
                 return navGrid;
             }
@@ -365,6 +369,8 @@ namespace NCL {
             BucketObject* bucket = nullptr;
             AnimalObject* moose = nullptr;
 
+            RobotObject* robot = nullptr;
+
             Vector3 player1Position;
             Vector3 player2Position;
             Vector3 player3Position;
@@ -373,6 +379,7 @@ namespace NCL {
             Vector3 pickaxePosition;
             Vector3 bucketPosition;
             Vector3 trainPosition;
+            Vector3 robotPosition;
 
             NavigationGrid* navGrid;
 

@@ -3,16 +3,14 @@
 #include "State.h"
 #include "StateTransition.h"
 #include "PhysicsObject.h"
+#include "TutorialGame.h"
 //part of this codes are from www.github.com
 
-RobotObject::RobotObject(string filePath, PlayerObject* player, Vector3 initialPosition) : GameObject()
+RobotObject::RobotObject(PlayerObject* player, Vector3 initialPosition) : GameObject()
 {
 	_player = player;
 	playerPosition = _player->GetTransform().GetPosition();
-	filename = filePath;
-	grid = new NavigationGrid(filename);
-	grid->FindPath(initialPosition, _player->GetTransform().GetPosition(), path);
-	path.PopWaypoint(destPos);
+	typeID = 11;
 
 	stateMachine = new StateMachine();
 
@@ -21,20 +19,25 @@ RobotObject::RobotObject(string filePath, PlayerObject* player, Vector3 initialP
 			this->Idle(dt);
 		}
 	);
-	State* ChaseState = new State([&](float dt) -> void
+	State* CuttingState = new State([&](float dt) -> void
 		{
-
-			this->Chase(dt);
+			this->CutTree(dt);
 		}
 	);
+	State* DiggingState = new State([&](float dt) -> void
+		{
+			this->DigRock(dt);
+		}
+	);
+
 	stateMachine->AddState(IdleState);
+	stateMachine->AddState(CuttingState);
+	stateMachine->AddState(DiggingState);
 
-	stateMachine->AddState(ChaseState);
-
-	stateMachine->AddTransition(new StateTransition(IdleState, ChaseState,
+	stateMachine->AddTransition(new StateTransition(IdleState, CuttingState,
 		[&]() -> bool
 		{
-			if (true) {
+			if (_player->RobotCut()) {
 				return true;
 			}
 			else {
@@ -42,7 +45,18 @@ RobotObject::RobotObject(string filePath, PlayerObject* player, Vector3 initialP
 			}
 		}
 	));
-	stateMachine->AddTransition(new StateTransition(ChaseState, IdleState,
+	stateMachine->AddTransition(new StateTransition(IdleState, DiggingState,
+		[&]() -> bool
+		{
+			if (_player->RobotDig()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	));
+	stateMachine->AddTransition(new StateTransition(CuttingState, IdleState,
 		[&]() -> bool
 		{
 			if (this->counter > 30.0f) {
@@ -53,15 +67,6 @@ RobotObject::RobotObject(string filePath, PlayerObject* player, Vector3 initialP
 			}
 		}
 	));
-
-
-}
-
-void RobotObject::UpdatePosition(PlayerObject* player, float dt)
-{
-	_player = player;
-	currentPosition = GetTransform().GetPosition();
-	stateMachine->Update(dt);
 }
 
 void RobotObject::OnCollisionBegin(PlayerObject* otherObject)
@@ -71,23 +76,40 @@ void RobotObject::OnCollisionBegin(PlayerObject* otherObject)
 	}
 }
 
-void RobotObject::Chase(float dt)
-{
+void RobotObject::CutTree(float dt) {
+	cutting = true;
 	nodes.clear();
 	path.Clear();
-	grid->FindPath(currentPosition, _player->GetTransform().GetPosition(), path);
+	grid->FindPath(transform.GetPosition(), grid->FindNearestTree(transform.GetPosition()), path);
 	while (path.PopWaypoint(destPos))
 	{
 		nodes.push_back(destPos);
 	}
-	//drawPath();
+	if (nodes.size() > 1) {
+		Vector3 direction = nodes[1] - nodes[0];
+		physicsObject->AddForce(direction.Normalised() * speed);
+		UpdateOrientation(direction);
+		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+		nodes.clear();
+	}
+	counter += dt;
+}
+
+void RobotObject::DigRock(float dt) {
+	digging = true;
+	nodes.clear();
+	path.Clear();
+	grid->FindPath(transform.GetPosition(), _player->GetTransform().GetPosition(), path);
+	while (path.PopWaypoint(destPos))
+	{
+		nodes.push_back(destPos);
+	}
 	if (nodes.size() >= 2) {
 		Vector3 direction = nodes[1] - nodes[0];
 		direction.Normalise();
 		direction.y = 0;
-		/*GetPhysicsObject()->SetForce(direction * speed * dt);*/
+		GetPhysicsObject()->AddForce(direction * speed * dt);
 	}
-
 	counter += dt;
 }
 
@@ -105,10 +127,21 @@ void RobotObject::drawPath()
 }
 void RobotObject::Update(float dt) {
     renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
-    while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
+    while (renderObject->GetAnimationObject()->GetFrameTime() <= 0.0f) {
         renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
             renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameCount());
         renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() + 1.0f /
             renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
     }
+
+	stateMachine->Update(dt);
+}
+
+void RobotObject::UpdateOrientation(Vector3 direction) {
+	Quaternion rotation;
+	if (direction.x > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, -90, 0);
+	else if (direction.x < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 90, 0);
+	else if (direction.z > 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 180, 0);
+	else if (direction.z < 0) rotation = Quaternion::EulerAnglesToQuaternion(0, 0, 0);
+	transform.SetOrientation(rotation);
 }

@@ -63,7 +63,7 @@ void TutorialGame::InitMeshes() {
     girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
     mooseMesh = renderer->LoadMesh("Moose.msh");
-    //robotMesh = renderer->LoadMesh("Robot.msh");
+    robotMesh = renderer->LoadMesh("Robot.msh");
     //droneMesh = renderer->LoadMesh("Drone.msh");
 
     trainMesh = renderer->LoadOBJMesh("Train.obj");
@@ -218,25 +218,25 @@ void TutorialGame::InitMaterials() {
         mooseTextures.emplace_back(texID);
     }
     
-    //robotMaterial = new MeshMaterial("Robot.mat");
-    //for (int i = 0; i < robotMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        robotMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    robotTextures.emplace_back(texID);
-    //
-    //    matEntry->GetEntry("Bump", &filename);
-    //    string path2 = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    robotBumpTextures.emplace_back(texID2);
-    //}
-    //
+    robotMaterial = new MeshMaterial("Robot.mat");
+    for (int i = 0; i < robotMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            robotMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        robotTextures.emplace_back(texID);
+    
+        matEntry->GetEntry("Bump", &filename);
+        string path2 = Assets::TEXTUREDIR + *filename;
+        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        robotBumpTextures.emplace_back(texID2);
+    }
+    
     //droneMaterial = new MeshMaterial("Drone.mat");
     //for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
     //    const MeshMaterialEntry* matEntry =
@@ -322,14 +322,13 @@ void TutorialGame::InitAnimations() {
     mooseAnimation->SetAnim5(new MeshAnimation("Moose.anm"));
     mooseAnimation->SetActiveAnim(mooseAnimation->GetAnim1());
     
-    //robotAnimation = new AnimationObject();
-    //robotAnimation->SetAnim1(new MeshAnimation("Robot.anm"));
-    //robotAnimation->SetAnim2(new MeshAnimation("Robot.anm"));
-    //robotAnimation->SetAnim3(new MeshAnimation("Robot.anm"));
-    //robotAnimation->SetAnim4(new MeshAnimation("Robot.anm"));
-    //robotAnimation->SetAnim5(new MeshAnimation("Robot.anm"));
-    //robotAnimation->SetActiveAnim(robotAnimation->GetAnim1());
-    //
+    robotAnimation = new AnimationObject();
+    robotAnimation->SetAnim1(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim2(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim3(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim4(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetAnim5(new MeshAnimation("Robot.anm"));
+    robotAnimation->SetActiveAnim(robotAnimation->GetAnim1());
     //droneAnimation = new AnimationObject();
     //droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
     //droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
@@ -414,6 +413,7 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridWidth;
         infile >> gridHeight;
         navGrid = new NavigationGrid("map1.txt");
+        robot->SetGrid(navGrid);
         break;
     case 2:
         infile = std::ifstream(Assets::DATADIR + "map2.txt");
@@ -421,13 +421,15 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridWidth;
         infile >> gridHeight;
         navGrid = new NavigationGrid("map2.txt");
+        robot->SetGrid(navGrid);
         break;
     case 3:
         infile = std::ifstream(Assets::DATADIR + "map3.txt");
         infile >> nodeSize;
         infile >> gridWidth;
         infile >> gridHeight;
-        navGrid = new NavigationGrid("map3.txt");
+        navGrid = new NavigationGrid("map3.txt"); 
+        robot->SetGrid(navGrid);
         break;
     //case 4:
     //    infile = std::ifstream(Assets::DATADIR + "map4.txt");
@@ -1139,8 +1141,8 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin,
 }
 
 RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
-    RobotObject* robot = new RobotObject();
-    AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
+    RobotObject* robot = new RobotObject(player, position);
+    AABBVolume* volume = new AABBVolume(Vector3(4, 4, 4));
     robot->SetBoundingVolume((CollisionVolume*)volume);
 
     robot->GetTransform()

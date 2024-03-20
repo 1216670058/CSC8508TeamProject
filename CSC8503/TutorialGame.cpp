@@ -346,6 +346,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         pickaxePosition = Vector3(25, 6.5f, 120);
         axePosition = Vector3(15, 8, 120);
         bucketPosition = Vector3(35, 6.5f, 120);
+        robotPosition = Vector3(45, 4, 110);
         if (networked) {
             player2Position = Vector3(15, 4, 110);
             player3Position = Vector3(25, 4, 110);
@@ -358,6 +359,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         pickaxePosition = Vector3(20, 6.5f, 75);
         axePosition = Vector3(10, 8, 75);
         bucketPosition = Vector3(30, 6.5f, 75);
+        robotPosition = Vector3(45, 4, 65);
         if (networked) {
             player2Position = Vector3(15, 4, 65);
             player3Position = Vector3(25, 4, 65);
@@ -370,6 +372,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         pickaxePosition = Vector3(20, 6.5f, 45);
         axePosition = Vector3(10, 8, 45);
         bucketPosition = Vector3(30, 6.5f, 45);
+        robotPosition = Vector3(45, 4, 35);
         if (networked) {
             player2Position = Vector3(15, 4, 35);
             player3Position = Vector3(25, 4, 35);
@@ -400,7 +403,7 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
     axe = AddAxeToWorld(axePosition, !networked);
     bucket = AddBucketToWorld(bucketPosition, !networked);
-    
+    robot = AddRobotToWorld(robotPosition);
     if (networked) {
         player2 = AddPlayerToWorld(player2Position, "Player2", 2, false);
         player3 = AddPlayerToWorld(player3Position, "Player3", 3, false);
