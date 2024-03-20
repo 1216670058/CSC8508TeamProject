@@ -418,6 +418,8 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     }
     pad = AddPadToWorld();
     AddSceneToWorld(level);
+
+    moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105); // update to format of other functions
 }
 
 bool TutorialGame::SelectObject() {

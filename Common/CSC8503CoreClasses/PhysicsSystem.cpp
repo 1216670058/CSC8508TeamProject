@@ -359,10 +359,15 @@ void PhysicsSystem::NarrowPhase() {
             //    std::cout << " Collision between " << (info.a)->GetTypeID()
             //        << " and " << (info.b)->GetTypeID() << std::endl;
             //}
+
+
+            //if (info.a->GetBoundingVolume()->isTrigger || info.b->GetBoundingVolume()->isTrigger) std::cout << "TRIGGER COLLISION\n";
+
+
             info.framesLeft = numCollisionFrames;
-            if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
+            if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2 && !info.a->GetBoundingVolume()->isTrigger && !info.b->GetBoundingVolume()->isTrigger)
                 ImpulseResolveCollision(*info.a, *info.b, info.point);
-            else if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
+            else if ((info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1) && !info.a->GetBoundingVolume()->isTrigger && !info.b->GetBoundingVolume()->isTrigger)
                 ProjectionResolveCollision(*info.a, *info.b, info.point);
             allCollisions.insert(info); // insert into our main set
         }

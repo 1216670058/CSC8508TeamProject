@@ -372,6 +372,7 @@ void GameTechRenderer::RenderFrame() {
     RenderSkybox();
     RenderCamera();
     DrawParticle();
+    isNight = (int)(ui->GetPlayTime() / 5) % 2 == 1 ? 1 : 0;
     if (isNight) {
         DrawLightBuffer();
         CombineBuffers();
@@ -407,7 +408,7 @@ void GameTechRenderer::BuildObjectList() {
     gameWorld.OperateOnContents(
         [&](GameObject* o) {
             if (frameFrustum.InsideFrustum(o->GetTransform().GetPosition(), o->GetBoundingRadius())
-                && o->IsActive()) {
+                && o->IsActive() && !o->GetBoundingVolume()->isTrigger) {
                 RenderObject* g = o->GetRenderObject();
                 Vector3 dir = o->GetTransform().GetPosition() - gameWorld.GetMainCamera().GetPosition();
                 g->SetCameraDistance(Vector3::Dot(dir, dir));
@@ -539,14 +540,26 @@ void GameTechRenderer::RenderSkybox() {
 
     int projLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "projMatrix");
     int viewLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "viewMatrix");
-    int texLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "cubeTex");
+    int daytexLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "cubeTex");
+    int nighttexLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "nightCubeTex");
 
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), ui->GetPlayTime());
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
+        (float)((int)ui->GetPlayTime() % 11) / 10.0f);
+
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), ui->GetPlayTime());
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
+        (float)((int)ui->GetPlayTime() % 11) / 10.0f);
     glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
     glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-    glUniform1i(texLocation, 6);
+    glUniform1i(daytexLocation, 6);
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, daySkyboxTex);
+
+    glUniform1i(nighttexLocation, 7);
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, nightSkyboxTex);
 
     Draw(skyboxMesh, false);
 

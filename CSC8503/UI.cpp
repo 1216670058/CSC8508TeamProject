@@ -398,7 +398,7 @@ void UI::DrawPlayingUI(float dt)
     ImGui::Text(lvl.c_str());
 
     int hours = 0, minutes = 0, remainingSeconds = 0;
-    float playtime = TutorialGame::GetGame()->GetPlayTime();
+    playtime = TutorialGame::GetGame()->GetPlayTime();
     ConvertTime(playtime, hours, minutes, remainingSeconds);
     string time = (hours ? (hours >= 10 ? to_string(hours) : "0" + to_string(hours)) : "00") + ":" +
         (minutes ? (minutes >= 10 ? to_string(minutes) : "0" + to_string(minutes)) : "00") + ":" +
