@@ -56,6 +56,12 @@ void CollectableObject::Update(float dt) {
             Vector3 robotPosition = robot->GetTransform().GetPosition();
             transform.SetPosition(Vector3(robotPosition.x, robotPosition.y + 8, robotPosition.z));
             transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0));
+            if (!robot->IsCutting() && !robot->IsDigging()) {
+                if (typeID == 3)transform.SetPosition(Vector3(transform.GetPosition().x, 8, transform.GetPosition().z));
+                else transform.SetPosition(Vector3(transform.GetPosition().x, 6.5f, transform.GetPosition().z));
+                putDown = true;
+                robot = nullptr;
+            }
         }
     }
 }

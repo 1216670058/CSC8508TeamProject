@@ -20,7 +20,7 @@ namespace NCL::CSC8503 {
 	class StateMachine;
 	class RobotObject :public GameObject {
 	public:
-		RobotObject(PlayerObject* player, Vector3 position);
+		RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 position);
 		RobotObject() {
 			typeID = 11;
 			name = "Robot";
@@ -47,24 +47,30 @@ namespace NCL::CSC8503 {
 			digging = d;
 		}
 
-		virtual void OnCollisionBegin(PlayerObject* otherObject);
-		void drawPath();
+		void OnCollisionBegin(GameObject* otherObject) override;
 
 	protected:
 		void Idle(float dt);
+		void FollowPlayer(float dt);
+		void MoveToTree(float dt);
 		void CutTree(float dt);
 		void DigRock(float dt);
+		void MoveToPlayer(float dt);
+
+		GridNode& GetGrid(const Vector3& position);
 
 		void UpdateOrientation(Vector3 direction);
 
 		PlayerObject* _player = nullptr;
 		Vector3 playerPosition;
 		StateMachine* stateMachine;
-		float counter;
+		float counter = 0.0f;
 		NavigationGrid* grid;
 		vector<Vector3> nodes;
 
-		float speed = 20.0f;
+		float speed = 50.0f;
+
+		float timer = 0;
 
 		Vector3 origin;
 
@@ -73,6 +79,7 @@ namespace NCL::CSC8503 {
 		NavigationPath path;
 
 		Vector3 currentPosition;
+		Vector3 face;
 
 		std::string filename;
 
@@ -84,8 +91,16 @@ namespace NCL::CSC8503 {
 
 		bool pathNotFound = true;
 
+		Vector3 treePosition;
+
 		bool cutting = false;
 		bool digging = false;
+		bool treeFound = false;
+		bool treeCut = false;
+		bool nextTree = false;
+
+		bool moveToPlayer = false;
+		bool foundPlayer = false;
 
 		int j = 0;
 	};
