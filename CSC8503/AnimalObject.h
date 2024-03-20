@@ -18,7 +18,7 @@
 namespace NCL::CSC8503 {
 	class AnimalObject :public GameObject {
 	public:
-		AnimalObject(string filePath, Vector3 startingPos, GameWorld* world);
+		AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world);
 		~AnimalObject() {};
 
 		void Update(float dt) override;

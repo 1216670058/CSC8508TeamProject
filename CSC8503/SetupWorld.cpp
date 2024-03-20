@@ -1114,7 +1114,7 @@ DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& po
 }
 
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax) {
-    AnimalObject* moose = new AnimalObject("map.txt", position, world);
+    AnimalObject* moose = new AnimalObject(navGrid, position, world);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 

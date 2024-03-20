@@ -2,11 +2,11 @@
 
 using namespace NCL::CSC8503;
 
-AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* world) {
+AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world) {
     this->typeID = 10;
     this->stateMachine = new StateMachine();
     this->currentPos = startingPos;
-    this->grid = new NavigationGrid(filePath);
+    this->grid = navGrid;
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
 
