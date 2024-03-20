@@ -173,14 +173,14 @@ namespace NCL {
             StateGameObject* AddStateObjectToWorld(const Vector3& position);
             StateGameObject* testStateObject = nullptr;
 
-            vector<std::pair<Vector3, int>> Path;//Ìú¹ìÂ·¾¶
+            vector<std::pair<Vector3, int>> Path;//ÃŒÃºÂ¹Ã¬Ã‚Â·Â¾Â¶
 
             void BridgeConstraintTest();
 
 #ifdef USEVULKAN
-            GameTechVulkanRenderer* renderer;
+			GameTechVulkanRenderer* renderer;
 #else
-            GameTechRenderer* renderer;
+			GameTechRenderer* renderer;
 #endif
             PhysicsSystem* physics;
             GameWorld* world;
