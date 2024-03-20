@@ -1059,6 +1059,32 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool network, 
     }
 }
 
+DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal) {
+    DetectionSphereObject* sphere = new DetectionSphereObject(animal);
+
+    Vector3 sphereSize = Vector3(radius, radius, radius);
+    SphereVolume* volume = new SphereVolume(radius);
+    sphere->SetBoundingVolume((CollisionVolume*)volume);
+
+    sphere->GetTransform()
+        .SetScale(sphereSize)
+        .SetPosition(position);
+
+    sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
+    sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
+
+    sphere->GetPhysicsObject()->SetInverseMass(10.0f);
+    sphere->GetPhysicsObject()->InitSphereInertia();
+    sphere->GetRenderObject()->SetColour(Vector4(0, 0, 0, 0));
+    world->AddGameObject(sphere);
+
+    ((CollisionVolume*)sphere->GetBoundingVolume())->SetIsTrigger(true);
+    PositionConstraint* constraint = new PositionConstraint(animal, sphere, 0.01f);
+    world->AddConstraint(constraint);
+
+    return sphere;
+}
+
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax) {
     AnimalObject* moose = new AnimalObject("map.txt", position, world);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
@@ -1079,11 +1105,7 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin,
 
     world->AddGameObject(moose);
 
-    GameObject* viewcone = AddSphereToWorld(position, 25.0f);
-    viewcone->GetRenderObject()->SetColour(Vector4(0, 0, 0, 0));
-    ((CollisionVolume*)viewcone->GetBoundingVolume())->SetIsTrigger(true);
-    PositionConstraint* constraint = new PositionConstraint(moose, viewcone, 0.01f);
-    world->AddConstraint(constraint);
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 25.0f, moose);
 
     return moose;
 }

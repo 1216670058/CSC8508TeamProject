@@ -18,7 +18,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
     timer = 0;
 
     State* wander = new State([&](float dt) -> void {
-        std::cout << "enter wander state" << std::endl;
+        //std::cout << "enter wander state" << std::endl;
         if (wanderPathNodes.empty()) {
             n = grid->GetGridNode(rand() % this->gridSize);
             while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {
@@ -51,7 +51,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
 
 
     State* scared = new State([&](float dt) -> void {
-        std::cout << "enter scared state p2" << std::endl;
+        //std::cout << "enter scared state p2" << std::endl;
         /*float speed = 20.0f;
 
         Vector3 prevPathPos = wanderPathNodes[currentNodeIndex - 1];
@@ -105,7 +105,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
             }
             else { 
 
-                std::cout << "exit scared state p1" << std::endl;
+                //std::cout << "exit scared state p1" << std::endl;
                 noLongerScared = true;
             }
         }
@@ -117,7 +117,7 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
         
         });
 
-    stateMachine->AddState(scared);
+    /*stateMachine->AddState(scared);
 
 
 
@@ -130,22 +130,22 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
         Ray r = Ray(rayPos, rayDir);
 
         if (this->world->Raycast(r, closestCollision, true, this, 10.0f) && stateCooldown > 0.5) {
-            std::cout << ((GameObject*)closestCollision.node)->GetTypeID() << std::endl;
+            //std::cout << ((GameObject*)closestCollision.node)->GetTypeID() << std::endl;
             //scaredPos = currentPos;
             //currentNodeIndex--;
             stateCooldown = 0;
 
-            for (std::vector<Vector3>::iterator it = wanderPathNodes.begin(); it != wanderPathNodes.end(); ++it)
-                std::cout << ' ' << *it;
-            std::cout << '\n';
+            //for (std::vector<Vector3>::iterator it = wanderPathNodes.begin(); it != wanderPathNodes.end(); ++it)
+                //std::cout << ' ' << *it;
+            //std::cout << '\n';
 
             std::reverse(wanderPathNodes.begin(), wanderPathNodes.end());
 
             for (std::vector<Vector3>::iterator it = wanderPathNodes.begin(); it != wanderPathNodes.end(); ++it)
-                std::cout << ' ' << *it;
-            std::cout << '\n';
+                //std::cout << ' ' << *it;
+            //std::cout << '\n';
 
-            std::cout << "enter scared state p1" << std::endl;
+            //std::cout << "enter scared state p1" << std::endl;
             currentNodeIndex = 0;
             return true;
         }
@@ -158,13 +158,13 @@ AnimalObject::AnimalObject(string filePath, Vector3 startingPos, GameWorld* worl
     stateMachine->AddTransition(new StateTransition(scared, wander, [&]() -> bool {
         if (noLongerScared && stateCooldown > 0.5) {
             noLongerScared = false;
-            std::cout << "exit scared state p2" << std::endl;
+            //std::cout << "exit scared state p2" << std::endl;
             stateCooldown = 0;
             return true;
         }
 
         return false;
-        }));
+        }));*/
 }
 
 void AnimalObject::Update(float dt) {
@@ -213,4 +213,20 @@ bool AnimalObject::Pathfind(Vector3 targetPos) { // pathfinds to target position
     }
 
     return foundPath;
+}
+
+void AnimalObject::DetectThreat(GameObject* object) {
+    std::cout << "detected " << object->GetName() << std::endl;
+}
+
+void AnimalObject::StopDetectThreat(GameObject* object) {
+    std::cout << "stopped detecting " << object->GetName() << std::endl;
+}
+
+
+
+
+
+DetectionSphereObject::DetectionSphereObject(AnimalObject* animal) {
+    this->animal = animal;
 }

@@ -156,6 +156,7 @@ namespace NCL {
             AnimalObject* AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);
+            DetectionSphereObject* AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal);
 
             GameObject* AddPadToWorld();
 

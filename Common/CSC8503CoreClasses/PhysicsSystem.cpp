@@ -361,7 +361,7 @@ void PhysicsSystem::NarrowPhase() {
             //}
 
 
-            if (info.a->GetBoundingVolume()->isTrigger || info.b->GetBoundingVolume()->isTrigger) std::cout << "TRIGGER COLLISION\n";
+            //if (info.a->GetBoundingVolume()->isTrigger || info.b->GetBoundingVolume()->isTrigger) std::cout << "TRIGGER COLLISION\n";
 
 
             info.framesLeft = numCollisionFrames;

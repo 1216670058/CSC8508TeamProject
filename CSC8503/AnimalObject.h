@@ -26,6 +26,9 @@ namespace NCL::CSC8503 {
 		void MoveToPosition(Vector3 targetPos, float speed);
 		bool Pathfind(Vector3 targetPos);
 
+		void DetectThreat(GameObject* object);
+		void StopDetectThreat(GameObject* object);
+
 		StateMachine* stateMachine;
 		NavigationGrid* grid;
 		GameWorld* world;
@@ -40,5 +43,29 @@ namespace NCL::CSC8503 {
 
 		int gridSize;
 		bool noLongerScared = false;
+	};
+
+
+	class DetectionSphereObject : public GameObject {
+	public:
+		DetectionSphereObject(AnimalObject* animal);
+		~DetectionSphereObject() {};
+
+		void OnCollisionBegin(GameObject* otherObject) override {
+			//std::cout << "DETECTION COL BEGIN\n";
+			animal->DetectThreat(otherObject);
+		}
+
+		/*void OnCollisionStay(GameObject* otherObject) override {
+			std::cout << "DETECTION COL STAY\n";
+		}*/
+
+		void OnCollisionEnd(GameObject* otherObject) override {
+			//std::cout << "DETECTION COL END\n";
+			animal->StopDetectThreat(otherObject);
+		}
+
+	protected:
+		AnimalObject* animal;
 	};
 }
