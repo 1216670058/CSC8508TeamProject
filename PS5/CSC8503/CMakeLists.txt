@@ -3,11 +3,36 @@ set(PROJECT_NAME CSC8503)
 ################################################################################
 # Source groups
 ################################################################################
+set(GameObjects
+    "StateGameObject.h" 
+    "StateGameObject.cpp"
+    "NetworkPlayer.h"
+    "NetworkPlayer.cpp"
+    "CollectableObject.h"
+    "CollectableObject.cpp"
+    "AxeObject.h"
+    "PickaxeObject.h"
+    "BucketObject.h"
+    "PlayerObject.h"
+    "PlayerObject.cpp"
+    "TrainObject.h"
+    "TrainObject.cpp"
+    "TrainCarriage.h"
+    "TrainCarriage.cpp"
+    "RailObject.h"
+    "RailObject.cpp"
+    "TreeObject.h"
+    "RockObject.h"
+    "PlankObject.h"
+    "PlankObject.cpp"
+    "StoneObject.h"
+    "StoneObject.cpp"
+)
+source_group("GameObjects" FILES ${GameObjects})
+
 set(Header_Files
 #    "GameTechRenderer.h"
     "NetworkedGame.h"
-    "NetworkPlayer.h"
-    "StateGameObject.h"
     "TutorialGame.h"
     "GameTechRendererInterface.h"
 )
@@ -17,14 +42,14 @@ set(Source_Files
  #   "GameTechRenderer.cpp"
     "Main.cpp"
     "NetworkedGame.cpp"
-    "NetworkPlayer.cpp"
-    "StateGameObject.cpp"
     "TutorialGame.cpp"
+    "SetupWorld.cpp"
 )
 
 source_group("Source Files" FILES ${Source_Files})
 
 set(ALL_FILES
+    ${GameObjects}
     ${Header_Files}
     ${Source_Files}
 )

@@ -73,26 +73,45 @@ TutorialGame::~TutorialGame() {
 }
 
 void TutorialGame::UpdateGame(float dt) {
-    //switch (world->GetGameState())
-    //{
-    //case LOADING:
-    //    UpdateLoading(dt);
-    //    break;
-    //case PLAYING:
-    //    UpdatePlaying(dt);
-    //    break;
-    //case PAUSED:
-    //    UpdatePaused(dt);
-    //    break;
-    //case MENU:
-    //    UpdateMenu(dt);
-    //    break;
-    //case EXIT:
-    //    isExit = true;
-    //    break;
-    //default:
-    //    break;
-    //}
+    if (!inSelectionMode) {
+        if (cameraMode == 1) {
+            CameraUpdate();
+        }
+        else {
+            world->GetMainCamera().UpdateCamera(dt);
+        }
+    }
+    if (failure) {
+        world->SetGameState(GameState::FAILURE);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
+    if (success) {
+        if (level < 3) {
+            renderer->GetUI()->SetSuccess(true);
+            level++;
+            InitGameWorld(false, level);
+        }
+        else {
+            world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
+        }
+    }
+
+
+    DrawPad();
+    TutorialGame::UpdateKeys();
+
+    playtime += dt;
+    audio->Update();
+    world->UpdateWorld(dt);
+    float cv = carriage3->GetBoundingRadius();
+    renderer->GetParticle()->Update(dt, carriage3, 2, Vector3(cv, cv, cv));
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    physics->Update(dt);
+
+    renderer->Render();
+    Debug::UpdateRenderables(dt);
 }
 
 void TutorialGame::UpdateLoading(float dt)
@@ -106,38 +125,9 @@ void TutorialGame::UpdateLoading(float dt)
     AssetsLoading();
 }
 
-void TutorialGame::UpdatePlaying(float dt) {
-    if (!inSelectionMode) {
-        if (cameraMode == 1) {
-            CameraUpdate();
-        }
-        else {
-            world->GetMainCamera().UpdateCamera(dt);
-        }
-    }
-
-    if (failure)
-        world->SetGameState(GameState::FAILURE);
-    if (success) 
-        world->SetGameState(GameState::MENU);
-
-    DrawPad();
-    UpdateKeys();
-
-    playtime += dt; 
-    audio->Update();
-    world->UpdateWorld(dt);
-    renderer->Update(dt);
-    renderer->GetUI()->Update(dt); //UI
-    physics->Update(dt);
-
-    renderer->Render();
-    Debug::UpdateRenderables(dt);
-}
-
 void TutorialGame::UpdatePaused(float dt)
 {
-    UpdateKeys();
+    TutorialGame::UpdateKeys();
     audio->Update();
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
@@ -153,6 +143,14 @@ void TutorialGame::UpdateMenu(float dt)
 }
 
 void TutorialGame::UpdateFailure(float dt)
+{
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
+}
+
+void TutorialGame::UpdateFinish(float dt)
 {
     audio->Update();
     renderer->Update(dt);
@@ -204,7 +202,7 @@ void TutorialGame::UpdateKeys() {
     if (world->GetGameState() == GameState::PLAYING)
     {
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::F1)) {
-            InitWorld(); //We can reset the simulation at any time with F1
+            InitWorld(false, 2); //We can reset the simulation at any time with F1
             selectionObject = nullptr;
         }
 
@@ -219,6 +217,10 @@ void TutorialGame::UpdateKeys() {
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::G)) {
             useGravity = !useGravity; //Toggle gravity!
             physics->UseGravity(useGravity);
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::M)) {
+            success = true;
         }
 
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
@@ -243,7 +245,7 @@ void TutorialGame::UpdateKeys() {
         if (lockedObject) {
             LockedObjectMovement();
         }
-        
+
     }
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::ESCAPE)) {
@@ -303,12 +305,12 @@ void TutorialGame::CameraUpdate() {
     }
 }
 
-void TutorialGame::InitGameWorld(bool networked) {
+void TutorialGame::InitGameWorld(bool networked, int level) {
     success = false;
     failure = false;
     winFlag = false;
-    InitCamera(); 
-    InitWorld(networked);
+    InitCamera();
+    InitWorld(networked, level);
 }
 
 void TutorialGame::InitCamera() {
@@ -320,42 +322,99 @@ void TutorialGame::InitCamera() {
     lockedObject = nullptr;
 }
 
-void TutorialGame::InitWorld(bool networked) {
+void TutorialGame::InitWorld(bool networked, int level) {
     std::cout << std::endl << "--------Initialising Game Objects--------" << std::endl;
     world->ClearAndErase();
     physics->Clear();
 
-    InitGameExamples(networked);
+    InitPositions(networked, level);
+    InitGameExamples(networked, level);
     InitDefaultFloor();
 
     playtime = 0.0f;
 }
 
 void TutorialGame::InitDefaultFloor() {
-    AddFloorToWorld(Vector3(155, 2, 95));
+    AddFloorToWorld(Vector3(150, 2, 95));
 }
 
-void TutorialGame::InitGameExamples(bool networked) {
-    player = AddPlayerToWorld(Vector3(10, 4, 100), "Player1", 1, !networked);
-    train = AddTrainToWorld(Vector3(70, 4.5f, 100), !networked);
-    pickaxe = AddPickaxeToWorld(Vector3(25, 6.5f, 90), !networked);
-    axe = AddAxeToWorld(Vector3(25, 8, 100), !networked);
-    bucket = AddBucketToWorld(Vector3(25, 6.5f, 110), !networked);
-    pad = AddPadToWorld();
-    moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105);
-    AddSceneToWorld();
-    if (!networked) {
+void TutorialGame::InitPositions(bool networked, int level) {
+    switch (level) {
+    case 1:
+        player1Position = Vector3(5, 4, 110);
+        trainPosition = Vector3(30, 4.5f, 100);
+        pickaxePosition = Vector3(25, 6.5f, 120);
+        axePosition = Vector3(15, 8, 120);
+        bucketPosition = Vector3(35, 6.5f, 120);
+        if (networked) {
+            player2Position = Vector3(15, 4, 110);
+            player3Position = Vector3(25, 4, 110);
+            player4Position = Vector3(35, 4, 110);
+        }
+        break;
+    case 2:
+        player1Position = Vector3(5, 4, 65);
+        trainPosition = Vector3(30, 4.5f, 50);
+        pickaxePosition = Vector3(20, 6.5f, 75);
+        axePosition = Vector3(10, 8, 75);
+        bucketPosition = Vector3(30, 6.5f, 75);
+        if (networked) {
+            player2Position = Vector3(15, 4, 65);
+            player3Position = Vector3(25, 4, 65);
+            player4Position = Vector3(35, 4, 65);
+        }
+        break;
+    case 3:
+        player1Position = Vector3(5, 4, 35);
+        trainPosition = Vector3(30, 4.5f, 20);
+        pickaxePosition = Vector3(20, 6.5f, 45);
+        axePosition = Vector3(10, 8, 45);
+        bucketPosition = Vector3(30, 6.5f, 45);
+        if (networked) {
+            player2Position = Vector3(15, 4, 35);
+            player3Position = Vector3(25, 4, 35);
+            player4Position = Vector3(35, 4, 35);
+        }
+        break;
+        //case 4:
+        //    player1Position = Vector3(5, 4, 65);
+        //    trainPosition = Vector3(30, 4.5f, 50);
+        //    pickaxePosition = Vector3(20, 6.5f, 40);
+        //    axePosition = Vector3(10, 8, 40);
+        //    bucketPosition = Vector3(30, 6.5f, 40);
+        //    if (networked) {
+        //        player2Position = Vector3(15, 4, 65);
+        //        player3Position = Vector3(25, 4, 65);
+        //        player4Position = Vector3(35, 4, 65);
+        //    }
+        //    break;
+    default:
+        break;
+    }
+}
+
+void TutorialGame::InitGameExamples(bool networked, int level) {
+    player = AddPlayerToWorld(player1Position, "Player1", 1, !networked);
+    train = AddTrainToWorld(trainPosition, !networked);
+    train->InitPaths(level);
+    pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
+    axe = AddAxeToWorld(axePosition, !networked);
+    bucket = AddBucketToWorld(bucketPosition, !networked);
+    moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105); // update to format of other functions
+    if (networked) {
+        player2 = AddPlayerToWorld(player2Position, "Player2", 2, false);
+        player3 = AddPlayerToWorld(player3Position, "Player3", 3, false);
+        player4 = AddPlayerToWorld(player4Position, "Player4", 4, false);
+    }
+    else {
         carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
         carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
         carriage3 = (WaterCarriage*)(train->AddCarriage(23, !networked));
         carriage1->SetProduceCarriage(carriage2);
         carriage2->SetMaterialCarriage(carriage1);
     }
-    else {
-        player2 = AddPlayerToWorld(Vector3(10, 4, 110), "Player2", 2, false);
-        player3 = AddPlayerToWorld(Vector3(10, 4, 120), "Player3", 3, false);
-        player4 = AddPlayerToWorld(Vector3(10, 4, 130), "Player4", 4, false);
-    }
+    pad = AddPadToWorld();
+    AddSceneToWorld(level);
 }
 
 bool TutorialGame::SelectObject() {

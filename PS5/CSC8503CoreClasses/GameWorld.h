@@ -3,7 +3,7 @@
 
 #include "Ray.h"
 #include "CollisionDetection.h"
-#include "QuadTree.h"
+#include "OcTree.h"
 namespace NCL {
 		class Camera;
 		using Maths::Ray;
@@ -13,6 +13,15 @@ namespace NCL {
 
 		typedef std::function<void(GameObject*)> GameObjectFunc;
 		typedef std::vector<GameObject*>::const_iterator GameObjectIterator;
+
+		enum GameState {
+			START,
+			PLAYING,
+			PAUSED,
+			FAILURE,
+			FINISH,
+			EXIT
+		};
 
 		class GameWorld	{
 		public:
@@ -58,6 +67,13 @@ namespace NCL {
 				return worldStateCounter;
 			}
 
+			void SetGameState(GameState state) { 
+				currentstate = state; 
+			};
+			GameState GetGameState() {
+				return currentstate;
+			};
+
 		protected:
 			std::vector<GameObject*> gameObjects;
 			std::vector<Constraint*> constraints;
@@ -68,6 +84,8 @@ namespace NCL {
 			bool shuffleObjects;
 			int		worldIDCounter;
 			int		worldStateCounter;
+
+			GameState currentstate;
 		};
 	}
 }

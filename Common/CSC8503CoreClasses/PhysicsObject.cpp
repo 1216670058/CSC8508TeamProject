@@ -13,7 +13,7 @@ PhysicsObject::PhysicsObject(Transform* parentTransform, const CollisionVolume* 
 	friction	= 0.8f;
 
 	channel = 2;
-	gravity = true;
+	gravity = false;
 	resolve = true;
 }
 

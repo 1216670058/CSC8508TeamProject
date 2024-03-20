@@ -108,7 +108,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
     if (p.objectID == object.GetNetworkObject()->GetNetworkID()) {
         lastFullState = p.fullState;
         if (!(object.GetTypeID() == 10010) && !(object.GetTypeID() == 10086)) {
-            std::cout << "Type: " << object.GetTypeID() << std::endl;
+            //std::cout << "Type: " << object.GetTypeID() << std::endl;
             object.GetTransform().SetPosition(lastFullState.position);
             object.GetTransform().SetOrientation(lastFullState.orientation);
 
@@ -117,11 +117,21 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
                 object.SetSlot(lastFullState.slot);
                 object.SetSlotNum(lastFullState.slotNum);
             }
-            else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
+            else if (object.GetTypeID() == 4 || object.GetTypeID() == 22) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
             }
             else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
                 object.GetTransform().SetScale(lastFullState.scale);
+            }
+            else if (object.GetTypeID() == 20) {
+                object.SetFlag1(lastFullState.flag1);
+                object.SetFloat1(lastFullState.float1);
+                object.SetFloat2(lastFullState.float2);
+                object.SetFloat3(lastFullState.float3);
+            }
+            else if (object.GetTypeID() == 23) {
+                object.GetRenderObject()->SetColour(lastFullState.colour);
+                object.SetFloat1(lastFullState.float1);
             }
         }
         else {
@@ -205,11 +215,21 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
             fp->fullState.slot = object.GetSlot();
             fp->fullState.slotNum = object.GetSlotNum();
         }
-        else if (object.GetTypeID() == 4 || object.GetTypeID() == 22 || object.GetTypeID() == 23) {
+        else if (object.GetTypeID() == 4 || object.GetTypeID() == 22) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
         }
         else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
             fp->fullState.scale = object.GetTransform().GetScale();
+        }
+        else if (object.GetTypeID() == 20) {
+            fp->fullState.flag1 = object.GetFlag1();
+            fp->fullState.float1 = object.GetFloat1();
+            fp->fullState.float2 = object.GetFloat2();
+            fp->fullState.float3 = object.GetFloat3();
+        }
+        else if (object.GetTypeID() == 23) {
+            fp->fullState.colour = object.GetRenderObject()->GetColour();
+            fp->fullState.float1 = object.GetFloat1();
         }
 
         *p = fp;

@@ -4,6 +4,7 @@
 #include "OGLTexture.h"
 #include "OGLMesh.h"
 #include "Light.h"
+#include "Particle.h"
 
 #include "GameWorld.h"
 #include "UI.h"
@@ -28,6 +29,7 @@ namespace NCL {
             Shader* LoadShader(const std::string& vertex, const std::string& fragment);
             void       ToggleNight();
             UI* GetUI() { return ui; };
+            ParticleGenerator* GetParticle() { return particle; };
 
         protected:
             void NewRenderLines();
@@ -55,6 +57,7 @@ namespace NCL {
             void DrawLightBuffer();
             void SetShaderLight(const Light& l);
             void DrawPointLights();
+            void DrawParticle();
 
             void DrawProcess(int count);
             void ProcessCombine();
@@ -100,9 +103,9 @@ namespace NCL {
             GLuint blurColourTex[2];
 
             //Skybox Buffer
-            OGLShader*  debugShader;
-            OGLShader*  skyboxShader;
-            OGLMesh*    skyboxMesh;
+            OGLShader* debugShader;
+            OGLShader* skyboxShader;
+            OGLMesh* skyboxMesh;
             GLuint		daySkyboxTex;
             GLuint      nightSkyboxTex;
             GLuint		skyboxBufferTex;
@@ -147,6 +150,11 @@ namespace NCL {
             size_t textCount;
 
             bool   isNight;
+
+            //Particle
+            OGLShader* particleShader;
+            GLuint particleTex;
+            ParticleGenerator* particle;
         };
     }
 }

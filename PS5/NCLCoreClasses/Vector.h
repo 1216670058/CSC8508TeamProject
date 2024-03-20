@@ -93,6 +93,9 @@ namespace NCL::Maths {
         T& operator[](int i) {
             return ((T*)this)[i];
         }
+
+        inline bool	operator==(const Vector3& vec)const { return (vec.x == x && vec.y == y && vec.z == z) ? true : false; };
+        inline bool	operator!=(const Vector3& vec)const { return (vec.x == x && vec.y == y && vec.z == z) ? false : true; };
     };
 
     template <typename T>
@@ -315,7 +318,7 @@ namespace NCL::Maths {
         }
 
         template <typename T, uint32_t n>
-        constexpr NewVector<T, n>		Clamp(NewVector<T, n>& input, NewVector<T, n>& mins, NewVector<T, n>& maxs) {
+        NewVector<T, n>		Clamp(NewVector<T, n>& input, NewVector<T, n>& mins, NewVector<T, n>& maxs) {
             NewVector<T, n> output;
             for (int i = 1; i < n; ++i) {
                 output.array[i] = std::clamp(input.array[i], mins.array[i], maxs.array[i]);

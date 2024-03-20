@@ -28,6 +28,8 @@ namespace NCL::CSC8503 {
 
         void Update(float dt);
 
+        void InitPaths(int level);
+
         void AddPath(Vector3 p);
 
         void AddCarriagePath(Vector3 p);
@@ -75,9 +77,9 @@ namespace NCL::CSC8503 {
         Texture* carriageTex = nullptr;
         ShaderGroup* basicShader = nullptr;
         Vector3 direction;
-        Vector3 firstPath = Vector3(90, 4.5f, 100);
-        Vector3 finalPath = Vector3(270, 4.5f, 50);
-        Vector3 finishPath = Vector3(290, 4.5f, 50);
+        Vector3 firstPath;
+        Vector3 finalPath;
+        Vector3 finishPath;
 
         //UI
         float force = 10.0f;

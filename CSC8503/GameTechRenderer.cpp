@@ -25,6 +25,10 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
     processShader = (OGLShader*)LoadShader("process.vert", "process.frag");
     processCombineShader = (OGLShader*)LoadShader("processCombine.vert", "processCombine.frag");
     combineShader = (OGLShader*)LoadShader("combine.vert", "combine.frag");
+    particleShader = (OGLShader*)LoadShader("particle.vert", "particle.frag");
+    particle = new ParticleGenerator(particleShader, 500);
+    particle->texture = SOIL_load_OGL_texture((Assets::TEXTUREDIR + "particle.png").c_str(),
+        SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
     InitBuffers();
 
@@ -61,6 +65,7 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 GameTechRenderer::~GameTechRenderer() {
     delete ui;
+    delete particle;
 
     glDeleteTextures(1, &skyboxBufferTex);
     glDeleteTextures(1, &worldDepthTex);
@@ -366,6 +371,8 @@ void GameTechRenderer::RenderFrame() {
     RenderShadowMap();
     RenderSkybox();
     RenderCamera();
+    DrawParticle();
+    isNight = (int)(ui->GetPlayTime() / 5) % 2 == 1 ? 1 : 0;
     if (isNight) {
         DrawLightBuffer();
         CombineBuffers();
@@ -496,7 +503,7 @@ void GameTechRenderer::RenderShadowMap() {
                 }
             }
         }
-    };
+        };
 
     for (const auto& i : activeObjects) {
         DrawShadowMap(i);
@@ -533,14 +540,26 @@ void GameTechRenderer::RenderSkybox() {
 
     int projLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "projMatrix");
     int viewLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "viewMatrix");
-    int texLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "cubeTex");
+    int daytexLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "cubeTex");
+    int nighttexLocation = glGetUniformLocation(skyboxShader->GetProgramID(), "nightCubeTex");
 
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), ui->GetPlayTime());
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
+        (float)((int)ui->GetPlayTime() % 11) / 10.0f);
+
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "time"), ui->GetPlayTime());
+    glUniform1f(glGetUniformLocation(skyboxShader->GetProgramID(), "gradientFactor"),
+        (float)((int)ui->GetPlayTime() % 11) / 10.0f);
     glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
     glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-    glUniform1i(texLocation, 6);
+    glUniform1i(daytexLocation, 6);
     glActiveTexture(GL_TEXTURE6);
     glBindTexture(GL_TEXTURE_CUBE_MAP, daySkyboxTex);
+
+    glUniform1i(nighttexLocation, 7);
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, nightSkyboxTex);
 
     Draw(skyboxMesh, false);
 
@@ -763,6 +782,39 @@ void GameTechRenderer::DrawPointLights() {
     Draw(sphere);
 }
 
+void GameTechRenderer::DrawParticle()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, lightFBO);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // use additive blending to give it a 'glow' effect
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    BindShader(*particleShader);
+    Matrix4 projMatrix = gameWorld.GetMainCamera().BuildProjectionMatrix(hostWindow.GetScreenAspect());
+    Matrix4 viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
+
+    glUniformMatrix4fv(glGetUniformLocation(activeShader->GetProgramID(), "viewMatrix"), 1, false, (float*)&viewMatrix);
+    glUniformMatrix4fv(glGetUniformLocation(activeShader->GetProgramID(), "projMatrix"), 1, false, (float*)&projMatrix);
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(glGetUniformLocation(activeShader->GetProgramID(), "sprite"), 0);
+
+    for (Particle& p : particle->particles)
+    {
+        if (p.Life > 0.0f)
+        {
+            glUniform3f(glGetUniformLocation(activeShader->GetProgramID(), "offset"), p.Position.x, p.Position.y, p.Position.z);
+            glUniform4f(glGetUniformLocation(activeShader->GetProgramID(), "color"), p.Color.x, p.Color.y, p.Color.z, p.Color.w);
+            glBindTexture(GL_TEXTURE_2D, particle->texture);
+            glBindVertexArray(particle->VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
+        }
+    }
+    //Draw(quad, false);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void GameTechRenderer::SetShaderLight(const Light& l) {
     Vector3 lightPosition = l.GetPosition();
     Vector4 lightColour = l.GetColour();
@@ -818,11 +870,13 @@ void GameTechRenderer::DrawProcess(int count) {
 
 void GameTechRenderer::ProcessCombine() {
     if (gameWorld.GetGameState() != GameState::PAUSED &&
-        gameWorld.GetGameState() != GameState::FAILURE) {
+        gameWorld.GetGameState() != GameState::FAILURE &&
+        gameWorld.GetGameState() != GameState::FINISH) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     else if (gameWorld.GetGameState() == GameState::PAUSED ||
-             gameWorld.GetGameState() == GameState::FAILURE)
+        gameWorld.GetGameState() == GameState::FAILURE ||
+        gameWorld.GetGameState() == GameState::FINISH)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, processFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pausedScreenTex, 0);
@@ -844,7 +898,8 @@ void GameTechRenderer::ProcessCombine() {
     Draw(quad, false);
 
     if (gameWorld.GetGameState() == GameState::PAUSED ||
-        gameWorld.GetGameState() == GameState::FAILURE) {
+        gameWorld.GetGameState() == GameState::FAILURE ||
+        gameWorld.GetGameState() == GameState::FINISH) {
         DrawProcess(1);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);

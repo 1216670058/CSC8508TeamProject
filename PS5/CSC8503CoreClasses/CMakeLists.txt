@@ -11,8 +11,9 @@ set(Collision_Detection
 	"CollisionVolume.h"
 	"OBBVolume.h"
 	"SphereVolume.h"
-	"CapsuleVolume.cpp"    
+	"CapsuleVolume.cpp"   
 	"CollisionDetection.cpp"
+        "OcTree.h"
 )
 source_group("Collision Detection" FILES ${Collision_Detection})
 

@@ -13,6 +13,7 @@ void StoneObject::OnCollisionBegin(GameObject* otherObject) {
         SphereVolume* volume = new SphereVolume(1);
         SetBoundingVolume((CollisionVolume*)volume);
         transform.SetScale(Vector3(2, 2, 2));
+        TutorialGame::GetGame()->GetAudio()->PlayGet();
     }
     else if (putDown && otherObject->GetTypeID() == 1 && otherObject->GetSlot() == 6 && otherObject->GetSlotNum() < 3) {
         player = (PlayerObject*)otherObject;
@@ -22,6 +23,7 @@ void StoneObject::OnCollisionBegin(GameObject* otherObject) {
         AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
         SetBoundingVolume((CollisionVolume*)volume);
         transform.SetScale(Vector3(2, 2, 2));
+        TutorialGame::GetGame()->GetAudio()->PlayGet();
     }
 }
 
@@ -42,7 +44,7 @@ void StoneObject::Update(float dt) {
             }
             else {
                 if (player->GetSlotNum() > 0 && player->GetSlot() == 6) {
-                    carriage = player->GetCarriage();                   
+                    carriage = player->GetCarriage();
                     if (carriage->GetStoneVector().size() < 10) {
                         carriage->AddStone(this);
                         loading = false;
@@ -90,6 +92,7 @@ void StoneObject::Update(float dt) {
 
             if (RPressed) {
                 if (!loading && !inCarriage) {
+                    TutorialGame::GetGame()->GetAudio()->PlayPut();
                     Vector3 position = transform.GetPosition();
                     Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
                     int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();

@@ -47,6 +47,9 @@ namespace NCL {
 			Mesh*	GetMesh() const {
 				return mesh;
 			}
+			void SetMesh(Mesh* m) {
+				mesh = m;
+			}
 
 			Transform*		GetTransform() const {
 				return transform;
@@ -65,6 +68,9 @@ namespace NCL {
 			}
 
 			void SetAnimation(MeshAnimation& inAnim);
+			MeshAnimation* GetAnimation() const {
+				return anim;
+			}
 
 			void UpdateAnimation(float dt);
 

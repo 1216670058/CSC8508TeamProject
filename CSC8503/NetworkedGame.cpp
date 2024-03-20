@@ -71,7 +71,7 @@ void NetworkedGame::UpdateGame(float dt) {
         UpdateLoading(dt);
         break;
     case PLAYING:
-        UpdatePlaying(dt);
+        TutorialGame::UpdateGame(dt);
         break;
     case SERVERPLAYING:
         UpdateNetworkedPlaying(dt);
@@ -84,6 +84,9 @@ void NetworkedGame::UpdateGame(float dt) {
         break;
     case FAILURE:
         UpdateFailure(dt);
+        break;
+    case FINISH:
+        UpdateFinish(dt);
         break;
     case MENU:
         UpdateMenu(dt);
@@ -129,6 +132,7 @@ void NetworkedGame::UpdateNetworkedPlaying(float dt) {
     DrawPad();
     UpdateKeys();
 
+    playtime += dt;
     audio->Update();
     if (thisServer) world->UpdateWorld(dt);
     else if (thisClient) world->UpdateWorld(dt, true);
@@ -157,16 +161,27 @@ void NetworkedGame::UpdateKeys() {
         }
     }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
-        cameraMode = 1;
-    }
+    if (world->GetGameState() == GameState::SERVERPLAYING ||
+        world->GetGameState() == GameState::CLIENTPLAYING) {
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
+            cameraMode = 1;
+        }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
-        cameraMode = 2;
-    }
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::F10)) {
+            cameraMode = 2;
+        }
 
-    if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
-        usePad = !usePad;
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
+            usePad = !usePad;
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::M)) {
+            success = true;
+        }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
+            playerUI = !playerUI;
+        }
     }
 }
 
@@ -194,12 +209,12 @@ void NetworkedGame::UpdatePaused(float dt)
         }
     }
 
+    UpdateKeys();
     audio->Update();
     if (thisServer) world->UpdateWorld(dt);
     else if (thisClient) world->UpdateWorld(dt, true);
     renderer->Update(dt);
     renderer->GetUI()->Update(dt); //UI
-    physics->Update(dt);
     renderer->Render();
     Debug::UpdateRenderables(dt);
 }
@@ -224,8 +239,47 @@ void NetworkedGame::UpdateFailure(float dt) {
     else if (thisClient && clienttimeToNextPacket < 0) {
         thisClient->UpdateClient();
         if (restartFlag) {
-            std::cout << "Client: Playing" << std::endl;
             InitGameWorld(true);
+            SpawnCarriage();
+            spawn = true;
+            spawnFlag = true;
+            restartFlag = false;
+            world->SetGameState(GameState::CLIENTPLAYING);
+        }
+        clienttimeToNextPacket += 1.0f / 60.0f; //60hz client update
+    }
+
+    audio->Update();
+    renderer->Update(dt);
+    renderer->GetUI()->Update(dt); //UI
+    renderer->Render();
+    Debug::UpdateRenderables(dt);
+
+    //std::cout << "TrainLastFullID: " << train->GetNetworkObject()->GetLastFullState().GetStateID() << std::endl;
+}
+
+void NetworkedGame::UpdateFinish(float dt) {
+    if (thisServer)
+        servertimeToNextPacket -= dt;
+    else
+        clienttimeToNextPacket -= dt;
+
+    if (thisServer && servertimeToNextPacket < 0) {
+        ServerBroadcast();
+        if (!winFlag) {
+            BoolPacket winPacket;
+            winPacket.flag = true;
+            winPacket.type = Win_Lose;
+            thisServer->SendGlobalPacket(winPacket);
+            winFlag = true;
+        }
+        servertimeToNextPacket += 1.0f / 60.0f;
+    }
+    else if (thisClient && clienttimeToNextPacket < 0) {
+        thisClient->UpdateClient();
+        if (restartFlag) {
+            level = 1;
+            InitGameWorld(true, 1);
             SpawnCarriage();
             spawn = true;
             spawnFlag = true;
@@ -271,11 +325,30 @@ void NetworkedGame::UpdateAsServer(float dt) {
         BroadcastSnapshot(true);
     }
     thisServer->UpdateServer();
+    if (failure) {
+        world->SetGameState(GameState::FAILURE);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
+    if (success) {
+        if (level < 3) {
+            if (!winFlag) {
+                BoolPacket winPacket;
+                winPacket.flag = true;
+                winPacket.type = Win_Lose;
+                thisServer->SendGlobalPacket(winPacket);
+                winFlag = true;
+            }
+            renderer->GetUI()->SetSuccess(true);
+            level++;
+            InitGameWorld(true, level);
+            StartLevel();
+        }
+        else {
+            world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
+        }
+    }
 
-    if (failure)
-        world->SetGameState(GameState::FAILURE);        
-    if (success)
-        world->SetGameState(GameState::MENU);
 
     //std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
     //	player->GetTransform().GetPosition().y << " " <<
@@ -315,10 +388,25 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
     thisClient->UpdateClient();
 
-    if (failure)
+    if (failure) {
         world->SetGameState(GameState::FAILURE);
-    if (success) 
-        world->SetGameState(GameState::MENU);
+        TutorialGame::GetGame()->GetAudio()->PlayFailure();
+    }
+    if (success) {
+        if (level < 3) {
+            renderer->GetUI()->SetSuccess(true);
+            level++;
+            InitGameWorld(true, level);
+            SpawnCarriage();
+            spawn = true;
+            spawnFlag = true;
+        }
+        else {
+            world->SetGameState(GameState::FINISH);
+            TutorialGame::GetGame()->GetAudio()->PlayWin();
+        }
+    }
+
 
     if (spawnFlag) {
         SpawnPacket spawnPacket;
@@ -467,17 +555,17 @@ void NetworkedGame::SpawnPlayer() {
         if (!spawnFlag) {
             if (thisServer->GetClientCount() == 1) {
                 player2->SetSpawned(true);
-                player2->GetTransform().SetPosition(Vector3(10, 4, 110));
+                player2->GetTransform().SetPosition(player2Position);
                 thisServer->SetSpawnFlag(false);
             }
             else if (thisServer->GetClientCount() == 2) {
                 player3->SetSpawned(true);
-                player3->GetTransform().SetPosition(Vector3(10, 4, 120));
+                player3->GetTransform().SetPosition(player3Position);
                 thisServer->SetSpawnFlag(false);
             }
             else if (thisServer->GetClientCount() == 3) {
                 player4->SetSpawned(true);
-                player4->GetTransform().SetPosition(Vector3(10, 4, 130));
+                player4->GetTransform().SetPosition(player4Position);
                 thisServer->SetSpawnFlag(false);
             }
 
@@ -489,19 +577,19 @@ void NetworkedGame::SpawnPlayer() {
         else {
             if (spawnNum == 2) {
                 player2->SetSpawned(true);
-                player2->GetTransform().SetPosition(Vector3(10, 4, 110));
+                player2->GetTransform().SetPosition(player2Position);
                 spawnNum = 0;
                 spawnFlag = false;
             }
             if (spawnNum == 3) {
                 player3->SetSpawned(true);
-                player3->GetTransform().SetPosition(Vector3(10, 4, 120));
+                player3->GetTransform().SetPosition(player3Position);
                 spawnNum = 0;
                 spawnFlag = false;
             }
             if (spawnNum == 4) {
                 player4->SetSpawned(true);
-                player4->GetTransform().SetPosition(Vector3(10, 4, 130));
+                player4->GetTransform().SetPosition(player4Position);
                 spawnNum = 0;
                 spawnFlag = false;
             }
@@ -510,7 +598,7 @@ void NetworkedGame::SpawnPlayer() {
     else if (thisClient) {
         if (spawnNum == 2) {
             player2->SetSpawned(true);
-            player2->GetTransform().SetPosition(Vector3(10, 4, 110));
+            player2->GetTransform().SetPosition(player2Position);
             if (playerNum == -1) {
                 playerNum = 2;
                 localPlayer = player2;
@@ -519,7 +607,7 @@ void NetworkedGame::SpawnPlayer() {
         }
         if (spawnNum == 3) {
             player3->SetSpawned(true);
-            player3->GetTransform().SetPosition(Vector3(10, 4, 120));
+            player3->GetTransform().SetPosition(player3Position);
             if (playerNum == -1) {
                 playerNum = 3;
                 localPlayer = player3;
@@ -528,7 +616,7 @@ void NetworkedGame::SpawnPlayer() {
         }
         if (spawnNum == 4) {
             player4->SetSpawned(true);
-            player4->GetTransform().SetPosition(Vector3(10, 4, 130));
+            player4->GetTransform().SetPosition(player4Position);
             if (playerNum == -1) {
                 playerNum = 4;
                 localPlayer = player4;
@@ -649,22 +737,22 @@ void NetworkedGame::UpdateGameObjects() {
 
 void NetworkedGame::StartLevel() {
     train->SetSpawned(true);
-    train->GetTransform().SetPosition(Vector3(70, 4.5f, 100));
+    train->GetTransform().SetPosition(trainPosition);
     carriage1 = (MaterialCarriage*)(train->AddCarriage(21, true));
     carriage2 = (ProduceCarriage*)(train->AddCarriage(22, true));
     carriage3 = (WaterCarriage*)(train->AddCarriage(23, true));
     carriage1->SetProduceCarriage(carriage2);
     carriage2->SetMaterialCarriage(carriage1);
     player->SetSpawned(true);
-    player->GetTransform().SetPosition(Vector3(10, 4, 100));
+    player->GetTransform().SetPosition(player1Position);
     localPlayer = player;
     playerNum = 1;
     pickaxe->SetSpawned(true);
-    pickaxe->GetTransform().SetPosition(Vector3(25, 6.5f, 90));
+    pickaxe->GetTransform().SetPosition(pickaxePosition);
     axe->SetSpawned(true);
-    axe->GetTransform().SetPosition(Vector3(25, 8, 100));
+    axe->GetTransform().SetPosition(axePosition);
     bucket->SetSpawned(true);
-    bucket->GetTransform().SetPosition(Vector3(25, 6.5f, 110));
+    bucket->GetTransform().SetPosition(bucketPosition);
 }
 
 void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {

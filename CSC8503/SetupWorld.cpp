@@ -401,16 +401,44 @@ StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
     return cube;
 }
 
-void TutorialGame::AddSceneToWorld()
+void TutorialGame::AddSceneToWorld(int level)
 {
     int nodeSize;
     int gridWidth;
     int gridHeight;
-    std::ifstream infile(Assets::DATADIR + "map.txt");
-    infile >> nodeSize;
-    infile >> gridWidth;
-    infile >> gridHeight;
-    navGrid = new NavigationGrid("map.txt");
+    std::ifstream infile;
+    switch (level) {
+    case 1:
+        infile = std::ifstream(Assets::DATADIR + "map1.txt");
+        infile >> nodeSize;
+        infile >> gridWidth;
+        infile >> gridHeight;
+        navGrid = new NavigationGrid("map1.txt");
+        break;
+    case 2:
+        infile = std::ifstream(Assets::DATADIR + "map2.txt");
+        infile >> nodeSize;
+        infile >> gridWidth;
+        infile >> gridHeight;
+        navGrid = new NavigationGrid("map2.txt");
+        break;
+    case 3:
+        infile = std::ifstream(Assets::DATADIR + "map3.txt");
+        infile >> nodeSize;
+        infile >> gridWidth;
+        infile >> gridHeight;
+        navGrid = new NavigationGrid("map3.txt");
+        break;
+    //case 4:
+    //    infile = std::ifstream(Assets::DATADIR + "map4.txt");
+    //    infile >> nodeSize;
+    //    infile >> gridWidth;
+    //    infile >> gridHeight;
+    //    navGrid = new NavigationGrid("map4.txt");
+        break;
+    default:
+        break;
+    }
 
     GridNode* nodes = new GridNode[gridWidth * gridHeight];
     for (int y = 0; y < gridHeight; ++y) {
@@ -440,7 +468,7 @@ void TutorialGame::AddSceneToWorld()
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
     GameObject* floor = new GameObject("Floor");
 
-    Vector3 floorSize = Vector3(160, 2, 100);
+    Vector3 floorSize = Vector3(155, 2, 100);
     AABBVolume* volume = new AABBVolume(Vector3(0.1f, 0.1f, 0.1f));
     floor->SetBoundingVolume((CollisionVolume*)volume);
     floor->GetTransform()

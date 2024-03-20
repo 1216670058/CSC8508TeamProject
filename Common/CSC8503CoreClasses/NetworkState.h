@@ -22,6 +22,10 @@ namespace NCL {
 			int			   stateID;
 			int            slot;
 			int            slotNum;
+			bool           flag1;
+			float          float1;
+			float          float2;
+			float          float3;
 		};
 	}
 }

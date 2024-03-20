@@ -88,7 +88,7 @@ namespace NCL {
             StoneObject* AddStoneToWorld(const Vector3& position, bool network = false, int id = 0);
             RailObject* AddRailToWorld(const Vector3& position, bool network = false, int id = 0, bool placed = false);
 
-            void InitGameWorld(bool networked = false);
+            void InitGameWorld(bool networked = false, int level = 1);
             bool IsExitGame() { return isExit; }
             float GetPlayTime() { return playtime; };
             TrainObject* GetTrain() const { return train; };
@@ -96,6 +96,8 @@ namespace NCL {
             MaterialCarriage* GetMaterialCarriage() { return carriage1; }
             ProduceCarriage* GetProduceCarriage() { return carriage2; }
             WaterCarriage* GetWaterCarriage() { return carriage3; }
+
+            Audio* GetAudio() { return audio; }
 
         protected:
             void InitMeshes();
@@ -107,16 +109,16 @@ namespace NCL {
             int assetsLoadedStep = 0;
 
             void InitCamera();
-            void InitWorld(bool networked = false);
+            void InitWorld(bool networked = false, int level = 1);
 
             void DrawPad();
 
             virtual void UpdateKeys();
 
             void UpdateLoading(float dt);
-            void UpdatePlaying(float dt);
             virtual void UpdatePaused(float dt);
             virtual void UpdateFailure(float dt);
+            virtual void UpdateFinish(float dt);
             void UpdateMenu(float dt);
 
             /*
@@ -124,7 +126,8 @@ namespace NCL {
             in the module. Feel free to mess around with them to see different objects being created in different
             test scenarios (constraints, collision types, and so on).
             */
-            void InitGameExamples(bool networked = false);
+            void InitPositions(bool networked = false, int level = 1);
+            void InitGameExamples(bool networked = false, int level = 1);
 
             void InitDefaultFloor();
             bool SelectObject();
@@ -132,7 +135,7 @@ namespace NCL {
             void LockedObjectMovement();
             void CameraUpdate();
 
-            void AddSceneToWorld();
+            void AddSceneToWorld(int level = 1);
             void HoldObject();
 
             GameObject* AddFloorToWorld(const Vector3& position);
@@ -362,7 +365,15 @@ namespace NCL {
             BucketObject* bucket = nullptr;
             AnimalObject* moose = nullptr;
 
-            vector<Vector3> mazeNodes;
+            Vector3 player1Position;
+            Vector3 player2Position;
+            Vector3 player3Position;
+            Vector3 player4Position;
+            Vector3 axePosition;
+            Vector3 pickaxePosition;
+            Vector3 bucketPosition;
+            Vector3 trainPosition;
+
             NavigationGrid* navGrid;
 
             static TutorialGame* instance;

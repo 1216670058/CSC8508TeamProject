@@ -12,9 +12,8 @@ TrainObject::~TrainObject() {
 }
  
 TrainObject::TrainObject(GameWorld* w) {
-
-    path.push_back(firstPath);
     world = w;
+    typeID = 20;
     trainCarriage = new TrainCarriage[trainMaxIndex];
     trainIndex = 0;
     name = "Train";
@@ -52,31 +51,35 @@ void TrainObject::Update(float dt) {
             return;
         }
     }
-    if (path[path.size() - 1] == finalPath)
-        path.push_back(finishPath);
-    Vector3 target = path[0];
-    direction = (target - this->GetTransform().GetPosition());
-    direction = Vector3(direction.x, 0, direction.z);
-    force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
-    if (path[path.size() - 1] == finishPath) force = 500.0f;
-    GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
+    else {
+        if (path[path.size() - 1] == finalPath)
+            path.push_back(finishPath);
+        Vector3 target = path[0];
+        direction = (target - this->GetTransform().GetPosition());
+        direction = Vector3(direction.x, 0, direction.z);
+        force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
+        if (path[path.size() - 1] == finishPath) force = 800.0f;
+        GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 
-    float dtdist = (lastpos - curpos).Length();
-    distance += dtdist; //run dist
-    lastpos = curpos; curpos = this->GetTransform().GetPosition();
-    time_s += dt;
-    dist_s += dtdist;
-    if (time_s >= 1.0f) {
-        speed = dist_s / time_s;
-        dist_s = time_s = 0.0f;
-    }
+        float dtdist = (lastpos - curpos).Length();
+        distance += dtdist; //run dist
+        lastpos = curpos; curpos = this->GetTransform().GetPosition();
+        time_s += dt;
+        dist_s += dtdist;
+        if (time_s >= 1.0f) {
+            speed = dist_s / time_s;
+            dist_s = time_s = 0.0f;
+        }
+        float2 = distance;
+        float3 = speed;
 
-    float mm = (this->GetTransform().GetPosition() - target).Length();
-    if (mm < 0.5f) {
-        if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
-        else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
-        physicsObject->SetLinearVelocity(Vector3());
-        path.erase(path.begin());
+        float mm = (this->GetTransform().GetPosition() - target).Length();
+        if (mm < 0.5f) {
+            if (GetDirection() < 3) transform.SetPosition(Vector3(target.x, transform.GetPosition().y, transform.GetPosition().z));
+            else transform.SetPosition(Vector3(transform.GetPosition().x, transform.GetPosition().y, target.z));
+            physicsObject->SetLinearVelocity(Vector3());
+            path.erase(path.begin());
+        }
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
@@ -84,12 +87,45 @@ void TrainObject::Update(float dt) {
     //std::cout << "Target: " << target.x << " " << target.y << " " << target.z << std::endl;
     UpdateOrientation(direction);
 
-    if(onFire){
+    flag1 = onFire;
+    if (onFire) {
+        float1 = fire;
         float speed = 1.0f;
         if (fire > 0.0f)
             fire -= dt * speed;
         else
             TutorialGame::GetGame()->SetFailure(true);
+    }
+}
+
+void TrainObject::InitPaths(int level) {
+    switch (level) {
+    case 1:
+        firstPath = Vector3(50, 4.5f, 100);
+        finalPath = Vector3(270, 4.5f, 50);
+        finishPath = Vector3(290, 4.5f, 50);
+        path.push_back(firstPath);
+        break;
+    case 2:
+        firstPath = Vector3(50, 4.5f, 50);
+        finalPath = Vector3(270, 4.5f, 150);
+        finishPath = Vector3(290, 4.5f, 150);
+        path.push_back(firstPath);
+        break;
+    case 3:
+        firstPath = Vector3(50, 4.5f, 20);
+        finalPath = Vector3(270, 4.5f, 150);
+        finishPath = Vector3(290, 4.5f, 150);
+        path.push_back(firstPath);
+        break;
+    //case 4:
+    //    firstPath = Vector3(50, 4.5f, 50);
+    //    finalPath = Vector3(270, 4.5f, 150);
+    //    finishPath = Vector3(290, 4.5f, 150);
+    //    path.push_back(firstPath);
+    //    break;
+    default:
+        break;
     }
 }
 

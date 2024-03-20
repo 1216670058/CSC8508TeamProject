@@ -18,8 +18,9 @@ void CollectableObject::Update(float dt) {
             RPressed = true;
         else
             RPressed = player->GetButton(4);
-        
+
         if (RPressed) {
+            TutorialGame::GetGame()->GetAudio()->PlayPut();
             Vector3 position = transform.GetPosition();
             Vector3 gridPosition = FindGrid(Vector3(position.x, 5, position.z) - player->GetFace() * 5.0f);
             int index = gridPosition.x / 10 + (gridPosition.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
@@ -29,13 +30,13 @@ void CollectableObject::Update(float dt) {
                 putDown = true;
                 num = 1;
                 if (typeID != 3)transform.SetPosition(Vector3(position.x, 6.5f, position.z) - player->GetFace() * 5.0f);
-                else 
+                else
                     transform.SetPosition(Vector3(position.x, 8, position.z) - player->GetFace() * 5.0f);
                 player->SetSlot(0);
                 player->SetSlotNum(0);
                 player = nullptr;
             }
-        }       
+        }
     }
 }
 
@@ -44,6 +45,7 @@ void CollectableObject::OnCollisionBegin(GameObject* otherObject) {
         player = (PlayerObject*)otherObject;
         putDown = false;
         player->SetSlot(this->GetTypeID());
+        TutorialGame::GetGame()->GetAudio()->PlayGet();
     }
 }
 

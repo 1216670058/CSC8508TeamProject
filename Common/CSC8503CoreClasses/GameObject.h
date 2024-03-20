@@ -183,6 +183,25 @@ namespace NCL::CSC8503 {
             return flag5;
         }
 
+        void SetFloat1(float f) {
+            float1 = f;
+        }
+        float GetFloat1() const {
+            return float1;
+        }
+        void SetFloat2(float f) {
+            float2 = f;
+        }
+        float GetFloat2() const {
+            return float2;
+        }
+        void SetFloat3(float f) {
+            float3 = f;
+        }
+        float GetFloat3() const {
+            return float3;
+        }
+
         void SetButton(int index, bool state) {
             buttonStates[index] = state;
         }
@@ -224,6 +243,10 @@ namespace NCL::CSC8503 {
         bool flag3 = false;
         bool flag4 = false;
         bool flag5 = false;
+
+        float float1 = 0.0f;
+        float float2 = 0.0f;
+        float float3 = 0.0f;
 
         Vector3 broadphaseAABB;
 
