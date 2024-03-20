@@ -18,6 +18,7 @@
 namespace NCL::CSC8503 {
 	class AnimalObject :public GameObject {
 	public:
+		AnimalObject() {};
 		AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world);
 		~AnimalObject() {};
 
@@ -29,9 +30,9 @@ namespace NCL::CSC8503 {
 		void DetectThreat(GameObject* object);
 		void StopDetectThreat(GameObject* object);
 
-		StateMachine* stateMachine;
-		NavigationGrid* grid;
-		GameWorld* world;
+		StateMachine* stateMachine = nullptr;
+		NavigationGrid* grid = nullptr;
+		GameWorld* world = nullptr;
 
 		Vector3 currentPos;
 		std::vector<Vector3> wanderPathNodes = {};
@@ -40,11 +41,11 @@ namespace NCL::CSC8503 {
 		float timer = 0;
 		float stateCooldown = 0;
 
-		int gridSize;
+		int gridSize = 0;
 		//bool noLongerScared = false;
 
 		bool threatDetected = false;
-		GameObject* threat;
+		GameObject* threat = nullptr;
 	};
 
 

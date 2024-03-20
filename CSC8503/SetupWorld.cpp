@@ -64,7 +64,7 @@ void TutorialGame::InitMeshes() {
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
     mooseMesh = renderer->LoadMesh("Moose.msh");
     robotMesh = renderer->LoadMesh("Robot.msh");
-    //droneMesh = renderer->LoadMesh("Drone.msh");
+    droneMesh = renderer->LoadMesh("Drone.msh");
 
     trainMesh = renderer->LoadOBJMesh("Train.obj");
 
@@ -237,18 +237,18 @@ void TutorialGame::InitMaterials() {
         robotBumpTextures.emplace_back(texID2);
     }
     
-    //droneMaterial = new MeshMaterial("Drone.mat");
-    //for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        droneMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    droneTextures.emplace_back(texID);
-    //}
+    droneMaterial = new MeshMaterial("Drone.mat");
+    for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            droneMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        droneTextures.emplace_back(texID);
+    }
 
     //textures.push_back(maleTextures);
     //textures.push_back(femaleTextures);
@@ -329,13 +329,13 @@ void TutorialGame::InitAnimations() {
     robotAnimation->SetAnim4(new MeshAnimation("Robot.anm"));
     robotAnimation->SetAnim5(new MeshAnimation("Robot.anm"));
     robotAnimation->SetActiveAnim(robotAnimation->GetAnim1());
-    //droneAnimation = new AnimationObject();
-    //droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim3(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
+    droneAnimation = new AnimationObject();
+    droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim3(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
 
     //animations.push_back(maleAnimation);
     //animations.push_back(femaleAnimation);
@@ -1165,7 +1165,7 @@ RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
 }
 
 DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
-    DroneObject* drone = new DroneObject();
+    DroneObject* drone = new DroneObject(navGrid, world);
     AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
     drone->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1183,6 +1183,8 @@ DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
     drone->GetPhysicsObject()->InitCubeInertia();
 
     world->AddGameObject(drone);
+
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 40.0f, drone);
 
     return drone;
 }

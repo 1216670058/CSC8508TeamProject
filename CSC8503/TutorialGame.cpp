@@ -356,6 +356,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         bucketPosition = Vector3(35, 6.5f, 120);
         robotPosition = Vector3(45, 4, 110);
         moosePosition = Vector3(140, 5, 100);
+		dronePosition = Vector3(150, 5, 100);
         if (networked) {
             player2Position = Vector3(15, 4, 110);
             player3Position = Vector3(25, 4, 110);
@@ -370,6 +371,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         bucketPosition = Vector3(30, 6.5f, 75);
         robotPosition = Vector3(45, 4, 65);
         moosePosition = Vector3(140, 5, 100);
+		dronePosition = Vector3(150, 5, 100);
         if (networked) {
             player2Position = Vector3(15, 4, 65);
             player3Position = Vector3(25, 4, 65);
@@ -384,6 +386,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
         bucketPosition = Vector3(30, 6.5f, 45);
         robotPosition = Vector3(45, 4, 35);
         moosePosition = Vector3(40, 5, 50);
+		dronePosition = Vector3(150, 5, 100);
         if (networked) {
             player2Position = Vector3(15, 4, 35);
             player3Position = Vector3(25, 4, 35);
@@ -431,6 +434,7 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     AddSceneToWorld(level);
 
     moose = AddMooseToWorld(moosePosition);
+	drone = AddDroneToWorld(dronePosition);
 }
 
 bool TutorialGame::SelectObject() {
