@@ -30,6 +30,7 @@ namespace NCL {
             void       ToggleNight();
             UI* GetUI() { return ui; };
             ParticleGenerator* GetParticle() { return particle; };
+            void Update(float dt) override;
 
         protected:
             void NewRenderLines();
@@ -122,6 +123,8 @@ namespace NCL {
             Light* redstoneLight1;
             Light* redstoneLight2;
             Light* redstoneLight3;
+            Light* playerLight;
+            Light* trainLight;
 
             OGLShader* pointLightShader;
             Mesh* sphere;

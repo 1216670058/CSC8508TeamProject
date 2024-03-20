@@ -148,7 +148,7 @@ void TrainObject::UploadAssets(Mesh* mesh, Texture* texture, ShaderGroup* shader
 TrainCarriage* TrainObject::AddCarriage(int id, bool spawn) {
     Vector3 nowPos;
     if (trainIndex == 0)
-        nowPos = GetTransform().GetPosition();
+        nowPos = GetTransform().GetPosition() - Vector3(0, 3.5f, 0);
     else
         nowPos = trainCarriage[trainIndex].GetTransform().GetPosition();
 
