@@ -124,12 +124,18 @@ namespace NCL::CSC8503 {
         void BuildBridge();
         void LoadMaterial();
         void UseRobot();
+        void RunFast(float dt);
+
         bool doing = false;
         bool cutting = false;
         bool digging = false;
         bool placing1 = false;
         bool placing2 = false;
         bool building = false;
+        bool running = false;
+
+        float coolDown = 2.0f;
+        float runPower = 0.0f;
 
         bool robotCut = false;
         bool robotDig = false;

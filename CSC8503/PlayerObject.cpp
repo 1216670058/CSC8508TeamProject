@@ -26,6 +26,7 @@ void PlayerObject::Update(float dt) {
         BuildBridge();
         LoadMaterial();
         UseRobot();
+        RunFast(dt);
 
         //Vector3 position = transform.GetPosition();
         //Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
@@ -169,7 +170,7 @@ void PlayerObject::PlayerMovement(float dt) {
     }
 
     Quaternion* qq;
-    speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+    if(!running)speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
     //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
 
@@ -497,7 +498,7 @@ bool PlayerObject::CanPlaceRail() {
             }
         }
     }
-    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - position).Length() < 14)
+    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - Vector3(0, 4.5f, 0) - position).Length() < 14)
         isPath = true;
 
     return canConnect && isPath && notRail;
@@ -530,5 +531,31 @@ void PlayerObject::UseRobot() {
                 Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
+    }
+}
+
+void PlayerObject::RunFast(float dt) {
+    if (coolDown < 2.0f) {
+        coolDown += dt;
+    }
+    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SHIFT)&&coolDown>=2.0f) {
+        running = true;
+        coolDown = 0.0f;
+        runPower = 0.11f;
+    }
+    if (running) {
+        if (runPower <= 0) {
+            running = false;
+            speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+            physicsObject->SetRealDamping(0.962);
+        }
+        if (runPower > 0 && runPower < 0.05f) {
+            speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+            physicsObject->SetRealDamping(0.825);
+        }
+        else {
+            speed = TutorialGame::GetGame()->IsNetworked() ? 2000 : 2000; 
+        }
+        runPower -= dt;
     }
 }

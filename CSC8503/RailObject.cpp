@@ -172,7 +172,7 @@ void RailObject::PlaceRail() {
                     }
                 }
             }
-            if ((train->GetLastPath() - position).Length() < 14)
+            if ((train->GetLastPath() - Vector3(0, 4.5f, 0) - position).Length() < 14)
                 isPath = true;
             if (n.type == 0 && canConnect && isPath) {
                 placed = true;
