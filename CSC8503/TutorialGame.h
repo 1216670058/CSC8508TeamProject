@@ -160,7 +160,7 @@ namespace NCL {
             PickaxeObject* AddPickaxeToWorld(const Vector3& position, bool spawn = true);
             AxeObject* AddAxeToWorld(const Vector3& position, bool spawn = true);
             BucketObject* AddBucketToWorld(const Vector3& position, bool spawn = true);
-            AnimalObject* AddMooseToWorld(const Vector3& position, float xMin, float xMax, float zMin, float zMax);
+            AnimalObject* AddMooseToWorld(const Vector3& position);
             RobotObject* AddRobotToWorld(const Vector3& position);
             DroneObject* AddDroneToWorld(const Vector3& position);
             DetectionSphereObject* AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal);
@@ -380,6 +380,7 @@ namespace NCL {
             Vector3 bucketPosition;
             Vector3 trainPosition;
             Vector3 robotPosition;
+            Vector3 moosePosition;
 
             NavigationGrid* navGrid;
 
