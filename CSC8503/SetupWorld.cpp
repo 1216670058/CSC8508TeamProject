@@ -413,7 +413,6 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridWidth;
         infile >> gridHeight;
         navGrid = new NavigationGrid("map1.txt");
-        robot->SetGrid(navGrid);
         break;
     case 2:
         infile = std::ifstream(Assets::DATADIR + "map2.txt");
@@ -421,7 +420,6 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridWidth;
         infile >> gridHeight;
         navGrid = new NavigationGrid("map2.txt");
-        robot->SetGrid(navGrid);
         break;
     case 3:
         infile = std::ifstream(Assets::DATADIR + "map3.txt");
@@ -429,7 +427,6 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridWidth;
         infile >> gridHeight;
         navGrid = new NavigationGrid("map3.txt"); 
-        robot->SetGrid(navGrid);
         break;
     //case 4:
     //    infile = std::ifstream(Assets::DATADIR + "map4.txt");
@@ -1141,7 +1138,7 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position, float xMin,
 }
 
 RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
-    RobotObject* robot = new RobotObject(player, position);
+    RobotObject* robot = new RobotObject(navGrid, player, position);
     AABBVolume* volume = new AABBVolume(Vector3(4, 4, 4));
     robot->SetBoundingVolume((CollisionVolume*)volume);
 

@@ -97,7 +97,6 @@ void TutorialGame::UpdateGame(float dt) {
         }
     }
 
-
     DrawPad();
     TutorialGame::UpdateKeys();
 
@@ -403,7 +402,6 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
     axe = AddAxeToWorld(axePosition, !networked);
     bucket = AddBucketToWorld(bucketPosition, !networked);
-    robot = AddRobotToWorld(robotPosition);
     if (networked) {
         player2 = AddPlayerToWorld(player2Position, "Player2", 2, false);
         player3 = AddPlayerToWorld(player3Position, "Player3", 3, false);
@@ -419,7 +417,8 @@ void TutorialGame::InitGameExamples(bool networked, int level) {
     pad = AddPadToWorld();
     AddSceneToWorld(level);
 
-    moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105); // update to format of other functions
+    //moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105); // update to format of other functions
+    robot = AddRobotToWorld(robotPosition);
 }
 
 bool TutorialGame::SelectObject() {

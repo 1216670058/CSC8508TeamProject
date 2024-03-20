@@ -264,7 +264,7 @@ float NavigationGrid::Heuristic(GridNode *hNode, GridNode *endNode) const {
 Vector3 NavigationGrid::FindNearestTree(const Vector3& position) {
     std::vector<float> fs;
     for (int i = 0; i < gridWidth * gridHeight; ++i) {
-        if (allNodes[i].type == 10086 && (allNodes[i].position - position).Length() < 80) {
+        if (allNodes[i].type == 10086 && (allNodes[i].position - position).Length() < 43) {
             float f = 50000.0f;
             FindPath(position, allNodes[i].position, f);
             fs.push_back(f);
