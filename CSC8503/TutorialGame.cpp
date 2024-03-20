@@ -347,87 +347,90 @@ void TutorialGame::InitDefaultFloor() {
 }
 
 void TutorialGame::InitPositions(bool networked, int level) {
-	switch (level) {
-	case 1:
-		player1Position = Vector3(5, 4, 110);
-		trainPosition = Vector3(30, 4.5f, 100);
-		pickaxePosition = Vector3(25, 6.5f, 120);
-		axePosition = Vector3(15, 8, 120);
-		bucketPosition = Vector3(35, 6.5f, 120);
-		robotPosition = Vector3(45, 4, 110);
-		if (networked) {
-			player2Position = Vector3(15, 4, 110);
-			player3Position = Vector3(25, 4, 110);
-			player4Position = Vector3(35, 4, 110);
-		}
-		break;
-	case 2:
-		player1Position = Vector3(5, 4, 65);
-		trainPosition = Vector3(30, 4.5f, 50);
-		pickaxePosition = Vector3(20, 6.5f, 75);
-		axePosition = Vector3(10, 8, 75);
-		bucketPosition = Vector3(30, 6.5f, 75);
-		robotPosition = Vector3(45, 4, 65);
-		if (networked) {
-			player2Position = Vector3(15, 4, 65);
-			player3Position = Vector3(25, 4, 65);
-			player4Position = Vector3(35, 4, 65);
-		}
-		break;
-	case 3:
-		player1Position = Vector3(5, 4, 35);
-		trainPosition = Vector3(30, 4.5f, 20);
-		pickaxePosition = Vector3(20, 6.5f, 45);
-		axePosition = Vector3(10, 8, 45);
-		bucketPosition = Vector3(30, 6.5f, 45);
-		robotPosition = Vector3(45, 4, 35);
-		if (networked) {
-			player2Position = Vector3(15, 4, 35);
-			player3Position = Vector3(25, 4, 35);
-			player4Position = Vector3(35, 4, 35);
-		}
-		break;
-		//case 4:
-		//    player1Position = Vector3(5, 4, 65);
-		//    trainPosition = Vector3(30, 4.5f, 50);
-		//    pickaxePosition = Vector3(20, 6.5f, 40);
-		//    axePosition = Vector3(10, 8, 40);
-		//    bucketPosition = Vector3(30, 6.5f, 40);
-		//    if (networked) {
-		//        player2Position = Vector3(15, 4, 65);
-		//        player3Position = Vector3(25, 4, 65);
-		//        player4Position = Vector3(35, 4, 65);
-		//    }
-		//    break;
-	default:
-		break;
-	}
+    switch (level) {
+    case 1:
+        player1Position = Vector3(5, 4, 110);
+        trainPosition = Vector3(30, 4.5f, 100);
+        pickaxePosition = Vector3(25, 6.5f, 120);
+        axePosition = Vector3(15, 8, 120);
+        bucketPosition = Vector3(35, 6.5f, 120);
+        robotPosition = Vector3(45, 4, 110);
+        moosePosition = Vector3(140, 5, 100);
+        if (networked) {
+            player2Position = Vector3(15, 4, 110);
+            player3Position = Vector3(25, 4, 110);
+            player4Position = Vector3(35, 4, 110);
+        }
+        break;
+    case 2:
+        player1Position = Vector3(5, 4, 65);
+        trainPosition = Vector3(30, 4.5f, 50);
+        pickaxePosition = Vector3(20, 6.5f, 75);
+        axePosition = Vector3(10, 8, 75);
+        bucketPosition = Vector3(30, 6.5f, 75);
+        robotPosition = Vector3(45, 4, 65);
+        moosePosition = Vector3(140, 5, 100);
+        if (networked) {
+            player2Position = Vector3(15, 4, 65);
+            player3Position = Vector3(25, 4, 65);
+            player4Position = Vector3(35, 4, 65);
+        }
+        break;
+    case 3:
+        player1Position = Vector3(5, 4, 35);
+        trainPosition = Vector3(30, 4.5f, 20);
+        pickaxePosition = Vector3(20, 6.5f, 45);
+        axePosition = Vector3(10, 8, 45);
+        bucketPosition = Vector3(30, 6.5f, 45);
+        robotPosition = Vector3(45, 4, 35);
+        moosePosition = Vector3(40, 5, 50);
+        if (networked) {
+            player2Position = Vector3(15, 4, 35);
+            player3Position = Vector3(25, 4, 35);
+            player4Position = Vector3(35, 4, 35);
+        }
+        break;
+        //case 4:
+        //    player1Position = Vector3(5, 4, 65);
+        //    trainPosition = Vector3(30, 4.5f, 50);
+        //    pickaxePosition = Vector3(20, 6.5f, 40);
+        //    axePosition = Vector3(10, 8, 40);
+        //    bucketPosition = Vector3(30, 6.5f, 40);
+        //    if (networked) {
+        //        player2Position = Vector3(15, 4, 65);
+        //        player3Position = Vector3(25, 4, 65);
+        //        player4Position = Vector3(35, 4, 65);
+        //    }
+        //    break;
+    default:
+        break;
+    }
 }
 
 void TutorialGame::InitGameExamples(bool networked, int level) {
-	player = AddPlayerToWorld(player1Position, "Player1", 1, !networked);
-	train = AddTrainToWorld(trainPosition, !networked);
-	train->InitPaths(level);
-	pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
-	axe = AddAxeToWorld(axePosition, !networked);
-	bucket = AddBucketToWorld(bucketPosition, !networked);
-	robot = AddRobotToWorld(robotPosition);
-	if (networked) {
-		player2 = AddPlayerToWorld(player2Position, "Player2", 2, false);
-		player3 = AddPlayerToWorld(player3Position, "Player3", 3, false);
-		player4 = AddPlayerToWorld(player4Position, "Player4", 4, false);
-	}
-	else {
-		carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
-		carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
-		carriage3 = (WaterCarriage*)(train->AddCarriage(23, !networked));
-		carriage1->SetProduceCarriage(carriage2);
-		carriage2->SetMaterialCarriage(carriage1);
-	}
-	pad = AddPadToWorld();
-	AddSceneToWorld(level);
+    player = AddPlayerToWorld(player1Position, "Player1", 1, !networked);
+    train = AddTrainToWorld(trainPosition, !networked);
+    train->InitPaths(level);
+    pickaxe = AddPickaxeToWorld(pickaxePosition, !networked);
+    axe = AddAxeToWorld(axePosition, !networked);
+    bucket = AddBucketToWorld(bucketPosition, !networked);
+    robot = AddRobotToWorld(robotPosition);
+    if (networked) {
+        player2 = AddPlayerToWorld(player2Position, "Player2", 2, false);
+        player3 = AddPlayerToWorld(player3Position, "Player3", 3, false);
+        player4 = AddPlayerToWorld(player4Position, "Player4", 4, false);
+    }
+    else {
+        carriage1 = (MaterialCarriage*)(train->AddCarriage(21, !networked));
+        carriage2 = (ProduceCarriage*)(train->AddCarriage(22, !networked));
+        carriage3 = (WaterCarriage*)(train->AddCarriage(23, !networked));
+        carriage1->SetProduceCarriage(carriage2);
+        carriage2->SetMaterialCarriage(carriage1);
+    }
+    pad = AddPadToWorld();
+    AddSceneToWorld(level);
 
-	//moose = AddMooseToWorld(Vector3(140, 5, 100), 135, 145, 95, 105); // update to format of other functions
+    moose = AddMooseToWorld(moosePosition);
 }
 
 bool TutorialGame::SelectObject() {
