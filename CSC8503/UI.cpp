@@ -283,6 +283,7 @@ void UI::DrawMenu(float dt)
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
 		TutorialGame::GetGame()->GetAudio()->PlayButton();
+		TutorialGame::GetGame()->ResetPlaytime();
 	}
 
 	//set Multiplayer
@@ -348,6 +349,7 @@ void UI::DrawChooseServer(float dt) {
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
 		TutorialGame::GetGame()->GetAudio()->PlayButton();
+		TutorialGame::GetGame()->ResetPlaytime();
 	}
 
 	//set Client
@@ -360,6 +362,7 @@ void UI::DrawChooseServer(float dt) {
 		Window::GetWindow()->ShowOSPointer(false);
 		Window::GetWindow()->LockMouseToWindow(true);
 		TutorialGame::GetGame()->GetAudio()->PlayButton();
+		TutorialGame::GetGame()->ResetPlaytime();
 	}
 
 	//set Exit Game
@@ -1107,6 +1110,7 @@ void UI::DrawFailureMenu(float dt)
 			Window::GetWindow()->ShowOSPointer(false);
 			Window::GetWindow()->LockMouseToWindow(true);
 			TutorialGame::GetGame()->GetAudio()->PlayButton();
+			TutorialGame::GetGame()->ResetPlaytime();
 		}
 	}
 
@@ -1204,6 +1208,7 @@ void UI::DrawFinishMenu(float dt)
 			Window::GetWindow()->ShowOSPointer(false);
 			Window::GetWindow()->LockMouseToWindow(true);
 			TutorialGame::GetGame()->GetAudio()->PlayButton();
+			TutorialGame::GetGame()->ResetPlaytime();
 		}
 	}
 

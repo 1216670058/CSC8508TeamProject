@@ -46,6 +46,8 @@ TutorialGame::TutorialGame() : controller(*Window::GetWindow()->GetKeyboard(), *
 	world->SetGameState(GameState::LOADING);
 
 	instance = this;
+
+	playtime = 0.0f;
 }
 
 /*
@@ -89,7 +91,14 @@ void TutorialGame::UpdateGame(float dt) {
 		if (level < 3) {
 			renderer->GetUI()->SetSuccess(true);
 			level++;
+			float d;
+			if (TutorialGame::GetGame()->IsNetworked())
+				d = TutorialGame::GetGame()->GetTrain()->GetFloat2();
+			else d = TutorialGame::GetGame()->GetTrain()->GetDistance();
 			InitGameWorld(false, level);
+			if (TutorialGame::GetGame()->IsNetworked())
+				TutorialGame::GetGame()->GetTrain()->SetFloat2(d);
+			else TutorialGame::GetGame()->GetTrain()->SetDistance(d);
 		}
 		else {
 			world->SetGameState(GameState::FINISH);
@@ -331,7 +340,6 @@ void TutorialGame::InitWorld(bool networked, int level) {
 	InitGameExamples(networked, level);
 	InitDefaultFloor();
 
-	playtime = 0.0f;
 }
 
 void TutorialGame::InitDefaultFloor() {
