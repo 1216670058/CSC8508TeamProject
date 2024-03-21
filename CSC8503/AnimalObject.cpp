@@ -113,7 +113,6 @@ void AnimalObject::Update(float dt) {
             renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
     }
 
-    //prevPos = currentPos;
     currentPos = GetTransform().GetPosition();
 
     bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());

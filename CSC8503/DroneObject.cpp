@@ -153,7 +153,9 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 }
 
 void DroneObject::Update(float dt) {
+    timer += dt;
     stateCooldown += dt;
+    if (timer > 1.0) timer = 1.0;
 
     renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
     while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
