@@ -34,6 +34,26 @@ namespace NCL {
 				return clientCount;
 			}
 
+			void SetRemovePlayer(int r) {
+				removePlayer = r;
+			}
+			int GetRemovePlayer() const {
+				return removePlayer;
+			}
+
+			bool ConnectDebug() const {
+				return connectDebug;
+			}
+			void SetConnectDebug(bool d) {
+				connectDebug = d;
+			}
+			bool DisconnectDebug() const {
+				return disconnectDebug;
+			}
+			void SetDisconnectDebug(bool d) {
+				disconnectDebug = d;
+			}
+
 		protected:
 			int			port;
 			int			clientMax;
@@ -43,8 +63,12 @@ namespace NCL {
 			int incomingDataRate;
 			int outgoingDataRate;
 
+			int removePlayer = 0;
+
 			bool spawnFlag = false;
 			bool connected = false;
+			bool connectDebug = false;
+			bool disconnectDebug = false;
 		};
 	}
 }

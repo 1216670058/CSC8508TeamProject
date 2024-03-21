@@ -57,8 +57,8 @@ void TutorialGame::InitMeshes() {
     stoneMesh = renderer->LoadMesh("Stone.msh");
     railMesh = renderer->LoadMesh("Rail.msh");
     railTurnMesh = renderer->LoadMesh("RailTurn.msh");
-    //maleMesh = renderer->LoadMesh("Male_Guard.msh");
-    //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
+    maleMesh = renderer->LoadMesh("Male_Guard.msh");
+    femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     assassinMesh = renderer->LoadMesh("Assassin.msh");
     girlMesh = renderer->LoadMesh("Girl.msh");
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
@@ -67,12 +67,6 @@ void TutorialGame::InitMeshes() {
     //droneMesh = renderer->LoadMesh("Drone.msh");
 
     trainMesh = renderer->LoadOBJMesh("Train.obj");
-
-    //meshes.push_back(maleMesh);
-    //meshes.push_back(femaleMesh);
-    //meshes.push_back(assassinMesh);
-    //meshes.push_back(girlMesh);
-    //meshes.push_back(smurfMesh);
 }
 
 void TutorialGame::InitTextures() {
@@ -115,43 +109,43 @@ void TutorialGame::InitTextures() {
 
 void TutorialGame::InitMaterials() {
     std::cout << std::endl << "--------Loading Materials--------" << std::endl;
-    //maleMaterial = new MeshMaterial("Male_Guard.mat");
-    //for (int i = 0; i < maleMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        maleMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    maleTextures.emplace_back(texID);
-    //
-    //    matEntry->GetEntry("Bump", &filename);
-    //    string path2 = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    maleBumpTextures.emplace_back(texID2);
-    //}
-    //
-    //femaleMaterial = new MeshMaterial("Female_Guard.mat");
-    //for (int i = 0; i < femaleMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        femaleMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    femaleTextures.emplace_back(texID);
-    //
-    //    matEntry->GetEntry("Bump", &filename);
-    //    string path2 = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    femaleBumpTextures.emplace_back(texID2);
-    //}
+    maleMaterial = new MeshMaterial("Male_Guard.mat");
+    for (int i = 0; i < maleMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            maleMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        maleTextures.emplace_back(texID);
+    
+        matEntry->GetEntry("Bump", &filename);
+        string path2 = Assets::TEXTUREDIR + *filename;
+        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        maleBumpTextures.emplace_back(texID2);
+    }
+    
+    femaleMaterial = new MeshMaterial("Female_Guard.mat");
+    for (int i = 0; i < femaleMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            femaleMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        femaleTextures.emplace_back(texID);
+    
+        matEntry->GetEntry("Bump", &filename);
+        string path2 = Assets::TEXTUREDIR + *filename;
+        GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        femaleBumpTextures.emplace_back(texID2);
+    }
     
     assassinMaterial = new MeshMaterial("Assassin.mat");
     for (int i = 0; i < assassinMesh->GetSubMeshCount(); ++i) {
@@ -185,25 +179,6 @@ void TutorialGame::InitMaterials() {
             SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
         girlBumpTextures.emplace_back(texID2);
     }
-    
-    //smurfMaterial = new MeshMaterial("Smurf.mat");
-    //for (int i = 0; i < smurfMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        smurfMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    smurfTextures.emplace_back(texID);
-    //
-    //    matEntry->GetEntry("Bump", &filename);
-    //    string path2 = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID2 = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    smurfBumpTextures.emplace_back(texID2);
-    //}
 
     mooseMaterial = new MeshMaterial("Moose.mat");
     for (int i = 0; i < mooseMesh->GetSubMeshCount(); ++i) {
@@ -249,43 +224,10 @@ void TutorialGame::InitMaterials() {
     //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
     //    droneTextures.emplace_back(texID);
     //}
-
-    //textures.push_back(maleTextures);
-    //textures.push_back(femaleTextures);
-    //textures.push_back(assassinTextures);
-    //textures.push_back(girlTextures);
-    //textures.push_back(smurfTextures);
-
-    //bumpTextures.push_back(maleBumpTextures);
-    //bumpTextures.push_back(femaleBumpTextures);
-    //bumpTextures.push_back(assassinBumpTextures);
-    //bumpTextures.push_back(girlBumpTextures);
-    //bumpTextures.push_back(smurfBumpTextures);
 }
 
 void TutorialGame::InitAnimations() {
     std::cout << std::endl << "--------Loading Animations--------" << std::endl;
-    maleAnimation = new AnimationObject();
-    maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
-    maleAnimation->SetAnim2(new MeshAnimation("StepForward1.anm"));
-    maleAnimation->SetAnim3(new MeshAnimation("StepLeft1.anm"));
-    maleAnimation->SetAnim4(new MeshAnimation("StepRight1.anm"));
-    maleAnimation->SetAnim5(new MeshAnimation("StepBack1.anm"));
-    maleAnimation->SetAnim6(new MeshAnimation("Angry1.anm"));
-    maleAnimation->SetAnim7(new MeshAnimation("Happy1.anm"));
-    maleAnimation->SetAnim8(new MeshAnimation("Cheer1.anm"));
-    maleAnimation->SetActiveAnim(maleAnimation->GetAnim1());
-
-    femaleAnimation = new AnimationObject();
-    femaleAnimation->SetAnim1(new MeshAnimation("Idle2.anm"));
-    femaleAnimation->SetAnim2(new MeshAnimation("StepForward2.anm"));
-    femaleAnimation->SetAnim3(new MeshAnimation("StepLeft2.anm"));
-    femaleAnimation->SetAnim4(new MeshAnimation("StepRight2.anm"));
-    femaleAnimation->SetAnim5(new MeshAnimation("StepBack2.anm"));
-    femaleAnimation->SetAnim6(new MeshAnimation("Angry2.anm"));
-    femaleAnimation->SetAnim7(new MeshAnimation("Happy2.anm"));
-    femaleAnimation->SetAnim8(new MeshAnimation("Cheer2.anm"));
-    femaleAnimation->SetActiveAnim(femaleAnimation->GetAnim1());
     
     assassinAnimation = new AnimationObject();
     assassinAnimation->SetAnim1(new MeshAnimation("Assassin.anm"));
@@ -304,15 +246,6 @@ void TutorialGame::InitAnimations() {
     girlAnimation->SetAnim5(new MeshAnimation("Girl.anm"));
     girlAnimation->SetActiveAnim(girlAnimation->GetAnim1());
     girlAnimation->SetIdle(false);
-    
-    //smurfAnimation = new AnimationObject();
-    //smurfAnimation->SetAnim1(new MeshAnimation("Smurf.anm"));
-    //smurfAnimation->SetAnim2(new MeshAnimation("Smurf.anm"));
-    //smurfAnimation->SetAnim3(new MeshAnimation("Smurf.anm"));
-    //smurfAnimation->SetAnim4(new MeshAnimation("Smurf.anm"));
-    //smurfAnimation->SetAnim5(new MeshAnimation("Smurf.anm"));
-    //smurfAnimation->SetActiveAnim(smurfAnimation->GetAnim1());
-    //smurfAnimation->SetIdle(false);
 
     mooseAnimation = new AnimationObject();
     mooseAnimation->SetAnim1(new MeshAnimation("Moose.anm"));
@@ -336,12 +269,6 @@ void TutorialGame::InitAnimations() {
     //droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
     //droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
     //droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
-
-    //animations.push_back(maleAnimation);
-    //animations.push_back(femaleAnimation);
-    //animations.push_back(assassinAnimation);
-    //animations.push_back(girlAnimation);
-    //animations.push_back(smurfAnimation);
 }
 
 void TutorialGame::InitShaders() {
@@ -621,6 +548,8 @@ GameObject* TutorialGame::AddStationToWorld(const Vector3& position) {
     .SetScale(Vector3(15, 15, 15))
     .SetPosition(position);
 
+    station->SetName("Station");
+
     station->SetRenderObject(new RenderObject(&station->GetTransform(), stationMesh, stationTex, basicShader));
     station->SetPhysicsObject(new PhysicsObject(&station->GetTransform(), station->GetBoundingVolume()));
 
@@ -639,6 +568,8 @@ GameObject* TutorialGame::AddTestingLightToWorld(const Vector3& position, const 
 
     AABBVolume* volume = new AABBVolume(Vector3(0.5, 0.5, 0.5));
     cube->SetBoundingVolume((CollisionVolume*)volume);
+
+    cube->SetName("Light");
 
     cube->GetTransform()
         .SetPosition(position)
@@ -692,27 +623,18 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position, std::strin
         player->GetRenderObject()->SetBumpTextures(girlBumpTextures);
         break;
     case 3:
-        player->SetRenderObject(new RenderObject(&player->GetTransform(), cubeMesh, nullptr, basicShader, 1));
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), maleMesh, nullptr, skinningBumpShader, 1));
         player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-        player->GetRenderObject()->SetAnimationObject(maleAnimation);
-        //player->GetRenderObject()->SetTextures(maleTextures);
-        //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
+        player->GetRenderObject()->SetTextures(maleTextures);
+        player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
         break;
     case 4:
-        player->SetRenderObject(new RenderObject(&player->GetTransform(), cubeMesh, nullptr, basicShader, 1));
+        player->SetRenderObject(new RenderObject(&player->GetTransform(), femaleMesh, nullptr, skinningBumpShader, 1));
         player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-        player->GetRenderObject()->SetAnimationObject(femaleAnimation);
-        //player->GetRenderObject()->SetTextures(femaleTextures);
-        //player->GetRenderObject()->SetBumpTextures(femaleBumpTextures);
+        player->GetRenderObject()->SetTextures(femaleTextures);
+        player->GetRenderObject()->SetBumpTextures(femaleBumpTextures);
         break;
     }
-    //player->GetRenderObject()->SetBumpTextures(maleBumpTextures);
-
-    //player->SetPlayerMeshes(meshes);
-    //player->SetPlayerTextures(textures);
-    //player->SetPlayerBumpTextures(bumpTextures);
-    //player->SetPlayerAnimations(animations);
-    //player->SetPlayerShaders(shaders);
 
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
@@ -787,6 +709,8 @@ GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
     rock->GetTransform()
         .SetScale(Vector3(3, 3, 3))
         .SetPosition(rock->FindGrid(position));
+
+    rock->SetName("Desert Rock");
 
     rock->SetRenderObject(new RenderObject(&rock->GetTransform(), desertRockMesh, desertRockTex, bumpShader));// todo can change capsule
     rock->GetRenderObject()->SetBumpTexture(desertRockBumpTex);

@@ -52,7 +52,7 @@ int main() {
         //    w->SetWindowPosition(0, 0);
         //}
 
-        w->SetTitle("Train Bob   " + std::to_string(1000.0f * dt));
+        w->SetTitle("Train Bob");
 
         g->UpdateGame(dt);
     }

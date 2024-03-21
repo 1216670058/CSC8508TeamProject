@@ -129,6 +129,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
                 object.SetFloat1(lastFullState.float1);
                 object.SetFloat2(lastFullState.float2);
                 object.SetFloat3(lastFullState.float3);
+                object.SetPosition1(lastFullState.position1);
             }
             else if (object.GetTypeID() == 23) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
@@ -230,6 +231,7 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
             fp->fullState.float1 = object.GetFloat1();
             fp->fullState.float2 = object.GetFloat2();
             fp->fullState.float3 = object.GetFloat3();
+            fp->fullState.position1 = object.GetPosition1();
         }
         else if (object.GetTypeID() == 23) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
