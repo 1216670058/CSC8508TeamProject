@@ -21,6 +21,6 @@
 ## Game Goal
 * Pick up your tool, collect woods and rocks
 * Build rails on train to make the train move further
-* Notice the water level to avoid the train on fire
-* Final goal is the train station
+* Final goal for the railway is the train station
+* Always notice the water level to avoid the train on fire
 * Five levels in total
