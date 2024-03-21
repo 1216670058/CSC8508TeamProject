@@ -106,6 +106,9 @@ namespace NCL::CSC8503 {
             networkObject = newObject;
         }
 
+        void SetName(std::string n) {
+            name = n;
+        }
         const std::string& GetName() const {
             return name;
         }
@@ -202,6 +205,10 @@ namespace NCL::CSC8503 {
             return float3;
         }
 
+        bool ShowInfo() const {
+            return showInfo;
+        }
+
         void SetButton(int index, bool state) {
             buttonStates[index] = state;
         }
@@ -247,6 +254,8 @@ namespace NCL::CSC8503 {
         float float1 = 0.0f;
         float float2 = 0.0f;
         float float3 = 0.0f;
+
+        bool showInfo = false;
 
         Vector3 broadphaseAABB;
 
