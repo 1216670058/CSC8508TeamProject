@@ -114,7 +114,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
             object.GetTransform().SetOrientation(lastFullState.orientation);
 
             if (object.GetTypeID() == 1) {
-                object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+                if(object.GetRenderObject()->GetAnimationObject())object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
                 object.SetSlot(lastFullState.slot);
                 object.SetSlotNum(lastFullState.slotNum);
             }
@@ -216,7 +216,7 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
         fp->fullState.orientation = object.GetTransform().GetOrientation();
 
         if (object.GetTypeID() == 1) {
-            fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
+            if(object.GetRenderObject()->GetAnimationObject()) fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
             fp->fullState.slot = object.GetSlot();
             fp->fullState.slotNum = object.GetSlotNum();
         }
