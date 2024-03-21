@@ -1,8 +1,8 @@
 # CSC8508 
 ## Game Operation
-|  Platform   | Key Settings  |
-|  :----:  | :----:  |
-| PC  | WASD| Character Movement|
+|  Platform   | Keys  | Features|
+|  :----:  | :----:  |:----:  |
+| PC  | WASD | Character Movement|
 |   | R| Put down Objects|
 |   |P| Projection Mode|
 |   |B| Debug Mode|
