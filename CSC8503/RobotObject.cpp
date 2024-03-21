@@ -31,6 +31,11 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 			this->MoveToTree(dt);
 		}
 	);
+	State* MoveToRockState = new State([&](float dt) -> void
+		{
+			this->MoveToRock(dt);
+		}
+	);
 	State* CuttingState = new State([&](float dt) -> void
 		{
 			this->CutTree(dt);
@@ -50,6 +55,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddState(IdleState);
 	stateMachine->AddState(FollowPlayerState);
 	stateMachine->AddState(MoveToTreeState);
+	stateMachine->AddState(MoveToRockState);
 	stateMachine->AddState(CuttingState);
 	stateMachine->AddState(DiggingState);
 	stateMachine->AddState(MoveToPlayerState);
@@ -60,6 +66,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 			if (_player->RobotCut() || _player->RobotDig()) {
 				if (_player->RobotCut()) _player->SetRobotCut(false);
 				if (_player->RobotDig()) _player->SetRobotDig(false);
+				stateID = 1;
 				return true;
 			}
 			else {
@@ -72,8 +79,24 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 		[&]() -> bool
 		{
 			if (cutting && Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
-				counter = 5.0f;
+				treeCounter = 5.0f;
 				nextTree = true;
+				stateID = 2;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(FollowPlayerState, MoveToRockState,
+		[&]() -> bool
+		{
+			if (digging && Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
+				rockCounter = 5.0f;
+				nextRock = true;
+				stateID = 3;
 				return true;
 			}
 			else {
@@ -87,7 +110,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 		{
 			bool flag = treeFound;
 			treeFound = false;
-			if(flag)std::cout << "Cutting" << std::endl;
+			stateID = 4;
 			return flag;
 		}
 	));
@@ -98,9 +121,33 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 			bool flag = treeCut;
 			treeCut = false;
 			if (flag) { 
-				std::cout << "MoveToTree" << std::endl; 
-				counter = 5.0f;
+				stateID = 2;
+				treeCounter = 5.0f;
 				nextTree = true;
+			}
+			return flag;
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(MoveToRockState, DiggingState,
+		[&]() -> bool
+		{
+			bool flag = rockFound;
+			rockFound = false;
+			stateID = 5;
+			return flag;
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(DiggingState, MoveToRockState,
+		[&]() -> bool
+		{
+			bool flag = rockDug;
+			rockDug = false;
+			if (flag) {
+				stateID = 3;
+				rockCounter = 5.0f;
+				nextRock = true;
 			}
 			return flag;
 		}
@@ -112,7 +159,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(KeyCodes::T);
 			moveToPlayer = false;
 			if (flag) {
-				std::cout << "MoveToPlayer" << std::endl;
+				stateID = 6;
 			}
 			return flag;
 		}
@@ -123,7 +170,30 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 		{
 			bool flag = Window::GetKeyboard()->KeyPressed(KeyCodes::T);
 			if (flag) {
-				std::cout << "MoveToPlayer" << std::endl;
+				stateID = 6;
+			}
+			return flag;
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(MoveToRockState, MoveToPlayerState,
+		[&]() -> bool
+		{
+			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			moveToPlayer = false;
+			if (flag) {
+				stateID = 6;
+			}
+			return flag;
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(DiggingState, MoveToPlayerState,
+		[&]() -> bool
+		{
+			bool flag = Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			if (flag) {
+				stateID = 6;
 			}
 			return flag;
 		}
@@ -137,7 +207,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 			if (flag) {
 				cutting = false;
 				digging = false;
-				std::cout << "Found Player" << std::endl;
+				stateID = 0;
 			}
 			return flag;
 		}
@@ -147,6 +217,10 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 void RobotObject::OnCollisionBegin(GameObject* otherObject){
 	if (cutting && otherObject->GetTypeID() == 10086) {
 		treeFound = true;
+		face = (otherObject->GetTransform().GetPosition() - currentPosition);
+	}
+	else if (digging && otherObject->GetTypeID() == 10010) {
+		rockFound = true;
 		face = (otherObject->GetTransform().GetPosition() - currentPosition);
 	}
 }
@@ -162,7 +236,7 @@ void RobotObject::FollowPlayer(float dt) {
 	if (GetGrid(currentPosition).position != GetGrid(playerPosition).position) {
 		nodes.clear();
 		path.Clear();
-		grid->FindPath(transform.GetPosition(), playerPosition, path);
+		grid->FindPath2(transform.GetPosition(), playerPosition, path);
 		while (path.PopWaypoint(destPos))
 		{
 			nodes.push_back(destPos);
@@ -187,8 +261,8 @@ void RobotObject::MoveToTree(float dt) {
 		if (treePosition != transform.GetPosition())
 			nextTree = false;
 	}
-	std::cout << "TreePosition: " << treePosition.x << "," << treePosition.y << "," << treePosition.z << "," << std::endl;
-	grid->FindPath(transform.GetPosition(), treePosition, path);
+	//std::cout << "TreePosition: " << treePosition.x << "," << treePosition.y << "," << treePosition.z << "," << std::endl;
+	grid->FindPath2(transform.GetPosition(), treePosition, path);
 	while (path.PopWaypoint(destPos))
 	{
 		nodes.push_back(destPos);
@@ -202,8 +276,36 @@ void RobotObject::MoveToTree(float dt) {
 		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 		nodes.clear();
 	}
-	counter -= dt;
-	if (counter <= 0) {
+	treeCounter -= dt;
+	if (treeCounter <= 0) {
+		moveToPlayer = true;
+	}
+}
+
+void RobotObject::MoveToRock(float dt) {
+	nodes.clear();
+	path.Clear();
+	if (nextRock) {
+		rockPosition = grid->FindNearestRock(transform.GetPosition());
+		if (rockPosition != transform.GetPosition())
+			nextRock = false;
+	}
+	grid->FindPath2(transform.GetPosition(), rockPosition, path);
+	while (path.PopWaypoint(destPos))
+	{
+		nodes.push_back(destPos);
+	}
+	if (nodes.size() > 1) {
+		Vector3 direction = nodes[1] - nodes[0];
+		direction.Normalise();
+		direction.y = 0;
+		UpdateOrientation(direction);
+		GetPhysicsObject()->AddForce(direction * speed);
+		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+		nodes.clear();
+	}
+	rockCounter -= dt;
+	if (rockCounter <= 0) {
 		moveToPlayer = true;
 	}
 }
@@ -230,7 +332,7 @@ void RobotObject::CutTree(float dt) {
 				}
 			}
 			else {
-				std::cout << "Moving" << std::endl;
+				//std::cout << "Moving" << std::endl;
 				Vector3 direction = closest->GetTransform().GetPosition() - currentPosition;
 				direction.Normalise();
 				direction.y = 0;
@@ -240,30 +342,55 @@ void RobotObject::CutTree(float dt) {
 			}
 		}
 		else {
-			std::cout << "Not Tree" << std::endl;
+			//std::cout << "Not Tree" << std::endl;
 			treeCut = true;
 		}
 	}
 	else {
-		std::cout << "Not Tree" << std::endl;
+		//std::cout << "Not Tree" << std::endl;
 		treeCut = true;
 	}
 }
 
 void RobotObject::DigRock(float dt) {
-	digging = true;
-	nodes.clear();
-	path.Clear();
-	grid->FindPath(transform.GetPosition(), playerPosition, path);
-	while (path.PopWaypoint(destPos))
-	{
-		nodes.push_back(destPos);
+	Ray r = Ray(transform.GetPosition(), face);
+	RayCollision closestCollision;
+	if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
+		GameObject* closest = (GameObject*)closestCollision.node;
+		if (closest->GetTypeID() == 10010) {
+			if (closestCollision.rayDistance < 5.0f) {
+				TutorialGame::GetGame()->GetAudio()->PlayWood();
+				closest->SetFlag1(true);
+				closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.025, 0.025, 0.025));
+				if (closest->GetTransform().GetScale().x < 0.1f) {
+					Vector3 position = FindGrid(closest->GetTransform().GetPosition());
+					int index = position.x / 10 + (position.z / 10) * TutorialGame::GetGame()->GetNavigationGrid()->GetGridWidth();
+					GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
+					n.SetType(0);
+					closest->SetFlag1(false);
+					StoneObject* stone1 = TutorialGame::GetGame()->AddStoneToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
+					TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+					rockDug = true;
+				}
+			}
+			else {
+				//std::cout << "Moving" << std::endl;
+				Vector3 direction = closest->GetTransform().GetPosition() - currentPosition;
+				direction.Normalise();
+				direction.y = 0;
+				UpdateOrientation(direction);
+				GetPhysicsObject()->AddForce(direction * speed);
+				Debug::DrawLine(transform.GetPosition(), closest->GetTransform().GetPosition(), Vector4(1, 1, 0, 1));
+			}
+		}
+		else {
+			//std::cout << "Not Tree" << std::endl;
+			rockDug = true;
+		}
 	}
-	if (nodes.size() >= 2) {
-		Vector3 direction = nodes[1] - nodes[0];
-		direction.Normalise();
-		direction.y = 0;
-		GetPhysicsObject()->AddForce(direction * speed * dt);
+	else {
+		//std::cout << "Not Tree" << std::endl;
+		rockDug = true;
 	}
 }
 
@@ -271,7 +398,7 @@ void RobotObject::MoveToPlayer(float dt) {
 	if (GetGrid(currentPosition).position != GetGrid(playerPosition).position) {
 		nodes.clear();
 		path.Clear();
-		grid->FindPath(transform.GetPosition(), playerPosition, path);
+		grid->FindPath2(transform.GetPosition(), playerPosition, path);
 		while (path.PopWaypoint(destPos))
 		{
 			nodes.push_back(destPos);

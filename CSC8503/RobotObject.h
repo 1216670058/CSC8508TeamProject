@@ -49,10 +49,15 @@ namespace NCL::CSC8503 {
 
 		void OnCollisionBegin(GameObject* otherObject) override;
 
+		int GetStateID() const {
+			return stateID;
+		}
+
 	protected:
 		void Idle(float dt);
 		void FollowPlayer(float dt);
 		void MoveToTree(float dt);
+		void MoveToRock(float dt);
 		void CutTree(float dt);
 		void DigRock(float dt);
 		void MoveToPlayer(float dt);
@@ -64,7 +69,6 @@ namespace NCL::CSC8503 {
 		PlayerObject* _player = nullptr;
 		Vector3 playerPosition;
 		StateMachine* stateMachine;
-		float counter = 0.0f;
 		NavigationGrid* grid;
 		vector<Vector3> nodes;
 
@@ -92,15 +96,24 @@ namespace NCL::CSC8503 {
 		bool pathNotFound = true;
 
 		Vector3 treePosition;
+		Vector3 rockPosition;
+
+		float treeCounter = 0.0f;
+		float rockCounter = 0.0f;
 
 		bool cutting = false;
 		bool digging = false;
 		bool treeFound = false;
+		bool rockFound = false;
 		bool treeCut = false;
+		bool rockDug = false;
 		bool nextTree = false;
+		bool nextRock = false;
 
 		bool moveToPlayer = false;
 		bool foundPlayer = false;
+
+		int stateID = 0;
 
 		int j = 0;
 	};
