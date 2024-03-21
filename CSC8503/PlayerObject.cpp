@@ -505,13 +505,7 @@ bool PlayerObject::CanPlaceRail() {
 }
 
 void PlayerObject::UseRobot() {
-    bool FPressed = false;
-    if (networkObject->GetNetworkID() == 1)
-        FPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F);
-    else
-        FPressed = buttonStates[7];
-
-    if (FPressed) {
+    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F)) {
         if (slot == 2 || slot == 3) {
             Ray r = Ray(transform.GetPosition(), face);
             RayCollision closestCollision;
@@ -520,6 +514,7 @@ void PlayerObject::UseRobot() {
                 if (closest->GetTypeID() == 11 && closestCollision.rayDistance < 5.0f) {
                     TutorialGame::GetGame()->GetAudio()->PlayGet();
                     Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                    TutorialGame::GetGame()->GetRobot()->SetPlayer(this);
                     if (slot == 2) robotDig = true;
                     if (slot == 3) robotCut = true;
                 }
@@ -535,10 +530,16 @@ void PlayerObject::UseRobot() {
 }
 
 void PlayerObject::RunFast(float dt) {
+    bool shiftPressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        shiftPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SHIFT);
+    else
+        shiftPressed = buttonStates[8];
+
     if (coolDown < 2.0f) {
         coolDown += dt;
     }
-    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SHIFT)&&coolDown>=2.0f) {
+    if (shiftPressed && coolDown>=2.0f) {
         running = true;
         coolDown = 0.0f;
         runPower = 0.11f;

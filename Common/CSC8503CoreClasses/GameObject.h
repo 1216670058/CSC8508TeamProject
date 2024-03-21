@@ -250,7 +250,7 @@ namespace NCL::CSC8503 {
 
         Vector3 broadphaseAABB;
 
-        bool buttonStates[8];
+        bool buttonStates[9];
     };
 }
 

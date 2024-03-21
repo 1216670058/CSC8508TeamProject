@@ -384,6 +384,9 @@ void NetworkedGame::UpdateAsClient(float dt) {
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F))
         newPacket.buttonstates[7] = 1;
 
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::SHIFT))
+        newPacket.buttonstates[8] = 1;
+
     thisClient->SendPacket(newPacket);
 
     thisClient->UpdateClient();

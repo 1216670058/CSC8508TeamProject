@@ -1130,6 +1130,8 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
     moose->GetPhysicsObject()->SetInverseMass(1);
     moose->GetPhysicsObject()->InitCubeInertia();
 
+    moose->SetNetworkObject(new NetworkObject(*moose, 10));
+
     world->AddGameObject(moose);
 
     GameObject* detSphere = AddDetectionSphereToWorld(position, 25.0f, moose);
@@ -1138,7 +1140,7 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
 }
 
 RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
-    RobotObject* robot = new RobotObject(navGrid, player, position);
+    RobotObject* robot = new RobotObject(navGrid, position);
     AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     robot->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -1155,6 +1157,8 @@ RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
     robot->SetPhysicsObject(new PhysicsObject(&robot->GetTransform(), robot->GetBoundingVolume()));
     robot->GetPhysicsObject()->SetInverseMass(1);
     robot->GetPhysicsObject()->InitCubeInertia();
+
+    robot->SetNetworkObject(new NetworkObject(*robot, 11));
 
     world->AddGameObject(robot);
 

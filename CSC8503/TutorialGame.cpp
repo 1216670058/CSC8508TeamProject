@@ -106,7 +106,6 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 	}
 
-
 	DrawPad();
 	TutorialGame::UpdateKeys();
 
