@@ -26,6 +26,7 @@ namespace NCL {
 			float          float1;
 			float          float2;
 			float          float3;
+			Vector3        position1;
 		};
 	}
 }

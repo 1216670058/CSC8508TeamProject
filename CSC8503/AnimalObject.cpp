@@ -10,6 +10,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
     this->grid = navGrid;
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
+    this->name = "Moose";
 
     GridNode n = grid->GetGridNode(rand() % this->gridSize);
     while (n.type != 0 || !Pathfind(n.position) || (n.position - currentPos).LengthSquared() > 6000.0f) {

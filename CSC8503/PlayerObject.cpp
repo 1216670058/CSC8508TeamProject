@@ -19,6 +19,8 @@ void PlayerObject::Update(float dt) {
         cutting = false;
         digging = false;
 
+        showDebug = TutorialGame::GetGame()->ShowDebug();
+
         CutTree();
         DigRock();
         ScoopWater();
@@ -26,6 +28,7 @@ void PlayerObject::Update(float dt) {
         BuildBridge();
         LoadMaterial();
         UseRobot();
+        RunFast(dt);
 
         //Vector3 position = transform.GetPosition();
         //Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
@@ -169,7 +172,7 @@ void PlayerObject::PlayerMovement(float dt) {
     }
 
     Quaternion* qq;
-    speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+    if(!running)speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
     //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
 
@@ -257,7 +260,7 @@ void PlayerObject::CutTree() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
                 TutorialGame::GetGame()->GetAudio()->PlayWood();
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 closest->SetFlag1(true);
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
@@ -280,11 +283,11 @@ void PlayerObject::CutTree() {
                 }
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
         else {
-            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
         }
     }
     else
@@ -310,7 +313,7 @@ void PlayerObject::DigRock() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10010 && closestCollision.rayDistance < 5.0f) {
                 TutorialGame::GetGame()->GetAudio()->PlayIron();
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 closest->SetFlag1(true);
                 closest->GetTransform().SetScale(closest->GetTransform().GetScale() - Vector3(0.05, 0.05, 0.05));
                 if (closest->GetTransform().GetScale().x < 0.1f) {
@@ -333,11 +336,11 @@ void PlayerObject::DigRock() {
                 }
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
         else {
-            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
         }
     }
     else
@@ -361,16 +364,16 @@ void PlayerObject::ScoopWater() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
                 TutorialGame::GetGame()->GetAudio()->PlayWaterin();
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
                 TutorialGame::GetGame()->GetBucket()->SetWater(true);
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
         else {
-            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
         }
     }
     else
@@ -394,7 +397,7 @@ void PlayerObject::UseWater() {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && TutorialGame::GetGame()->GetBucket()->GetWater() == true) {
                 TutorialGame::GetGame()->GetAudio()->PlayWaterout();
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 WaterCarriage* waterCarriage = (WaterCarriage*)closest;
                 waterCarriage->SetCarriageWater(100.0f);
                 TutorialGame::GetGame()->GetTrain()->SetOnFire(false);
@@ -403,11 +406,11 @@ void PlayerObject::UseWater() {
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
         else {
-            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
         }
     }
 }
@@ -427,7 +430,7 @@ void PlayerObject::BuildBridge() {
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
             if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 bridgePosition = closest->GetTransform().GetPosition();
                 if (TutorialGame::GetGame()->IsNetworked()) {
                     worldID1 = closest->GetWorldID();
@@ -441,11 +444,11 @@ void PlayerObject::BuildBridge() {
                 }
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
         else {
-            Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
         }
     }
 }
@@ -465,15 +468,15 @@ void PlayerObject::LoadMaterial() {
                 GameObject* closest = (GameObject*)closestCollision.node;
                 if (closest->GetTypeID() == 21 && closestCollision.rayDistance < 5.0f) {
                     TutorialGame::GetGame()->GetAudio()->PlayGet();
-                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                    if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                     carriage = (MaterialCarriage*)closest;
                 }
                 else {
-                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                    if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
                 }
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
     }
@@ -497,20 +500,14 @@ bool PlayerObject::CanPlaceRail() {
             }
         }
     }
-    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - position).Length() < 14)
+    if ((TutorialGame::GetGame()->GetTrain()->GetLastPath() - Vector3(0, 4.5f, 0) - position).Length() < 14)
         isPath = true;
 
     return canConnect && isPath && notRail;
 }
 
 void PlayerObject::UseRobot() {
-    bool FPressed = false;
-    if (networkObject->GetNetworkID() == 1)
-        FPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F);
-    else
-        FPressed = buttonStates[7];
-
-    if (FPressed) {
+    if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::F)) {
         if (slot == 2 || slot == 3) {
             Ray r = Ray(transform.GetPosition(), face);
             RayCollision closestCollision;
@@ -518,17 +515,50 @@ void PlayerObject::UseRobot() {
                 GameObject* closest = (GameObject*)closestCollision.node;
                 if (closest->GetTypeID() == 11 && closestCollision.rayDistance < 5.0f) {
                     TutorialGame::GetGame()->GetAudio()->PlayGet();
-                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                    if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
+                    TutorialGame::GetGame()->GetRobot()->SetPlayer(this);
                     if (slot == 2) robotDig = true;
                     if (slot == 3) robotCut = true;
                 }
                 else {
-                    Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                    if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
                 }
             }
             else {
-                Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+                if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
             }
         }
+    }
+}
+
+void PlayerObject::RunFast(float dt) {
+    bool shiftPressed = false;
+    if (networkObject->GetNetworkID() == 1)
+        shiftPressed = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::SHIFT);
+    else
+        shiftPressed = buttonStates[8];
+
+    if (coolDown < 2.0f) {
+        coolDown += dt;
+    }
+    if (shiftPressed && coolDown>=2.0f) {
+        running = true;
+        coolDown = 0.0f;
+        runPower = 0.11f;
+    }
+    if (running) {
+        if (runPower <= 0) {
+            running = false;
+            speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+            physicsObject->SetRealDamping(0.962);
+        }
+        if (runPower > 0 && runPower < 0.05f) {
+            speed = TutorialGame::GetGame()->IsNetworked() ? 50 : 50;
+            physicsObject->SetRealDamping(0.825);
+        }
+        else {
+            speed = TutorialGame::GetGame()->IsNetworked() ? 2000 : 2000; 
+        }
+        runPower -= dt;
     }
 }

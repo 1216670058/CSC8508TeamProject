@@ -182,6 +182,10 @@ void NetworkedGame::UpdateKeys() {
         if (Window::GetKeyboard()->KeyPressed(KeyCodes::E)) {
             playerUI = !playerUI;
         }
+
+        if (Window::GetKeyboard()->KeyPressed(KeyCodes::B)) {
+            showDebug = !showDebug;
+        }
     }
 }
 
@@ -349,6 +353,64 @@ void NetworkedGame::UpdateAsServer(float dt) {
         }
     }
 
+    if (thisServer->GetRemovePlayer()) {
+        switch (thisServer->GetRemovePlayer()) {
+        case 2:
+            world->RemoveGameObject(player2);
+            playerRemoved = true;
+            removedPlayerNetworkID = 2;
+            removePlayerTag = 9;
+            thisServer->SetRemovePlayer(0);
+            break;
+        case 3:
+            world->RemoveGameObject(player3);
+            playerRemoved = true;
+            removedPlayerNetworkID = 3;
+            removePlayerTag = 9;
+            thisServer->SetRemovePlayer(0);
+            break;
+        case 4:
+            world->RemoveGameObject(player4);
+            playerRemoved = true;
+            removedPlayerNetworkID = 4;
+            removePlayerTag = 9;
+            thisServer->SetRemovePlayer(0);
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (showDebug) {
+        if (thisServer->ConnectDebug()) {
+            connectCounter = 3.0f;
+            showConnect = true;
+            thisServer->SetConnectDebug(false);
+        }
+        if (thisServer->DisconnectDebug()) {
+            disconnectCounter = 3.0f;
+            showDisconnect = true;
+            thisServer->SetDisconnectDebug(false);
+        }
+        if (showConnect) {
+            connectCounter -= dt;
+            if (connectCounter > 0) {
+                Debug::Print("Server: New client connected", Vector2(0, 25), Debug::BLUE);
+            }
+            else {
+                showConnect = false;
+            }
+        }
+        if (showDisconnect) {
+            disconnectCounter -= dt;
+            if (disconnectCounter > 0) {
+                Debug::Print("Server: A client has disconnected", Vector2(0, 30), Debug::BLUE);
+            }
+            else {
+                showDisconnect = false;
+            }
+        }
+    }
 
     //std::cout << "Player1: " << player->GetTransform().GetPosition().x << " " <<
     //	player->GetTransform().GetPosition().y << " " <<
@@ -383,6 +445,9 @@ void NetworkedGame::UpdateAsClient(float dt) {
 
     if (Window::GetKeyboard()->KeyPressed(KeyCodes::F))
         newPacket.buttonstates[7] = 1;
+
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::SHIFT))
+        newPacket.buttonstates[8] = 1;
 
     thisClient->SendPacket(newPacket);
 
@@ -423,6 +488,18 @@ void NetworkedGame::UpdateAsClient(float dt) {
         SpawnGameObjects();
 
     UpdateGameObjects();
+
+    if (showDebug) {
+        if (showConnect) {
+            connectCounter -= dt;
+            if (connectCounter > 0) {
+                Debug::Print("Client: Connected to server", Vector2(0, 25), Debug::BLUE);
+            }
+            else {
+                showConnect = false;
+            }
+        }
+    }
 
     //std::cout << "TrainLastFullID: " << train->GetNetworkObject()->GetLastFullState().GetStateID() << std::endl;
     //if (player)
@@ -514,6 +591,14 @@ void NetworkedGame::BroadcastSnapshot(bool deltaFrame) {
         updatePacket.tag = bridgeBuiltTag;
         thisServer->SendGlobalPacket(updatePacket);
         bridgeBuilt = false;
+    }
+    if (playerRemoved) {
+        UpdatePacket updatePacket;
+
+        updatePacket.networkID1 = removedPlayerNetworkID;
+        updatePacket.tag = removePlayerTag;
+        thisServer->SendGlobalPacket(updatePacket);
+        playerRemoved = false;
     }
 }
 
@@ -733,6 +818,10 @@ void NetworkedGame::UpdateGameObjects() {
         world->RemoveGameObject(waterWorldID);
         bridgeBuiltTag = 0;
     }
+    else if (removePlayerTag == 9) {
+        world->RemoveGameObject(removedPlankNetworkID);
+        removePlayerTag = 0;
+    }
 }
 
 void NetworkedGame::StartLevel() {
@@ -809,12 +898,18 @@ void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source) {
                 bridgeBuiltTag = updatePacket->tag;
                 waterWorldID = updatePacket->worldID;
             }
+            else if (updatePacket->tag == 9) {
+                removePlayerTag = updatePacket->tag;
+                removedPlayerNetworkID = updatePacket->networkID1;
+            }
         }
         else if (payload->type == Client_Num) {
             NumPacket* numPacket = (NumPacket*)payload;
 
             spawnNum = numPacket->num;
             spawn = true;
+            showConnect = true;
+            connectCounter = 3.0f;
         }
         else if (payload->type == Win_Lose) {
             BoolPacket* losePacket = (BoolPacket*)payload;

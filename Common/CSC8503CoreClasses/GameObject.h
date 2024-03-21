@@ -106,6 +106,9 @@ namespace NCL::CSC8503 {
             networkObject = newObject;
         }
 
+        void SetName(std::string n) {
+            name = n;
+        }
         const std::string& GetName() const {
             return name;
         }
@@ -202,11 +205,22 @@ namespace NCL::CSC8503 {
             return float3;
         }
 
+        Vector3 GetPosition1() const {
+            return position1;
+        }
+        void SetPosition1(Vector3 p) {
+            position1 = p;
+        }
+
         void SetButton(int index, bool state) {
             buttonStates[index] = state;
         }
         bool GetButton(int index) const {
             return buttonStates[index];
+        }
+
+        bool ShowDebug() const {
+            return showDebug;
         }
 
         double EuclideanDistance(float x1, float y1, float x2, float y2);
@@ -244,13 +258,17 @@ namespace NCL::CSC8503 {
         bool flag4 = false;
         bool flag5 = false;
 
+        bool showDebug = false;
+
         float float1 = 0.0f;
         float float2 = 0.0f;
         float float3 = 0.0f;
 
+        Vector3 position1;
+
         Vector3 broadphaseAABB;
 
-        bool buttonStates[8];
+        bool buttonStates[9];
     };
 }
 

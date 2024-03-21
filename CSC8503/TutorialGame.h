@@ -88,6 +88,10 @@ namespace NCL {
                 return navGrid;
             }
 
+			bool ShowDebug() const {
+				return showDebug;
+			}
+
             void ResetPlaytime() { playtime = 0.0f; };
 
             PlankObject* AddPlankToWorld(const Vector3& position, bool network = false, int id = 0);
@@ -206,6 +210,8 @@ namespace NCL {
 			int level = 1;
 			bool success = false;
 			bool failure = false;
+
+			bool showDebug = false;
 
 			float		forceMagnitude;
 

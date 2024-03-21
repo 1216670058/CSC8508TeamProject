@@ -5,6 +5,8 @@
 #include "TextureLoader.h"
 #include "MshLoader.h"
 #include "Assets.h"
+#include "TutorialGame.h"
+
 using namespace NCL;
 using namespace Rendering;
 using namespace CSC8503;
@@ -14,53 +16,56 @@ using namespace CSC8503;
 Matrix4 biasMatrix = Matrix4::Translation(Vector3(0.5f, 0.5f, 0.5f)) * Matrix4::Scale(Vector3(0.5f, 0.5f, 0.5f));
 
 GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetWindow()), gameWorld(world) {
-	std::cout << std::endl << "--------Initialising Renderer--------" << std::endl;
-	ui = new UI(&world);
+    std::cout << std::endl << "--------Initialising Renderer--------" << std::endl;
+    ui = new UI(&world);
 
-	std::cout << std::endl << "--------Loading Shaders--------" << std::endl;
-	debugShader = (OGLShader*)LoadShader("debug.vert", "debug.frag");
-	shadowShader = (OGLShader*)LoadShader("shadow.vert", "shadow.frag");
-	skinningShadowShader = (OGLShader*)LoadShader("SkinningShadow.vert", "shadow.frag");
-	pointLightShader = (OGLShader*)LoadShader("PointLight.vert", "PointLight.frag");
-	processShader = (OGLShader*)LoadShader("process.vert", "process.frag");
-	processCombineShader = (OGLShader*)LoadShader("processCombine.vert", "processCombine.frag");
-	combineShader = (OGLShader*)LoadShader("combine.vert", "combine.frag");
-	particleShader = (OGLShader*)LoadShader("particle.vert", "particle.frag");
-	particle = new ParticleGenerator(particleShader, 500);
-	particle->texture = SOIL_load_OGL_texture((Assets::TEXTUREDIR + "particle.png").c_str(),
-		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+    std::cout << std::endl << "--------Loading Shaders--------" << std::endl;
+    debugShader = (OGLShader*)LoadShader("debug.vert", "debug.frag");
+    shadowShader = (OGLShader*)LoadShader("shadow.vert", "shadow.frag");
+    skinningShadowShader = (OGLShader*)LoadShader("SkinningShadow.vert", "shadow.frag");
+    pointLightShader = (OGLShader*)LoadShader("PointLight.vert", "PointLight.frag");
+    processShader = (OGLShader*)LoadShader("process.vert", "process.frag");
+    processCombineShader = (OGLShader*)LoadShader("processCombine.vert", "processCombine.frag");
+    combineShader = (OGLShader*)LoadShader("combine.vert", "combine.frag");
+    particleShader = (OGLShader*)LoadShader("particle.vert", "particle.frag");
+    particle = new ParticleGenerator(particleShader, 500);
+    particle->texture = SOIL_load_OGL_texture((Assets::TEXTUREDIR + "particle.png").c_str(),
+        SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
 
-	InitBuffers();
+    InitBuffers();
 
-	isNight = false;
+    isNight = false;
 
-	//Set up the light properties
+    //Set up the light properties
 
-	std::cout << std::endl << "--------Initialising Lights--------" << std::endl;
-	sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(2.0f, 2.0f, 2.0f, 1.0f), 1000.0f);
-	redstoneLight1 = new Light(Vector3(10, 20, 0), Vector4(1, 1, 0, 1), 50.0f);
-	redstoneLight2 = new Light(Vector3(30, 20, 40), Vector4(1, 0, 0, 1), 30.0f);
-	redstoneLight3 = new Light(Vector3(60, 20, 20), Vector4(0, 1, 0, 1), 40.0f);
-	sphere = LoadMesh("sphere.msh");
-	quad = OGLMesh::GenerateQuad();
+    std::cout << std::endl << "--------Initialising Lights--------" << std::endl;
+    sunLight = new Light(Vector3(-200.0f, 100.0f, -200.0f), Vector4(2.0f, 2.0f, 2.0f, 1.0f), 1000.0f);
+    redstoneLight1 = new Light(Vector3(10, 20, 0), Vector4(1, 1, 0, 1), 50.0f);
+    redstoneLight2 = new Light(Vector3(280, 6, 45), Vector4(1, 1, 0, 10), 30.0f);
+    redstoneLight3 = new Light(Vector3(60, 20, 20), Vector4(0, 1, 0, 1), 40.0f);
+    playerLight = new Light(Vector3(20, 20, 20), Vector4(1, 1, 0, 10), 40.0f);
+    trainLight = new Light(Vector3(20, 20, 20), Vector4(1, 1, 0, 10), 40.0f);
 
-	glGenVertexArrays(1, &lineVAO);
-	glGenVertexArrays(1, &textVAO);
+    sphere = LoadMesh("sphere.msh");
+    quad = OGLMesh::GenerateQuad();
 
-	glGenBuffers(1, &lineVertVBO);
-	glGenBuffers(1, &textVertVBO);
-	glGenBuffers(1, &textColourVBO);
-	glGenBuffers(1, &textTexVBO);
+    glGenVertexArrays(1, &lineVAO);
+    glGenVertexArrays(1, &textVAO);
 
-	Debug::CreateDebugFont("PressStart2P.fnt", *LoadTexture("PressStart2P.png"));
+    glGenBuffers(1, &lineVertVBO);
+    glGenBuffers(1, &textVertVBO);
+    glGenBuffers(1, &textColourVBO);
+    glGenBuffers(1, &textTexVBO);
 
-	/*SetDebugStringBufferSizes(10000);
-	SetDebugLineBufferSizes(1000);*/
+    Debug::CreateDebugFont("PressStart2P.fnt", *LoadTexture("PressStart2P.png"));
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    /*SetDebugStringBufferSizes(10000);
+    SetDebugLineBufferSizes(1000);*/
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 GameTechRenderer::~GameTechRenderer() {
@@ -86,6 +91,13 @@ GameTechRenderer::~GameTechRenderer() {
 	glDeleteFramebuffers(1, &skyboxFBO);
 	glDeleteFramebuffers(1, &combinedFBO);
 	glDeleteFramebuffers(1, &processFBO);
+}
+
+void GameTechRenderer::Update(float dt) {
+    if (TutorialGame::GetGame()->GetPlayer())
+        playerLight->SetPosition(TutorialGame::GetGame()->GetPlayer()->GetTransform().GetPosition() + Vector3(0, 10, 0));
+    if(TutorialGame::GetGame()->GetTrain())
+        trainLight->SetPosition(TutorialGame::GetGame()->GetTrain()->GetTransform().GetPosition() + Vector3(0, 10, 0));
 }
 
 void GameTechRenderer::InitBuffers() {
@@ -772,14 +784,17 @@ void GameTechRenderer::DrawPointLights() {
 	glUniformMatrix4fv(projLocation, 1, false, (float*)&projMatrix);
 	glUniformMatrix4fv(viewLocation, 1, false, (float*)&viewMatrix);
 
-	SetShaderLight(*redstoneLight1);
-	Draw(sphere);
+    SetShaderLight(*playerLight);
+    Draw(sphere);
 
-	SetShaderLight(*redstoneLight2);
-	Draw(sphere);
+    SetShaderLight(*trainLight);
+    Draw(sphere); 
 
-	SetShaderLight(*redstoneLight3);
-	Draw(sphere);
+    SetShaderLight(*redstoneLight2);
+    Draw(sphere);
+    //
+    //SetShaderLight(*redstoneLight3);
+    //Draw(sphere);
 }
 
 void GameTechRenderer::DrawParticle()

@@ -18,5 +18,6 @@ void main()
     TexCoords = texCoord;
     ParticleColor = color;
     //gl_Position = modelMatrix*viewMatrix*projMatrix * vec4((position * scale) + offset, 1.0);
-    gl_Position = modelMatrix*viewMatrix*projMatrix * vec4(position, 1.0);
+    //gl_Position = modelMatrix*viewMatrix*projMatrix * vec4(position, 1.0);
+    gl_Position = projMatrix * viewMatrix * modelMatrix * vec4((position + offset) * scale, 1.0);
 }

@@ -50,8 +50,10 @@ namespace NCL {
 			~NavigationGrid();
 
 			bool FindPath(const Vector3& from, const Vector3& to, NavigationPath& outPath) override;
+			bool FindPath2(const Vector3& from, const Vector3& to, NavigationPath& outPath);
 			bool FindPath(const Vector3& from, const Vector3& to, float& outF);
 			Vector3 FindNearestTree(const Vector3& position);
+			Vector3 FindNearestRock(const Vector3& position);
 
 			GridNode& GetGridNode(int index) const {
 				return allNodes[index];

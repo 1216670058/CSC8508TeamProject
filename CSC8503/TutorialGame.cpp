@@ -235,6 +235,10 @@ void TutorialGame::UpdateKeys() {
 		if (Window::GetKeyboard()->KeyPressed(KeyCodes::P)) {
 			usePad = !usePad;
 		}
+    
+    if (Window::GetKeyboard()->KeyPressed(KeyCodes::B)) {
+			showDebug = !showDebug;
+		}
 
 		if (Window::GetKeyboard()->KeyPressed(KeyCodes::F9)) {
 			cameraMode = 1;
