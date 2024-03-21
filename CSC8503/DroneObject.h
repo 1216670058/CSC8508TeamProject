@@ -46,10 +46,8 @@ namespace NCL::CSC8503 {
 
 		BehaviourSequence* patrolSequence;
 		BehaviourAction* moveOnPatrol;
-		//BehaviourAction* pathfindForPatrol;
 
 		bool itemDetected = false;
-		//bool itemDetectedAlready = false;
 		GameObject* item = nullptr;
 	};
 }

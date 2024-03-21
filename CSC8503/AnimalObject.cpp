@@ -56,8 +56,6 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
         Vector3 direction = (currentPos - threat->GetTransform().GetPosition()).Normalised();
         direction = Vector3(direction.x, 0, direction.z);
         GetPhysicsObject()->SetLinearVelocity(direction * speed);
-        //physicsObject->SetRealDamping(0.962f);
-        //physicsObject->AddForceAtPosition(direction * speed * 5, transform.GetPosition());
 
         float angle = atan2(-direction.x, -direction.z);
         float angleDegrees = Maths::RadiansToDegrees(angle);
@@ -119,7 +117,7 @@ void AnimalObject::Update(float dt) {
 
     bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());
     if (shouldRespawn) {
-        std::cout << "animal respawning\n";
+        //std::cout << "animal respawning\n";
         GetTransform().SetPosition(startingPos);
         currentPos = startingPos;
     }
@@ -172,17 +170,3 @@ void AnimalObject::StopDetectThreat(GameObject* object) {
         threatDetected = false;
     }
 }
-
-/*bool AnimalObject::PosNotChanging() {
-    float speed = GetPhysicsObject()->GetLinearVelocity().LengthSquared();
-    std::cout << speed << std::endl;
-    
-    if (speed < 90) notMovingCounter++;
-    else notMovingCounter = 0;
-
-    if (notMovingCounter > 4) {
-        std::cout << "NOT MOVING REGISTERED\n";
-        return true;
-    }
-    return false;
-}*/

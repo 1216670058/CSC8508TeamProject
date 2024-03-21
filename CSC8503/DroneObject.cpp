@@ -31,7 +31,6 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 
     moveAwayPlayer = new BehaviourAction("Move Away Player", [&](float dt, BehaviourState state)->BehaviourState {
         // always ongoing, success for error
-        // same code as animal scared state, clean up + make function
         wanderPathNodes.clear();
         float speed = 20.0f;
         Vector3 direction = (currentPos - threat->GetTransform().GetPosition()).Normalised();
@@ -60,11 +59,11 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
         // ongoing until item reached, then success
 
         if (wanderPathNodes.empty()) {
-            std::cout << "pathfind error\n";
+            //std::cout << "pathfind error\n";
 
             bool pf = Pathfind(item->GetTransform().GetPosition()); // if item not already pathfound to
             if (!pf) {
-                std::cout << "Pathfind error 2\n";
+                std::cout << "Pathfind error\n";
             }
         }
 
@@ -89,8 +88,7 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
     stealItem = new BehaviourAction("Steal Item", [&](float dt, BehaviourState state)->BehaviourState {
         // fail after stealing (to continue root selector), success for error
         //itemDetected = false;
-        std::cout << "item stolen\n";
-        //world->RemoveGameObject(item, true);
+        //std::cout << "item stolen\n";
         item->SetActive(false);
         item->GetTransform().SetPosition(Vector3(0, -20, 0));
         item->GetPhysicsObject()->SetInverseMass(0);
@@ -103,7 +101,6 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 
     moveOnPatrol = new BehaviourAction("Move On Patrol", [&](float dt, BehaviourState state)->BehaviourState {
         // ongoing, success for error
-        // same code as animal wander state, clean up + make function
         GridNode n;
         if (wanderPathNodes.empty()) {
             n = this->grid->GetGridNode(rand() % this->gridSize);
@@ -134,12 +131,6 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
         }
     );
 
-    /*pathfindForPatrol = new BehaviourAction("Pathfind For Patrol", [&](float dt, BehaviourState state)->BehaviourState {
-        // always ongoing, success for error
-        return Ongoing;
-        }
-    );*/
-
 
     playerSequence = new BehaviourSequence("Player Sequence");  // ongoing if player detected, fail if not, success=error
     playerSequence->AddChild(detectPlayer);
@@ -152,7 +143,6 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 
     patrolSequence = new BehaviourSequence("Patrol Sequence");  // always ongoing, success=error
     patrolSequence->AddChild(moveOnPatrol);
-    //patrolSequence->AddChild(pathfindForPatrol);
 
     rootSelector = new BehaviourSelector("Root Selector");  // always ongoing, success=error
     rootSelector->AddChild(playerSequence);
@@ -174,9 +164,9 @@ void DroneObject::Update(float dt) {
 
     currentPos = GetTransform().GetPosition();
 
-    bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());
+    bool shouldRespawn = !grid->CheckInGrid(currentPos);
     if (shouldRespawn) {
-        std::cout << "drone respawning\n";
+        //std::cout << "drone respawning\n";
         GetTransform().SetPosition(startingPos);
         currentPos = startingPos;
     }
@@ -184,11 +174,11 @@ void DroneObject::Update(float dt) {
     if (currentState == Ongoing || currentState == Success) currentState = rootSelector->Execute(dt);   // root selector - do until succeed/ongoing
     if (currentState == Success) std::cout << "Behaviour Tree Error\n";    // error
 
-    if (wanderPathNodes.empty()) return;
+    /*if (wanderPathNodes.empty()) return;
     for (int i = 0; i < wanderPathNodes.size() - 1; i++)
     {
         Debug::DrawLine(wanderPathNodes[i] + Vector3(0, 1, 0), wanderPathNodes[i + 1] + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
-    }
+    }*/
 }
 
 void DroneObject::DetectThreat(GameObject* object) {
