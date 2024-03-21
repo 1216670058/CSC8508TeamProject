@@ -13,6 +13,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, Vector3 initialPosition) : Gam
 	player = nullptr;
 	typeID = 11;
 	timer = 0;
+	name = "Robot";
 
 	stateMachine = new StateMachine();
 
@@ -268,7 +269,7 @@ void RobotObject::FollowPlayer(float dt) {
 			direction.y = 0;
 			UpdateOrientation(direction);
 			GetPhysicsObject()->AddForce(direction * speed);
-			Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+			if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 			nodes.clear();
 		}
 	}
@@ -294,7 +295,7 @@ void RobotObject::MoveToTree(float dt) {
 		direction.y = 0;
 		UpdateOrientation(direction);
 		GetPhysicsObject()->AddForce(direction * speed);
-		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+		if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 		nodes.clear();
 	}
 
@@ -323,7 +324,7 @@ void RobotObject::MoveToRock(float dt) {
 		direction.y = 0;
 		UpdateOrientation(direction);
 		GetPhysicsObject()->AddForce(direction * speed);
-		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+		if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 		nodes.clear();
 	}
 
@@ -371,16 +372,14 @@ void RobotObject::CutTree(float dt) {
 				direction.y = 0;
 				UpdateOrientation(direction);
 				GetPhysicsObject()->AddForce(direction * speed);
-				Debug::DrawLine(transform.GetPosition(), closest->GetTransform().GetPosition(), Vector4(1, 1, 0, 1));
+				if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), closest->GetTransform().GetPosition(), Vector4(1, 1, 0, 1));
 			}
 		}
 		else {
-			//std::cout << "Not Tree" << std::endl;
 			treeCut = true;
 		}
 	}
 	else {
-		//std::cout << "Not Tree" << std::endl;
 		treeCut = true;
 	}
 }
@@ -417,22 +416,19 @@ void RobotObject::DigRock(float dt) {
 				}
 			}
 			else {
-				//std::cout << "Moving" << std::endl;
 				Vector3 direction = closest->GetTransform().GetPosition() - currentPosition;
 				direction.Normalise();
 				direction.y = 0;
 				UpdateOrientation(direction);
 				GetPhysicsObject()->AddForce(direction * speed);
-				Debug::DrawLine(transform.GetPosition(), closest->GetTransform().GetPosition(), Vector4(1, 1, 0, 1));
+				if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), closest->GetTransform().GetPosition(), Vector4(1, 1, 0, 1));
 			}
 		}
 		else {
-			//std::cout << "Not Tree" << std::endl;
 			rockDug = true;
 		}
 	}
 	else {
-		//std::cout << "Not Tree" << std::endl;
 		rockDug = true;
 	}
 }
@@ -452,7 +448,7 @@ void RobotObject::MoveToPlayer(float dt) {
 			direction.y = 0;
 			UpdateOrientation(direction);
 			GetPhysicsObject()->AddForce(direction * speed);
-			Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
+			if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 			nodes.clear();
 		}
 	}

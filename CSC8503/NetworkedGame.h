@@ -96,6 +96,12 @@ namespace NCL {
             void SetBuildBridgeFlag(bool f) {
                 bridgeBuilt = f;
             }
+            bool GetRemovePlayerFlag() const {
+                return playerRemoved;
+            }
+            void SetRemovedPlayerFlag(bool f) {
+                playerRemoved = f;
+            }
 
             void SetTreeCutTag(int t) {
                 treeCutTag = t;
@@ -148,6 +154,20 @@ namespace NCL {
                 waterWorldID = id;
             }
 
+            void SetPlayerRemovedTag(int t) {
+                removePlayerTag = t;
+            }
+            void SetRemovedPlayerNetworkID(int id) {
+                removedPlayerNetworkID = id;
+            }
+
+            float SetConnectCounter(float c) {
+                connectCounter = c;
+            }
+            float SetDisConnectCounter(float c) {
+                disconnectCounter = c;
+            }
+
             static NetworkedGame* GetNetworkedGame() {
                 return networkInstance;
             };
@@ -197,6 +217,7 @@ namespace NCL {
             bool railProduced = false;
             bool updateRail = false;
             bool bridgeBuilt = false;
+            bool playerRemoved = false;
 
             int treeCutTag = 0;
             int plankNetworkID;
@@ -223,8 +244,17 @@ namespace NCL {
             int bridgeBuiltTag = 0;
             int waterWorldID;
 
+            int removePlayerTag = 0;
+            int removedPlayerNetworkID = 0;
+
             int removeObjectTag = 0;
             vector<int> removedObjectNetworkID;
+
+            bool showConnect;
+            bool showDisconnect;
+
+            float connectCounter = 0.0f;
+            float disconnectCounter = 0.0f;
         };
     }
 }

@@ -55,6 +55,7 @@ void TrainObject::Update(float dt) {
         if (path[path.size() - 1] == finalPath)
             path.push_back(finishPath);
         Vector3 target = path[0];
+        position1 = target;
         direction = (target - this->GetTransform().GetPosition());
         direction = Vector3(direction.x, 0, direction.z);
         force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
@@ -80,6 +81,11 @@ void TrainObject::Update(float dt) {
             physicsObject->SetLinearVelocity(Vector3());
             path.erase(path.begin());
         }
+
+        if (showDebug) {
+            Debug::Print("Train Position: " + std::to_string(transform.GetPosition().x) + " " + std::to_string(transform.GetPosition().y) + " " + std::to_string(transform.GetPosition().z), Vector2(0, 15), Debug::BLUE);
+            Debug::Print("Current Path: " + std::to_string(target.x) + " " + std::to_string(target.y) + " " + std::to_string(target.z), Vector2(0, 20), Debug::BLUE);
+        }
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
@@ -96,6 +102,8 @@ void TrainObject::Update(float dt) {
         else
             TutorialGame::GetGame()->SetFailure(true);
     }
+
+    showDebug = TutorialGame::GetGame()->ShowDebug();
 }
 
 void TrainObject::InitPaths(int level) {
