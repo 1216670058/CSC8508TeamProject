@@ -124,6 +124,7 @@ bool NavigationGrid::FindPath(const Vector3 &from, const Vector3 &to, Navigation
             GridNode *node = endNode;
             while (node != nullptr) {
                 outPath.PushWaypoint(node->position);
+                outPath.IncreaseCostBy(node->f);
                 node = node->parent;
             }
             return true;

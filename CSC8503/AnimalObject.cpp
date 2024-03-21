@@ -138,6 +138,8 @@ bool AnimalObject::Pathfind(Vector3 targetPos) { // pathfinds to target position
     NavigationPath outPath;
     bool foundPath = grid->FindPath(currentPos, targetPos, outPath);
 
+    // MAKE IT SO IF CANT FIND PATH / ANIMAL STUCK, THEN RESPAWN
+
     Vector3 pos;
     while (outPath.PopWaypoint(pos)) {  // converts path into Vector3 position nodes
         wanderPathNodes.push_back(pos);
