@@ -1128,7 +1128,7 @@ DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
 
     world->AddGameObject(drone);
 
-    GameObject* detSphere = AddDetectionSphereToWorld(position, 25.0f, drone);
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 80.0f, drone);
 
     return drone;
 }

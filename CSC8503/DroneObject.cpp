@@ -185,8 +185,10 @@ void DroneObject::Update(float dt) {
 void DroneObject::DetectThreat(GameObject* object) {
     //std::cout << "drone detect threat\n";
     if (object->GetTypeID() == 1 || object->GetTypeID() == 11) { // player, teammate
-        threatDetected = true;
-        threat = object;
+        if ((object->GetTransform().GetPosition() - currentPos).LengthSquared() < 625.0f) {
+            threatDetected = true;
+            threat = object;
+        }
     }
     else if ((object->GetTypeID() == 5 || object->GetTypeID() == 6) && !itemDetected) { // plank, stone
 
