@@ -76,7 +76,7 @@ namespace NCL::CSC8503 {
     struct ClientPacket : public GamePacket {
         int		lastID;
         int     playerNum;
-        char	buttonstates[8] = { 0 };
+        char	buttonstates[9] = { 0 };
 
         ClientPacket() {
             size = sizeof(ClientPacket);

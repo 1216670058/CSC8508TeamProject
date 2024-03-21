@@ -673,6 +673,46 @@ void UI::DrawServerPlayingUI(float dt)
 		ImGui::End();
 	}
 
+	ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - main_viewport->GetCenter().x / 3, main_viewport->WorkPos.y), ImGuiCond_Always);
+	ImGui::PushFont(infofont);
+	ImGui::Begin("Robot", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10.0f, 10.0f));
+
+	string robot = "";
+	switch (TutorialGame::GetGame()->GetRobot()->GetStateID()) {
+	case 0:
+		if (TutorialGame::GetGame()->GetPlayer()->GetSlot() == 2 || TutorialGame::GetGame()->GetPlayer()->GetSlot() == 3)
+			robot = "Robot: Come to me and Press F, I'll help u~";
+		else
+			robot = "Robot: Available";
+		break;
+	case 1:
+		robot = "Robot: I'm following u! Press T to make me work!";
+		break;
+	case 2:
+		robot = "Robot: I'm finding the nearest tree! Press T to call me back!";
+		break;
+	case 3:
+		robot = "Robot: I'm finding the nearest rock! Press T to call me back!";
+		break;
+	case 4:
+		robot = "Robot: I'm cutting tree... Press T to call me back!";
+		break;
+	case 5:
+		robot = "Robot: I'm digging rock... Press T to call me back!";
+		break;
+	case 6:
+		robot = "Robot: I'm coming back to u!";
+		break;
+	default:
+		break;
+	}
+	ImGui::Text(robot.c_str());
+
+	ImGui::PopFont();
+	ImGui::PopStyleVar();
+	ImGui::End();
+
 	ImVec2 imageSize(125, 125);
 	ImGui::PushFont(normalfont);
 	ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x, main_viewport->GetCenter().y - imageSize.y / 2), ImGuiCond_Always);
@@ -892,6 +932,18 @@ void UI::DrawClientPlayingUI(float dt)
 		ImGui::End();
 	}
 
+	ImGui::SetNextWindowPos(ImVec2(main_viewport->GetCenter().x - main_viewport->GetCenter().x / 4, main_viewport->WorkPos.y), ImGuiCond_Always);
+	ImGui::PushFont(infofont);
+	ImGui::Begin("Robot", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10.0f, 10.0f));
+
+	string robot = "Robot: Server Player Only!";	
+	ImGui::Text(robot.c_str());
+
+	ImGui::PopFont();
+	ImGui::PopStyleVar();
+	ImGui::End();
+
 	if (NetworkedGame::GetNetworkedGame()->GetLocalPlayer()) {
 		ImVec2 imageSize(125, 125);
 		ImGui::PushFont(normalfont);
@@ -1098,7 +1150,7 @@ void UI::DrawFailureMenu(float dt)
 
 	ImGui::PushFont(menufont);
 	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 25, 225, 255));
-	string result = "You traveled " + dist;
+	string result = "You traveled " + to_string(TutorialGame::GetGame()->GetTrain()->GetFloat2());
 	ImGui::SetCursorPos(ImVec2(main_viewport->GetCenter().x - ImGui::CalcTextSize(result.c_str()).x * 0.5, main_viewport->GetCenter().y - main_viewport->GetCenter().y * 0.25));
 	ImGui::Text(result.c_str());
 

@@ -4,13 +4,13 @@
 #include "StateTransition.h"
 #include "PhysicsObject.h"
 #include "TutorialGame.h"
+#include "NetworkedGame.h"
 //part of this codes are from www.github.com
 
-RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 initialPosition) : GameObject()
+RobotObject::RobotObject(NavigationGrid* navGrid, Vector3 initialPosition) : GameObject()
 {
 	grid = navGrid;
-	_player = player;
-	playerPosition = _player->GetTransform().GetPosition();
+	player = nullptr;
 	typeID = 11;
 	timer = 0;
 
@@ -63,22 +63,26 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(IdleState, FollowPlayerState,
 		[&]() -> bool
 		{
-			if (_player->RobotCut() || _player->RobotDig()) {
-				if (_player->RobotCut()) _player->SetRobotCut(false);
-				if (_player->RobotDig()) _player->SetRobotDig(false);
-				stateID = 1;
-				return true;
+			if (player) {
+				if (player->RobotCut() || player->RobotDig()) {
+					if (player->RobotCut()) player->SetRobotCut(false);
+					if (player->RobotDig()) player->SetRobotDig(false);
+					stateID = 1;
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
-			else {
+			else
 				return false;
-			}
 		}
 	));
 
 	stateMachine->AddTransition(new StateTransition(FollowPlayerState, MoveToTreeState,
 		[&]() -> bool
 		{
-			if (cutting && Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
+			if (cutting && Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T)) {
 				treeCounter = 5.0f;
 				nextTree = true;
 				stateID = 2;
@@ -93,10 +97,26 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(FollowPlayerState, MoveToRockState,
 		[&]() -> bool
 		{
-			if (digging && Window::GetKeyboard()->KeyPressed(KeyCodes::T)) {
+			if (digging && Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T)) {
 				rockCounter = 5.0f;
 				nextRock = true;
 				stateID = 3;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	));
+
+	stateMachine->AddTransition(new StateTransition(FollowPlayerState, IdleState,
+		[&]() -> bool
+		{
+			if (Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::Y)) {
+				player = nullptr;
+				cutting = false;
+				digging = false;
+				stateID = 0;
 				return true;
 			}
 			else {
@@ -156,7 +176,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(MoveToTreeState, MoveToPlayerState,
 		[&]() -> bool
 		{
-			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T);
 			moveToPlayer = false;
 			if (flag) {
 				stateID = 6;
@@ -168,7 +188,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(CuttingState, MoveToPlayerState,
 		[&]() -> bool
 		{
-			bool flag = Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			bool flag = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T);
 			if (flag) {
 				stateID = 6;
 			}
@@ -179,7 +199,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(MoveToRockState, MoveToPlayerState,
 		[&]() -> bool
 		{
-			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			bool flag = moveToPlayer || Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T);
 			moveToPlayer = false;
 			if (flag) {
 				stateID = 6;
@@ -191,7 +211,7 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(DiggingState, MoveToPlayerState,
 		[&]() -> bool
 		{
-			bool flag = Window::GetKeyboard()->KeyPressed(KeyCodes::T);
+			bool flag = Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::T);
 			if (flag) {
 				stateID = 6;
 			}
@@ -202,9 +222,10 @@ RobotObject::RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 
 	stateMachine->AddTransition(new StateTransition(MoveToPlayerState, IdleState,
 		[&]() -> bool
 		{
-			bool flag = foundPlayer;
+			bool flag = foundPlayer || Window::GetKeyboard()->KeyPressed(NCL::KeyCodes::Y);
 			foundPlayer = false;
 			if (flag) {
+				player = nullptr;
 				cutting = false;
 				digging = false;
 				stateID = 0;
@@ -231,8 +252,8 @@ void RobotObject::Idle(float dt)
 }
 
 void RobotObject::FollowPlayer(float dt) {
-	if (_player->GetSlot() == 3)cutting = true;
-	if (_player->GetSlot() == 2)digging = true;
+	if (player->GetSlot() == 3)cutting = true;
+	if (player->GetSlot() == 2)digging = true;
 	if (GetGrid(currentPosition).position != GetGrid(playerPosition).position) {
 		nodes.clear();
 		path.Clear();
@@ -276,6 +297,7 @@ void RobotObject::MoveToTree(float dt) {
 		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 		nodes.clear();
 	}
+
 	treeCounter -= dt;
 	if (treeCounter <= 0) {
 		moveToPlayer = true;
@@ -304,6 +326,7 @@ void RobotObject::MoveToRock(float dt) {
 		Debug::DrawLine(nodes[1], nodes[0], Vector4(0, 1, 0, 1));
 		nodes.clear();
 	}
+
 	rockCounter -= dt;
 	if (rockCounter <= 0) {
 		moveToPlayer = true;
@@ -311,6 +334,7 @@ void RobotObject::MoveToRock(float dt) {
 }
 
 void RobotObject::CutTree(float dt) {
+	int worldID1;
 	Ray r = Ray(transform.GetPosition(), face);
 	RayCollision closestCollision;
 	if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
@@ -326,8 +350,17 @@ void RobotObject::CutTree(float dt) {
 					GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
 					n.SetType(0);
 					closest->SetFlag1(false);
+					if (TutorialGame::GetGame()->IsNetworked()) {
+						worldID1 = closest->GetWorldID();
+					}
 					PlankObject* plank1 = TutorialGame::GetGame()->AddPlankToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
 					TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+					if (TutorialGame::GetGame()->IsNetworked()) {
+						NetworkedGame::GetNetworkedGame()->SetCutTreeFlag(true);
+						NetworkedGame::GetNetworkedGame()->SetPlankNetworkID(plank1->GetNetworkObject()->GetNetworkID());
+						NetworkedGame::GetNetworkedGame()->SetTreeWorldID(worldID1);
+						NetworkedGame::GetNetworkedGame()->SetTreeCutTag(1);
+					}
 					treeCut = true;
 				}
 			}
@@ -353,6 +386,7 @@ void RobotObject::CutTree(float dt) {
 }
 
 void RobotObject::DigRock(float dt) {
+	int worldID1;
 	Ray r = Ray(transform.GetPosition(), face);
 	RayCollision closestCollision;
 	if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
@@ -368,8 +402,17 @@ void RobotObject::DigRock(float dt) {
 					GridNode& n = TutorialGame::GetGame()->GetNavigationGrid()->GetGridNode(index);
 					n.SetType(0);
 					closest->SetFlag1(false);
+					if (TutorialGame::GetGame()->IsNetworked()) {
+						worldID1 = closest->GetWorldID();
+					}
 					StoneObject* stone1 = TutorialGame::GetGame()->AddStoneToWorld(Vector3(closest->GetTransform().GetPosition().x, 5, closest->GetTransform().GetPosition().z));
 					TutorialGame::GetGame()->GetWorld()->RemoveGameObject(closest, false);
+					if (TutorialGame::GetGame()->IsNetworked()) {
+						NetworkedGame::GetNetworkedGame()->SetDigRockFlag(true);
+						NetworkedGame::GetNetworkedGame()->SetStoneNetworkID(stone1->GetNetworkObject()->GetNetworkID());
+						NetworkedGame::GetNetworkedGame()->SetRockWorldID(worldID1);
+						NetworkedGame::GetNetworkedGame()->SetRockDugTag(2);
+					}
 					rockDug = true;
 				}
 			}
@@ -433,7 +476,7 @@ void RobotObject::Update(float dt) {
 	stateMachine->Update(dt);
 
 	currentPosition = transform.GetPosition();
-	playerPosition = _player->GetTransform().GetPosition();
+	if (player)playerPosition = player->GetTransform().GetPosition();
 }
 
 void RobotObject::UpdateOrientation(Vector3 direction) {

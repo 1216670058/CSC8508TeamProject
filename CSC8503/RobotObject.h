@@ -20,7 +20,7 @@ namespace NCL::CSC8503 {
 	class StateMachine;
 	class RobotObject :public GameObject {
 	public:
-		RobotObject(NavigationGrid* navGrid, PlayerObject* player, Vector3 position);
+		RobotObject(NavigationGrid* navGrid, Vector3 position);
 		RobotObject() {
 			typeID = 11;
 			name = "Robot";
@@ -32,6 +32,10 @@ namespace NCL::CSC8503 {
 
 		void SetGrid(NavigationGrid* g) {
 			grid = g;
+		}
+
+		void SetPlayer(PlayerObject* p) {
+			player = p;
 		}
 
 		bool IsCutting() const {
@@ -66,7 +70,7 @@ namespace NCL::CSC8503 {
 
 		void UpdateOrientation(Vector3 direction);
 
-		PlayerObject* _player = nullptr;
+		PlayerObject* player = nullptr;
 		Vector3 playerPosition;
 		StateMachine* stateMachine;
 		NavigationGrid* grid;

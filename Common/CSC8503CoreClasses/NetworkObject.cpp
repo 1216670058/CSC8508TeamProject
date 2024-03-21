@@ -34,6 +34,7 @@ bool NetworkObject::ReadClientPacket(ClientPacket& p) {
     object.SetButton(5, p.buttonstates[5]);
     object.SetButton(6, p.buttonstates[6]);
     object.SetButton(7, p.buttonstates[7]);
+    object.SetButton(8, p.buttonstates[8]);
     return true;
 }
 
@@ -133,6 +134,9 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
                 object.SetFloat1(lastFullState.float1);
             }
+            else if (object.GetTypeID() == 10 || object.GetTypeID() == 11) {
+                object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+            }
         }
         else {
             object.GetTransform().SetScale(lastFullState.scale);
@@ -230,6 +234,9 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
         else if (object.GetTypeID() == 23) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
             fp->fullState.float1 = object.GetFloat1();
+        }
+        else if (object.GetTypeID() == 10 || object.GetTypeID() == 11) {
+            fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
         }
 
         *p = fp;
