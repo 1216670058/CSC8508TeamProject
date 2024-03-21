@@ -206,6 +206,7 @@ namespace NCL {
 			Mesh*   railMesh = nullptr;
 			Mesh*   railTurnMesh = nullptr;
 			Mesh*   stationMesh = nullptr;
+			Mesh*   droneMesh = nullptr;
 
 			Shader*		basicShader = nullptr;
 
@@ -225,8 +226,10 @@ namespace NCL {
 			Texture* railTexture = nullptr;
 			Texture* railTurnTexture = nullptr;
 			Texture* stationTexture = nullptr;
+			Texture* droneTexture = nullptr;
 
 			MeshAnimation* enemyAnim = nullptr;
+			MeshAnimation* droneAnim = nullptr;
 
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
