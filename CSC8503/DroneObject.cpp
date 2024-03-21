@@ -10,13 +10,21 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
 
+    stateCooldown = 5.0f;   // initial value above threshold so doesnt auto detect at start
+
 
     detectPlayer = new BehaviourAction("Detect Player", [&](float dt, BehaviourState state)->BehaviourState {
         // if player in collider then success, else fail
         if (threatDetected) {
-            std::cout << "threat detected\n";
+            //std::cout << "threat detected\n";
+            stateCooldown = 0;
             return Success;
         }
+        if (stateCooldown < 1.5) {    // keep detecting for few secs after leaving range
+            //std::cout << "kept detecting\n";
+            return Success;
+        }
+
         else return Failure;
         }
     );
@@ -41,7 +49,7 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
     detectItem = new BehaviourAction("Detect Item", [&](float dt, BehaviourState state)->BehaviourState {
         // if item in collider then success, else fail
         if (itemDetected) {
-            std::cout << "item detected\n";
+            //std::cout << "item detected\n";
             return Success;
         }
         else return Failure;
@@ -50,12 +58,44 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 
     moveTowardItem = new BehaviourAction("Move Toward Item", [&](float dt, BehaviourState state)->BehaviourState {
         // ongoing until item reached, then success
+
+        if (wanderPathNodes.empty()) {
+            std::cout << "pathfind error\n";
+
+            bool pf = Pathfind(item->GetTransform().GetPosition()); // if item not already pathfound to
+            if (!pf) {
+                std::cout << "Pathfind error 2\n";
+            }
+        }
+
+        Vector3 nextPathPos = wanderPathNodes[currentNodeIndex];
+
+        if ((nextPathPos - currentPos).LengthSquared() < 100.0f) { // if close to current node
+            if (currentNodeIndex < (wanderPathNodes.size() - 1)) {    // if node isnt the final node, target next node
+                currentNodeIndex++;
+                nextPathPos = wanderPathNodes[currentNodeIndex];
+                timer = 0;
+            }
+            else { // if final node reached, return success
+                return Success;
+            }
+        }
+
+        MoveToPosition(nextPathPos, 10.0f);  // otherwise move towards next node
         return Ongoing;
         }
     );
 
     stealItem = new BehaviourAction("Steal Item", [&](float dt, BehaviourState state)->BehaviourState {
         // fail after stealing (to continue root selector), success for error
+        //itemDetected = false;
+        std::cout << "item stolen\n";
+        //world->RemoveGameObject(item, true);
+        item->SetActive(false);
+        item->GetTransform().SetPosition(Vector3(0, -20, 0));
+        item->GetPhysicsObject()->SetInverseMass(0);
+
+
         return Failure;
         }
     );
@@ -122,6 +162,8 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
 }
 
 void DroneObject::Update(float dt) {
+    stateCooldown += dt;
+
     renderObject->GetAnimationObject()->SetFrameTime(renderObject->GetAnimationObject()->GetFrameTime() - dt);
     while (renderObject->GetAnimationObject()->GetFrameTime() < 0.0f) {
         renderObject->GetAnimationObject()->SetCurrentFrame((renderObject->GetAnimationObject()->GetCurrentFrame() + 1) %
@@ -134,6 +176,12 @@ void DroneObject::Update(float dt) {
 
     if (currentState == Ongoing || currentState == Success) currentState = rootSelector->Execute(dt);   // root selector - do until succeed/ongoing
     if (currentState == Success) std::cout << "Behaviour Tree Error\n";    // error
+
+    if (wanderPathNodes.empty()) return;
+    for (int i = 0; i < wanderPathNodes.size() - 1; i++)
+    {
+        Debug::DrawLine(wanderPathNodes[i] + Vector3(0, 1, 0), wanderPathNodes[i + 1] + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
+    }
 }
 
 void DroneObject::DetectThreat(GameObject* object) {
@@ -142,8 +190,24 @@ void DroneObject::DetectThreat(GameObject* object) {
         threatDetected = true;
         threat = object;
     }
-    else if (object->GetTypeID() == 5 || object->GetTypeID() == 6) { // plank, stone
+    else if ((object->GetTypeID() == 5 || object->GetTypeID() == 6) && !itemDetected) { // plank, stone
+
+        if (item != object) {
+            bool pf = Pathfind(object->GetTransform().GetPosition()); // if item not already pathfound to
+            if (!pf) std::cout << "Pathfind error\n";
+        }
+
         itemDetected = true;
         item = object;
+    }
+}
+
+void DroneObject::StopDetectThreat(GameObject* object) {
+    if (threat == object) {
+        threatDetected = false;
+    }
+
+    if (item == object) {
+        itemDetected = false;
     }
 }

@@ -70,7 +70,7 @@ NavigationGrid::NavigationGrid(const std::string &filename) : NavigationGrid() {
                         n.costs[i] = 1;
                     }
                     else {
-                        n.costs[i] == 10;
+                        n.costs[i] = 10000;
                     }
                     //if (n.connected[i]->type == 'x') {
                     //    n.connected[i] = nullptr; //actually a wall, disconnect!

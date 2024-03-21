@@ -28,7 +28,7 @@ namespace NCL::CSC8503 {
 		bool Pathfind(Vector3 targetPos);
 
 		virtual void DetectThreat(GameObject* object);
-		void StopDetectThreat(GameObject* object);
+		virtual void StopDetectThreat(GameObject* object);
 
 		StateMachine* stateMachine = nullptr;
 		NavigationGrid* grid = nullptr;

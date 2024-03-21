@@ -29,6 +29,7 @@ namespace NCL::CSC8503 {
 		void Update(float dt) override;
 
 		void DetectThreat(GameObject* object) override;
+		void StopDetectThreat(GameObject* object) override;
 
 	protected:
 		BehaviourState currentState = Ongoing;
@@ -48,6 +49,7 @@ namespace NCL::CSC8503 {
 		//BehaviourAction* pathfindForPatrol;
 
 		bool itemDetected = false;
+		//bool itemDetectedAlready = false;
 		GameObject* item = nullptr;
 	};
 }
