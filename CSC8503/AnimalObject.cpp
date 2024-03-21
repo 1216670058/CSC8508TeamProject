@@ -56,6 +56,8 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
         Vector3 direction = (currentPos - threat->GetTransform().GetPosition()).Normalised();
         direction = Vector3(direction.x, 0, direction.z);
         GetPhysicsObject()->SetLinearVelocity(direction * speed);
+        //physicsObject->SetRealDamping(0.962f);
+        //physicsObject->AddForceAtPosition(direction * speed * 5, transform.GetPosition());
 
         float angle = atan2(-direction.x, -direction.z);
         float angleDegrees = Maths::RadiansToDegrees(angle);
@@ -70,7 +72,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
     stateMachine->AddTransition(new StateTransition(wander, scared, [&]() -> bool { // transition to scared state if runs into player/enemy/etc
 
-        if (threatDetected && stateCooldown > 1.0) {
+        if (threatDetected) {
             //std::cout << "entering scared state\n";
             stateCooldown = 0;
             return true;
@@ -82,7 +84,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
     stateMachine->AddTransition(new StateTransition(scared, wander, [&]() -> bool {
 
-        if (!threatDetected && stateCooldown > 1.0) {
+        if (!threatDetected && stateCooldown > 2.0) {
             //std::cout << "exiting scared state\n";
             stateCooldown = 0;
             threat = nullptr;
@@ -112,9 +114,10 @@ void AnimalObject::Update(float dt) {
             renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
     }
 
+    //prevPos = currentPos;
     currentPos = GetTransform().GetPosition();
 
-    bool shouldRespawn = !grid->CheckInGrid(currentPos) || (!threatDetected && PosNotChanging());
+    bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());
     if (shouldRespawn) {
         std::cout << "animal respawning\n";
         GetTransform().SetPosition(startingPos);
@@ -170,6 +173,16 @@ void AnimalObject::StopDetectThreat(GameObject* object) {
     }
 }
 
-bool AnimalObject::PosNotChanging() {
+/*bool AnimalObject::PosNotChanging() {
+    float speed = GetPhysicsObject()->GetLinearVelocity().LengthSquared();
+    std::cout << speed << std::endl;
+    
+    if (speed < 90) notMovingCounter++;
+    else notMovingCounter = 0;
 
-}
+    if (notMovingCounter > 4) {
+        std::cout << "NOT MOVING REGISTERED\n";
+        return true;
+    }
+    return false;
+}*/

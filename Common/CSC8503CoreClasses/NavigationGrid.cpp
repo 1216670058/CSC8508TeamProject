@@ -294,3 +294,4 @@ bool NavigationGrid::CheckInGrid(Vector3& pos) {
         return false; //outside of map region!
     }
     return true;
+}

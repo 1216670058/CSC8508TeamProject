@@ -174,7 +174,7 @@ void DroneObject::Update(float dt) {
 
     currentPos = GetTransform().GetPosition();
 
-    bool shouldRespawn = !grid->CheckInGrid(currentPos) || (!threatDetected && PosNotChanging());
+    bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());
     if (shouldRespawn) {
         std::cout << "drone respawning\n";
         GetTransform().SetPosition(startingPos);

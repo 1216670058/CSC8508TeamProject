@@ -372,8 +372,7 @@ void GameTechRenderer::RenderFrame() {
 	RenderSkybox();
 	RenderCamera();
 	DrawParticle();
-	//isNight = (int)(ui->GetPlayTime() / 45) % 2 == 1 ? 1 : 0;
-	isNight = false;
+	isNight = (int)(ui->GetPlayTime() / 45) % 2 == 1 ? 1 : 0;
 	if (isNight) {
 		DrawLightBuffer();
 		CombineBuffers();

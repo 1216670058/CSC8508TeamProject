@@ -1117,7 +1117,7 @@ DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& po
 
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
     AnimalObject* moose = new AnimalObject(navGrid, position, world);
-    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 
     moose->GetTransform()
@@ -1166,7 +1166,7 @@ RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
 
 DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
     DroneObject* drone = new DroneObject(navGrid, position, world);
-    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     drone->SetBoundingVolume((CollisionVolume*)volume);
 
     drone->GetTransform()
