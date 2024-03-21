@@ -36,16 +36,9 @@ void TutorialGame::InitMeshes() {
     stoneMesh = renderer.LoadMesh("Stone.msh");
     railMesh = renderer.LoadMesh("Rail.msh");
     railTurnMesh = renderer.LoadMesh("RailTurn.msh");
-    //maleMesh = renderer->LoadMesh("Male_Guard.msh");
-    //femaleMesh = renderer->LoadMesh("Female_Guard.msh");
     //assassinMesh = renderer.LoadMesh("Assassin.msh");
-    //girlMesh = renderer->LoadMesh("Girl.msh");
-    //smurfMesh = renderer->LoadMesh("Smurf.msh");
-    //mooseMesh = renderer->LoadMesh("Moose.msh");
-    //robotMesh = renderer.LoadMesh("Robot.msh");
-    droneMesh = renderer.LoadMesh("Drone.msh");
-
-    //trainMesh = renderer->LoadOBJMesh("Train.obj");
+    mooseMesh = renderer.LoadMesh("goat.msh");
+    robotMesh = renderer.LoadMesh("security.msh");
 }
 
 void TutorialGame::InitTextures() {
@@ -66,8 +59,7 @@ void TutorialGame::InitTextures() {
     stoneTexture = renderer.LoadTexture("Stone.png");
     railTexture = renderer.LoadTexture("Rail.png");
     railTurnTexture = renderer.LoadTexture("RailTurn.jpg");
-    //robotTexture = renderer.LoadTexture("Robot.png");
-    droneTexture = renderer.LoadTexture("Drone_diff.jpg");
+    //droneTexture = renderer.LoadTexture("Drone_diff.jpg");
 
     //stationTex = renderer->LoadGLTexture("Station.png");
 }
@@ -75,7 +67,7 @@ void TutorialGame::InitTextures() {
 void TutorialGame::InitAnimations() {
     std::cout << std::endl << "--------Loading Animations--------" << std::endl;
     enemyAnim = new MeshAnimation("Role_T.anm");
-    droneAnim = new MeshAnimation("Drone.anm");
+    //droneAnim = new MeshAnimation("Drone.anm");
 
     //maleAnimation = new AnimationObject();
     //maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
@@ -456,13 +448,13 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
         .SetPosition(position)
         .SetScale(Vector3(3, 3, 3));
 
-    player->SetRenderObject(new RenderObject(&player->GetTransform(), droneMesh, droneTexture, basicShader));
+    player->SetRenderObject(new RenderObject(&player->GetTransform(), enemyMesh, nullptr, basicShader));
     player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
     
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
 
-    player->GetRenderObject()->SetAnimation(*droneAnim);
+    player->GetRenderObject()->SetAnimation(*enemyAnim);
     
     world.AddGameObject(player);
     
@@ -521,11 +513,13 @@ GameObject* TutorialGame::AddDesertRockToWorld(const Vector3& position) {
     float inverseMass = 0;
     
     GameObject* rock = new GameObject();
-    AABBVolume* volume = new AABBVolume(Vector3(2.2f, 2.2f, 2.2f));
+    AABBVolume* volume = new AABBVolume(Vector3(3.5f, 3, 3.5f));
     rock->SetBoundingVolume((CollisionVolume*)volume);
     rock->GetTransform()
         .SetScale(Vector3(3, 3, 3))
         .SetPosition(rock->FindGrid(position));
+
+    rock->SetName("Desert Rock");
     
     rock->SetRenderObject(new RenderObject(&rock->GetTransform(), desertRockMesh, desertRockTexture, basicShader));// todo can change capsule
     rock->SetPhysicsObject(new PhysicsObject(&rock->GetTransform(), rock->GetBoundingVolume()));
@@ -792,52 +786,75 @@ RailObject* TutorialGame::AddRailToWorld(const Vector3& position, bool placed)
     }
 }
 
-//AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
-    //AnimalObject* moose = new AnimalObject();
-    //AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
-    //moose->SetBoundingVolume((CollisionVolume*)volume);
-    //
-    //moose->GetTransform()
-    //    .SetPosition(position)
-    //    .SetScale(Vector3(3, 3, 3));
-    //
-    //moose->SetRenderObject(new RenderObject(&moose->GetTransform(), mooseMesh, nullptr, skinningPerPixelShader, 3));
-    //moose->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-    //moose->GetRenderObject()->SetAnimationObject(mooseAnimation);
-    //moose->GetRenderObject()->SetTextures(mooseTextures);
-    //
-    //moose->SetPhysicsObject(new PhysicsObject(&moose->GetTransform(), moose->GetBoundingVolume()));
-    //moose->GetPhysicsObject()->SetInverseMass(1);
-    //moose->GetPhysicsObject()->InitCubeInertia();
-    //
-    //world->AddGameObject(moose);
-    //
-    //return moose;
-//}
+AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
+    AnimalObject* moose = new AnimalObject(navGrid, position, &world);
+    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    moose->SetBoundingVolume((CollisionVolume*)volume);
 
-//RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
-    //RobotObject* robot = new RobotObject();
-    //AABBVolume* volume = new AABBVolume(Vector3(1, 1, 1));
-    //robot->SetBoundingVolume((CollisionVolume*)volume);
-    //
-    //robot->GetTransform()
-    //    .SetPosition(position)
-    //    .SetScale(Vector3(2, 2, 2));
-    //
-    //robot->SetRenderObject(new RenderObject(&robot->GetTransform(), robotMesh, nullptr, skinningBumpShader2, 3));
-    //robot->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
-    //robot->GetRenderObject()->SetAnimationObject(robotAnimation);
-    //robot->GetRenderObject()->SetTextures(robotTextures);
-    //robot->GetRenderObject()->SetBumpTextures(robotBumpTextures);
-    //
-    //robot->SetPhysicsObject(new PhysicsObject(&robot->GetTransform(), robot->GetBoundingVolume()));
-    //robot->GetPhysicsObject()->SetInverseMass(1);
-    //robot->GetPhysicsObject()->InitCubeInertia();
-    //
-    //world->AddGameObject(robot);
-    //
-    //return robot;
-//}
+    moose->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(3, 3, 3));
+
+    moose->SetRenderObject(new RenderObject(&moose->GetTransform(), mooseMesh, nullptr, basicShader));
+    moose->GetRenderObject()->SetColour(Vector4(1, 1, 0, 1));
+
+    moose->SetPhysicsObject(new PhysicsObject(&moose->GetTransform(), moose->GetBoundingVolume()));
+    moose->GetPhysicsObject()->SetInverseMass(1);
+    moose->GetPhysicsObject()->InitCubeInertia();
+
+    world.AddGameObject(moose);
+
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 25.0f, moose);
+
+    return moose;
+}
+
+DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal) {
+    DetectionSphereObject* sphere = new DetectionSphereObject(animal);
+
+    Vector3 sphereSize = Vector3(radius, radius, radius);
+    AABBVolume* volume = new AABBVolume(sphereSize);
+    sphere->SetBoundingVolume((CollisionVolume*)volume);
+
+    sphere->GetTransform()
+        .SetScale(sphereSize)
+        .SetPosition(position);
+
+    //sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
+    sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
+
+    sphere->GetPhysicsObject()->SetInverseMass(10.0f);
+    sphere->GetPhysicsObject()->InitSphereInertia();
+    //sphere->GetRenderObject()->SetColour(Vector4(0, 0, 0, 0));
+    world.AddGameObject(sphere);
+
+    ((CollisionVolume*)sphere->GetBoundingVolume())->SetIsTrigger(true);
+    PositionConstraint* constraint = new PositionConstraint(animal, sphere, 0.01f);
+    world.AddConstraint(constraint);
+
+    return sphere;
+}
+
+RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
+    RobotObject* robot = new RobotObject(navGrid, position);
+    AABBVolume* volume = new AABBVolume(Vector3(2, 4, 2));
+    robot->SetBoundingVolume((CollisionVolume*)volume);
+
+    robot->GetTransform()
+        .SetPosition(position)
+        .SetScale(Vector3(4, 4, 4));
+
+    robot->SetRenderObject(new RenderObject(&robot->GetTransform(), mooseMesh, nullptr, basicShader));
+    robot->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
+
+    robot->SetPhysicsObject(new PhysicsObject(&robot->GetTransform(), robot->GetBoundingVolume()));
+    robot->GetPhysicsObject()->SetInverseMass(1);
+    robot->GetPhysicsObject()->InitCubeInertia();
+
+    world.AddGameObject(robot);
+
+    return robot;
+}
 
 //DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
     //DroneObject* drone = new DroneObject();

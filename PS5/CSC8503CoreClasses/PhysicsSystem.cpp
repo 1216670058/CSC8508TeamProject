@@ -358,10 +358,16 @@ void PhysicsSystem::NarrowPhase() {
         i != broadphaseCollisions.end(); ++i) {
         CollisionDetection::CollisionInfo info = *i;
         if (CollisionDetection::ObjectIntersection(info.a, info.b, info)) {
+            if (info.a->GetTypeID() == 1 || info.b->GetTypeID() == 1) {
+                if (info.a->ShowInfo() || info.b->ShowInfo()) {
+                    Debug::Print(" Collision between " + (info.a)->GetName()
+                        + " and " + (info.b)->GetName(), Vector2(0, 95), Vector4(1, 1, 1, 0.5f));
+                }
+            }
             info.framesLeft = numCollisionFrames;
-            if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2)
+            if (info.a->GetPhysicsObject()->GetChannel() == 2 && info.b->GetPhysicsObject()->GetChannel() == 2 && !info.a->GetBoundingVolume()->isTrigger && !info.b->GetBoundingVolume()->isTrigger)
                 ImpulseResolveCollision(*info.a, *info.b, info.point);
-            else if (info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1)
+            else if ((info.a->GetPhysicsObject()->GetChannel() == 1 || info.b->GetPhysicsObject()->GetChannel() == 1) && !info.a->GetBoundingVolume()->isTrigger && !info.b->GetBoundingVolume()->isTrigger)
                 ProjectionResolveCollision(*info.a, *info.b, info.point);
             allCollisions.insert(info); // insert into our main set
         }
