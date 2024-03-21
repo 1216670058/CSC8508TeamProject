@@ -125,22 +125,55 @@ void TutorialGame::UpdatePlaying(float dt) {
 	}
 	else {
 		if (showInfo) {
-			Debug::Print("Level: " + std::to_string(level), Vector2(0, 5), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Framerate: " + std::to_string((int)(1 / dt)) + " fps", Vector2(0, 5), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Delta time: " + std::to_string(dt * 1000) + "ms", Vector2(0, 10), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Level: " + std::to_string(level), Vector2(0, 15), Vector4(1, 1, 1, 0.5f));
 			ConvertTime(playTime, hours, minutes, seconds);
-			Debug::Print("Time: " + std::to_string(hours) + ":" + std::to_string(minutes) + ":" + std::to_string(seconds), Vector2(0, 10), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Distance: " + std::to_string((int)train->GetDistance()), Vector2(0, 15), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Speed: " + std::to_string(train->GetSpeed()), Vector2(0, 20), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Position: " + std::to_string((int)player->GetTransform().GetPosition().x) + "," + std::to_string((int)player->GetTransform().GetPosition().y) + "," + std::to_string((int)player->GetTransform().GetPosition().z), Vector2(0, 25), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Time: " + std::to_string(hours) + ":" + std::to_string(minutes) + ":" + std::to_string(seconds), Vector2(0, 20), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Distance: " + std::to_string((int)train->GetDistance()), Vector2(0, 25), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Speed: " + std::to_string(train->GetSpeed()), Vector2(0, 30), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Position: " + std::to_string((int)player->GetTransform().GetPosition().x) + "," + std::to_string((int)player->GetTransform().GetPosition().y) + "," + std::to_string((int)player->GetTransform().GetPosition().z), Vector2(0, 35), Vector4(1, 1, 1, 0.5f));
 			UpdateSlotString();
-			Debug::Print("Inventory: " + slotString, Vector2(0, 30), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Item Quantity: " + std::to_string(player->GetSlotNum()), Vector2(0, 35), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Press R1 to hide information", Vector2(0, 40), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Press Options to pause", Vector2(0, 45), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Inventory: " + slotString, Vector2(0, 40), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Item Quantity: " + std::to_string(player->GetSlotNum()), Vector2(0, 45), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Player Speed: " + std::to_string(player->GetSpeed()), Vector2(0, 50), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press R1 to hide information", Vector2(0, 65), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Press Options to pause", Vector2(0, 70), Vector4(1, 1, 1, 0.5f));
 		}
 		else {
 			Debug::Print("Level: " + std::to_string(level), Vector2(0, 5), Vector4(1, 1, 1, 0.5f));
 			Debug::Print("Press R1 to show more information", Vector2(0, 10), Vector4(1, 1, 1, 0.5f));
 			Debug::Print("Press Options to pause", Vector2(0, 15), Vector4(1, 1, 1, 0.5f));
+			std::string robot = "";
+			switch (TutorialGame::GetGame()->GetRobot()->GetStateID()) {
+			case 0:
+				if (TutorialGame::GetGame()->GetPlayer()->GetSlot() == 2 || TutorialGame::GetGame()->GetPlayer()->GetSlot() == 3)
+					robot = "Robot: Come to me and Press Square, I'll help u~";
+				else
+					robot = "Robot: Available";
+				break;
+			case 1:
+				robot = "Robot: I'm following u! Press L1 to make me work!";
+				break;
+			case 2:
+				robot = "Robot: I'm finding the nearest tree! Press L1 to call me back!";
+				break;
+			case 3:
+				robot = "Robot: I'm finding the nearest rock! Press L1 to call me back!";
+				break;
+			case 4:
+				robot = "Robot: I'm cutting tree... Press L1 to call me back!";
+				break;
+			case 5:
+				robot = "Robot: I'm digging rock... Press L1 to call me back!";
+				break;
+			case 6:
+				robot = "Robot: I'm coming back to u!";
+				break;
+			default:
+				break;
+			}
+			Debug::Print(robot, Vector2(0, 95), Debug::BLUE);
 		}
 	}
 
@@ -338,6 +371,8 @@ void TutorialGame::InitPositions(int level) {
 		pickaxePosition = Vector3(25, 6.5f, 120);
 		axePosition = Vector3(15, 8, 120);
 		bucketPosition = Vector3(35, 6.5f, 120);
+		robotPosition = Vector3(45, 7, 110);
+		moosePosition = Vector3(140, 5, 100);
 		break;
 	case 2:
 		playerPosition = Vector3(5, 4, 65);
@@ -345,6 +380,8 @@ void TutorialGame::InitPositions(int level) {
 		pickaxePosition = Vector3(20, 6.5f, 75);
 		axePosition = Vector3(10, 8, 75);
 		bucketPosition = Vector3(30, 6.5f, 75);
+		robotPosition = Vector3(45, 7, 65);
+		moosePosition = Vector3(140, 5, 100);
 		break;
 	case 3:
 		playerPosition = Vector3(5, 4, 35);
@@ -352,6 +389,8 @@ void TutorialGame::InitPositions(int level) {
 		pickaxePosition = Vector3(20, 6.5f, 45);
 		axePosition = Vector3(10, 8, 45);
 		bucketPosition = Vector3(30, 6.5f, 45);
+		robotPosition = Vector3(45, 7, 35);
+		moosePosition = Vector3(40, 5, 50);
 		break;
 		//case 4:
 		//    player1Position = Vector3(5, 4, 65);
@@ -379,6 +418,8 @@ void TutorialGame::InitGameExamples(int level) {
 	carriage2->SetMaterialCarriage(carriage1);
 	pad = AddPadToWorld();
 	AddSceneToWorld(level);
+	moose = AddMooseToWorld(moosePosition);
+	robot = AddRobotToWorld(robotPosition);
 }
 
 /*
