@@ -70,7 +70,7 @@ NavigationGrid::NavigationGrid(const std::string &filename) : NavigationGrid() {
                         n.costs[i] = 1;
                     }
                     else {
-                        n.costs[i] == 10;
+                        n.costs[i] = 10000;
                     }
                     //if (n.connected[i]->type == 'x') {
                     //    n.connected[i] = nullptr; //actually a wall, disconnect!
@@ -378,4 +378,15 @@ Vector3 NavigationGrid::FindNearestRock(const Vector3& position) {
     int index = std::distance(fs.begin(), smallest);
 
     return min_number != 50000.0f ? allNodes[index].position : position;
+}
+
+bool NavigationGrid::CheckInGrid(Vector3& pos) {
+    int posX = ((int)pos.x / nodeSize);
+    int posZ = ((int)pos.z / nodeSize);
+
+    if (posX < 0 || posX > gridWidth - 1 ||
+        posZ < 0 || posZ > gridHeight - 1) {
+        return false; //outside of map region!
+    }
+    return true;
 }

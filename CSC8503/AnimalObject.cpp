@@ -6,6 +6,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
     this->typeID = 10;
     this->stateMachine = new StateMachine();
     this->currentPos = startingPos;
+    this->startingPos = startingPos;
     this->grid = navGrid;
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
@@ -70,7 +71,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
     stateMachine->AddTransition(new StateTransition(wander, scared, [&]() -> bool { // transition to scared state if runs into player/enemy/etc
 
-        if (threatDetected && stateCooldown > 1.0) {
+        if (threatDetected) {
             //std::cout << "entering scared state\n";
             stateCooldown = 0;
             return true;
@@ -82,7 +83,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
 
     stateMachine->AddTransition(new StateTransition(scared, wander, [&]() -> bool {
 
-        if (!threatDetected && stateCooldown > 1.0) {
+        if (!threatDetected && stateCooldown > 2.0) {
             //std::cout << "exiting scared state\n";
             stateCooldown = 0;
             threat = nullptr;
@@ -112,7 +113,15 @@ void AnimalObject::Update(float dt) {
             renderObject->GetAnimationObject()->GetActiveAnim()->GetFrameRate());
     }
 
+    //prevPos = currentPos;
     currentPos = GetTransform().GetPosition();
+
+    bool shouldRespawn = !grid->CheckInGrid(currentPos);// || (!threatDetected && PosNotChanging());
+    if (shouldRespawn) {
+        //std::cout << "animal respawning\n";
+        GetTransform().SetPosition(startingPos);
+        currentPos = startingPos;
+    }
 
     stateMachine->Update(dt);
 
@@ -161,12 +170,4 @@ void AnimalObject::StopDetectThreat(GameObject* object) {
     if (threat == object) {
         threatDetected = false;
     }
-}
-
-
-
-
-
-DetectionSphereObject::DetectionSphereObject(AnimalObject* animal) {
-    this->animal = animal;
 }

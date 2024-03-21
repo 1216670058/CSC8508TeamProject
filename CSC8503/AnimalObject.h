@@ -16,8 +16,9 @@
 #include "TrainCarriage.h"
 
 namespace NCL::CSC8503 {
-	class AnimalObject :public GameObject {
+	class AnimalObject : public GameObject {
 	public:
+		AnimalObject() {};
 		AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld* world);
 		~AnimalObject() {};
 
@@ -26,31 +27,34 @@ namespace NCL::CSC8503 {
 		void MoveToPosition(Vector3 targetPos, float speed);
 		bool Pathfind(Vector3 targetPos);
 
-		void DetectThreat(GameObject* object);
-		void StopDetectThreat(GameObject* object);
+		virtual void DetectThreat(GameObject* object);
+		virtual void StopDetectThreat(GameObject* object);
 
-		StateMachine* stateMachine;
-		NavigationGrid* grid;
-		GameWorld* world;
+		StateMachine* stateMachine = nullptr;
+		NavigationGrid* grid = nullptr;
+		GameWorld* world = nullptr;
 
 		Vector3 currentPos;
+		Vector3 startingPos;
 		std::vector<Vector3> wanderPathNodes = {};
 		int currentNodeIndex = 0;
 
 		float timer = 0;
 		float stateCooldown = 0;
 
-		int gridSize;
-		//bool noLongerScared = false;
+		int gridSize = 0;
 
 		bool threatDetected = false;
-		GameObject* threat;
+		GameObject* threat = nullptr;
 	};
 
 
 	class DetectionSphereObject : public GameObject {
 	public:
-		DetectionSphereObject(AnimalObject* animal);
+		DetectionSphereObject(AnimalObject* animal) {
+			this->animal = animal;
+		}
+
 		~DetectionSphereObject() {};
 
 		void OnCollisionBegin(GameObject* otherObject) override {

@@ -376,7 +376,8 @@ namespace NCL {
 			AxeObject* axe = nullptr;
 			BucketObject* bucket = nullptr;
 			AnimalObject* moose = nullptr;
-
+			DroneObject* drone = nullptr;
+			DroneObject* drone2 = nullptr;
 			RobotObject* robot = nullptr;
 
 			Vector3 player1Position;
@@ -389,6 +390,8 @@ namespace NCL {
 			Vector3 trainPosition;
 			Vector3 robotPosition;
 			Vector3 moosePosition;
+			Vector3 dronePosition;
+			Vector3 drone2Position;
 
 			NavigationGrid* navGrid;
 
