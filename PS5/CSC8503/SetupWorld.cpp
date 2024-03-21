@@ -43,7 +43,7 @@ void TutorialGame::InitMeshes() {
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
     //mooseMesh = renderer->LoadMesh("Moose.msh");
     //robotMesh = renderer.LoadMesh("Robot.msh");
-    //droneMesh = renderer->LoadMesh("Drone.msh");
+    droneMesh = renderer.LoadMesh("Drone.msh");
 
     //trainMesh = renderer->LoadOBJMesh("Train.obj");
 }
@@ -67,6 +67,7 @@ void TutorialGame::InitTextures() {
     railTexture = renderer.LoadTexture("Rail.png");
     railTurnTexture = renderer.LoadTexture("RailTurn.jpg");
     //robotTexture = renderer.LoadTexture("Robot.png");
+    droneTexture = renderer.LoadTexture("Drone_diff.jpg");
 
     //stationTex = renderer->LoadGLTexture("Station.png");
 }
@@ -74,6 +75,7 @@ void TutorialGame::InitTextures() {
 void TutorialGame::InitAnimations() {
     std::cout << std::endl << "--------Loading Animations--------" << std::endl;
     enemyAnim = new MeshAnimation("Role_T.anm");
+    droneAnim = new MeshAnimation("Drone.anm");
 
     //maleAnimation = new AnimationObject();
     //maleAnimation->SetAnim1(new MeshAnimation("Idle1.anm"));
@@ -454,13 +456,13 @@ PlayerObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
         .SetPosition(position)
         .SetScale(Vector3(3, 3, 3));
 
-    player->SetRenderObject(new RenderObject(&player->GetTransform(), enemyMesh, nullptr, basicShader));
+    player->SetRenderObject(new RenderObject(&player->GetTransform(), droneMesh, droneTexture, basicShader));
     player->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
     
     player->SetPhysicsObject(new PhysicsObject(&player->GetTransform(), player->GetBoundingVolume()));
     player->GetPhysicsObject()->SetInverseMass(1);
 
-    player->GetRenderObject()->SetAnimation(*enemyAnim);
+    player->GetRenderObject()->SetAnimation(*droneAnim);
     
     world.AddGameObject(player);
     
