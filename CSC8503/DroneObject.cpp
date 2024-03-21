@@ -6,6 +6,7 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
     typeID = 12;
     name = "Drone";
     this->currentPos = startingPos;
+    this->startingPos = startingPos;
     this->grid = navGrid;
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
