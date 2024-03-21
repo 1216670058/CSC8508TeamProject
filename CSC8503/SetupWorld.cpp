@@ -1139,7 +1139,7 @@ AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
 
 RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
     RobotObject* robot = new RobotObject(navGrid, player, position);
-    AABBVolume* volume = new AABBVolume(Vector3(4, 4, 4));
+    AABBVolume* volume = new AABBVolume(Vector3(2, 2, 2));
     robot->SetBoundingVolume((CollisionVolume*)volume);
 
     robot->GetTransform()
