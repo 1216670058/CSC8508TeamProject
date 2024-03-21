@@ -4,7 +4,8 @@
 |  :----:  | :----:  |:----:  |
 | PC  | WASD | Character Movement|
 |   | R| Put down Objects|
-|   |P| Projection Mode|
+|   |Space| Interaction Functions|
+|   |P| Projection|
 |   |B| Debug Mode|
 |   |F9/F10| Lock/Unlock Camera|
 |   |F| Give tool to AI|
@@ -13,10 +14,13 @@
 | PS5  | Left Stick| Character Movement|
 |   |R1| More information|
 |   |L1| Lock/Unlock Camera|
+|   |Square| Give tool to AI|
 |   |Right Stick| Move Camera|
-|   |Circle| Put down objects|
-|   |Triangle| Projection Mode|
+|   |Cross| Put down objects|
+|   |Circle| Interaction Functions|
+|   |Triangle| Projection|
 |   |Square| Put down rail road|
+|   |L3/R3| AI chase/not chase character|
 |   |Options| Pause|
 ## Game Goal
 * Pick up your tool, collect woods and rocks
