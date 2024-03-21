@@ -30,11 +30,14 @@ namespace NCL::CSC8503 {
 		virtual void DetectThreat(GameObject* object);
 		virtual void StopDetectThreat(GameObject* object);
 
+		bool PosNotChanging();
+
 		StateMachine* stateMachine = nullptr;
 		NavigationGrid* grid = nullptr;
 		GameWorld* world = nullptr;
 
 		Vector3 currentPos;
+		Vector3 startingPos;
 		std::vector<Vector3> wanderPathNodes = {};
 		int currentNodeIndex = 0;
 

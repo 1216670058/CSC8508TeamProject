@@ -124,7 +124,6 @@ bool NavigationGrid::FindPath(const Vector3 &from, const Vector3 &to, Navigation
             GridNode *node = endNode;
             while (node != nullptr) {
                 outPath.PushWaypoint(node->position);
-                outPath.IncreaseCostBy(node->f);
                 node = node->parent;
             }
             return true;
@@ -285,3 +284,13 @@ Vector3 NavigationGrid::FindNearestTree(const Vector3& position) {
 
     return min_number != 50000.0f ? allNodes[index].position : position;
 }
+
+bool NavigationGrid::CheckInGrid(Vector3& pos) {
+    int posX = ((int)pos.x / nodeSize);
+    int posZ = ((int)pos.z / nodeSize);
+
+    if (posX < 0 || posX > gridWidth - 1 ||
+        posZ < 0 || posZ > gridHeight - 1) {
+        return false; //outside of map region!
+    }
+    return true;

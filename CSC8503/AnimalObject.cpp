@@ -6,6 +6,7 @@ AnimalObject::AnimalObject(NavigationGrid* navGrid, Vector3 startingPos, GameWor
     this->typeID = 10;
     this->stateMachine = new StateMachine();
     this->currentPos = startingPos;
+    this->startingPos = startingPos;
     this->grid = navGrid;
     this->gridSize = grid->GetGridWidth() * grid->GetGridHeight();
     this->world = world;
@@ -113,6 +114,13 @@ void AnimalObject::Update(float dt) {
 
     currentPos = GetTransform().GetPosition();
 
+    bool shouldRespawn = !grid->CheckInGrid(currentPos) || (!threatDetected && PosNotChanging());
+    if (shouldRespawn) {
+        std::cout << "animal respawning\n";
+        GetTransform().SetPosition(startingPos);
+        currentPos = startingPos;
+    }
+
     stateMachine->Update(dt);
 
     /*if (wanderPathNodes.empty()) return;
@@ -138,8 +146,6 @@ bool AnimalObject::Pathfind(Vector3 targetPos) { // pathfinds to target position
     NavigationPath outPath;
     bool foundPath = grid->FindPath(currentPos, targetPos, outPath);
 
-    // MAKE IT SO IF CANT FIND PATH / ANIMAL STUCK, THEN RESPAWN
-
     Vector3 pos;
     while (outPath.PopWaypoint(pos)) {  // converts path into Vector3 position nodes
         wanderPathNodes.push_back(pos);
@@ -162,4 +168,8 @@ void AnimalObject::StopDetectThreat(GameObject* object) {
     if (threat == object) {
         threatDetected = false;
     }
+}
+
+bool AnimalObject::PosNotChanging() {
+
 }

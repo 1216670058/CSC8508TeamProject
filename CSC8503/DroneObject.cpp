@@ -174,6 +174,13 @@ void DroneObject::Update(float dt) {
 
     currentPos = GetTransform().GetPosition();
 
+    bool shouldRespawn = !grid->CheckInGrid(currentPos) || (!threatDetected && PosNotChanging());
+    if (shouldRespawn) {
+        std::cout << "drone respawning\n";
+        GetTransform().SetPosition(startingPos);
+        currentPos = startingPos;
+    }
+
     if (currentState == Ongoing || currentState == Success) currentState = rootSelector->Execute(dt);   // root selector - do until succeed/ongoing
     if (currentState == Success) std::cout << "Behaviour Tree Error\n";    // error
 
