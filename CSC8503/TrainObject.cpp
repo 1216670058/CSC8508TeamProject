@@ -58,7 +58,10 @@ void TrainObject::Update(float dt) {
         position1 = target;
         direction = (target - this->GetTransform().GetPosition());
         direction = Vector3(direction.x, 0, direction.z);
-        force = TutorialGame::GetGame()->IsNetworked() ? 10.0f : 10.0f;
+        float trainSpeed = 0.07f;
+        force = TutorialGame::GetGame()->GetPlayTime()*trainSpeed + TutorialGame::GetGame()->GetLevel() * 1.0f+5.0f;
+        if (force >= 30.0f)force = 30.0f;
+        std::cout << force << std::endl;
         if (path[path.size() - 1] == finishPath) force = 800.0f;
         GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 
@@ -126,12 +129,18 @@ void TrainObject::InitPaths(int level) {
         finishPath = Vector3(290, 8.0f, 150);
         path.push_back(firstPath);
         break;
-        //case 4:
-        //    firstPath = Vector3(50, 4.5f, 50);
-        //    finalPath = Vector3(270, 4.5f, 150);
-        //    finishPath = Vector3(290, 4.5f, 150);
-        //    path.push_back(firstPath);
-        //    break;
+    case 4:
+        firstPath = Vector3(50, 8.0f, 20);
+        finalPath = Vector3(270, 8.0f, 180);
+        finishPath = Vector3(290, 8.0f, 180);
+        path.push_back(firstPath);
+        break;
+    case 5:
+        firstPath = Vector3(50, 8.0f, 10);
+        finalPath = Vector3(120, 8.0f, 100);
+        finishPath = Vector3(140, 8.0f, 100);
+        path.push_back(firstPath);
+        break;
     default:
         break;
     }

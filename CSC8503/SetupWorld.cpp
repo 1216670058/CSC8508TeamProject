@@ -355,12 +355,19 @@ void TutorialGame::AddSceneToWorld(int level)
         infile >> gridHeight;
         navGrid = new NavigationGrid("map3.txt"); 
         break;
-    //case 4:
-    //    infile = std::ifstream(Assets::DATADIR + "map4.txt");
-    //    infile >> nodeSize;
-    //    infile >> gridWidth;
-    //    infile >> gridHeight;
-    //    navGrid = new NavigationGrid("map4.txt");
+    case 4:
+        infile = std::ifstream(Assets::DATADIR + "map4.txt");
+        infile >> nodeSize;
+        infile >> gridWidth;
+        infile >> gridHeight;
+        navGrid = new NavigationGrid("map4.txt");
+        break;
+    case 5:
+        infile = std::ifstream(Assets::DATADIR + "map5.txt");
+        infile >> nodeSize;
+        infile >> gridWidth;
+        infile >> gridHeight;
+        navGrid = new NavigationGrid("map5.txt");
         break;
     default:
         break;

@@ -88,9 +88,10 @@ void TutorialGame::UpdateGame(float dt) {
 		TutorialGame::GetGame()->GetAudio()->PlayFailure();
 	}
 	if (success) {
-		if (level < 3) {
+		if (level < 5) {
 			renderer->GetUI()->SetSuccess(true);
 			level++;
+			playtime = 0.0f;
 			float d;
 			if (TutorialGame::GetGame()->IsNetworked())
 				d = TutorialGame::GetGame()->GetTrain()->GetFloat2();
@@ -386,25 +387,41 @@ void TutorialGame::InitPositions(bool networked, int level) {
         axePosition = Vector3(10, 8, 45);
         bucketPosition = Vector3(30, 6.5f, 45);
         robotPosition = Vector3(45, 4, 35);
-        moosePosition = Vector3(40, 5, 50);
+        moosePosition = Vector3(60, 5, 50);
         if (networked) {
             player2Position = Vector3(15, 4, 35);
             player3Position = Vector3(25, 4, 35);
             player4Position = Vector3(35, 4, 35);
         }
         break;
-        //case 4:
-        //    player1Position = Vector3(5, 4, 65);
-        //    trainPosition = Vector3(30, 4.5f, 50);
-        //    pickaxePosition = Vector3(20, 6.5f, 40);
-        //    axePosition = Vector3(10, 8, 40);
-        //    bucketPosition = Vector3(30, 6.5f, 40);
-        //    if (networked) {
-        //        player2Position = Vector3(15, 4, 65);
-        //        player3Position = Vector3(25, 4, 65);
-        //        player4Position = Vector3(35, 4, 65);
-        //    }
-        //    break;
+        case 4:
+            player1Position = Vector3(5, 4, 35);
+            trainPosition = Vector3(30, 8.0f, 20);
+            pickaxePosition = Vector3(20, 6.5f, 10);
+            axePosition = Vector3(10, 8, 10);
+            bucketPosition = Vector3(30, 6.5f, 10);
+			robotPosition = Vector3(45, 4, 35);
+			moosePosition = Vector3(60, 5, 50);
+            if (networked) {
+                player2Position = Vector3(15, 4, 35);
+                player3Position = Vector3(25, 4, 35);
+                player4Position = Vector3(35, 4, 35);
+            }
+            break;
+		case 5:
+			player1Position = Vector3(5, 4, 25);
+			trainPosition = Vector3(30, 8.0f, 10);
+			pickaxePosition = Vector3(20, 6.5f, 0);
+			axePosition = Vector3(10, 8, 0);
+			bucketPosition = Vector3(30, 6.5f, 0);
+			robotPosition = Vector3(45, 4, 20);
+			moosePosition = Vector3(60, 5, 20);
+			if (networked) {
+				player2Position = Vector3(15, 4, 25);
+				player3Position = Vector3(25, 4, 25);
+				player4Position = Vector3(35, 4, 25);
+			}
+			break;
     default:
         break;
     }
