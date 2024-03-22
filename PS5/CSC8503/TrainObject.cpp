@@ -79,11 +79,14 @@ void TrainObject::Update(float dt) {
             physicsObject->SetLinearVelocity(Vector3());
             path.erase(path.begin());
         }
+
+        if (showInfo) {
+            Debug::Print("Train Position: " + std::to_string(transform.GetPosition().x) + " " + std::to_string(transform.GetPosition().y) + " " + std::to_string(transform.GetPosition().z), Vector2(0, 55), Vector4(1, 1, 1, 0.5f));
+            Debug::Print("Current Path: " + std::to_string(target.x) + " " + std::to_string(target.y) + " " + std::to_string(target.z), Vector2(0, 60), Vector4(1, 1, 1, 0.5f));
+        }
     }
     for (int i = 1; i <= trainIndex; i++)
         trainCarriage[i].Update(dt);
-    //std::cout << "Position: " << transform.GetPosition().x << " " << transform.GetPosition().y << " " << transform.GetPosition().z << std::endl;
-    //std::cout << "Target: " << target.x << " " << target.y << " " << target.z << std::endl;
     UpdateOrientation(direction);
 
     flag1 = onFire;
@@ -95,6 +98,8 @@ void TrainObject::Update(float dt) {
         else
             TutorialGame::GetGame()->SetFailure(true);
     }
+
+    showInfo = TutorialGame::GetGame()->ShowInfo();
 }
 
 void TrainObject::InitPaths(int level) {

@@ -24,6 +24,7 @@ namespace NCL::CSC8503 {
         PlayerObject(std::string name) {
             this->name = name;
             typeID = 1;
+            speed = 50;
         };
         ~PlayerObject() {};
 
@@ -32,22 +33,6 @@ namespace NCL::CSC8503 {
         void OnCollisionEnd(GameObject* otherObject) override {};
         
         void Update(float dt) override;
-        //
-        //void SetPlayerMeshes(vector<Mesh*> m) {
-        //    meshes = m;
-        //}
-        //void SetPlayerTextures(vector<vector<GLuint>> t) {
-        //    textures = t;
-        //}
-        //void SetPlayerBumpTextures(vector<vector<GLuint>> t) {
-        //    bumpTextures = t;
-        //}
-        //void SetPlayerAnimations(vector<AnimationObject*> a) {
-        //    animations = a;
-        //}
-        //void SetPlayerShaders(vector<ShaderGroup*> s) {
-        //    shaders = s;
-        //}
         
         int GetNum() const {
             return num;
@@ -97,12 +82,24 @@ namespace NCL::CSC8503 {
             return bridgePosition;
         }
 
+        bool RobotCut() const {
+            return robotCut;
+        }
+        void SetRobotCut(bool c) {
+            robotCut = c;
+        }
+        bool RobotDig() const {
+            return robotDig;
+        }
+        void SetRobotDig(bool d) {
+            robotDig = d;
+        }
+
         void SetController(const Controller& c) {
             activeController = &c;
         }
 
         bool CanPlaceRail();
-        void UpdateAnimation(float dt);
         void PlayerMovement(float dt);
 
     protected:
@@ -112,24 +109,27 @@ namespace NCL::CSC8503 {
         void UseWater();
         void BuildBridge();
         void LoadMaterial();
+        void UseRobot();
+        void RunFast(float dt);
         bool doing = false;
         bool cutting = false;
         bool digging = false;
         bool placing1 = false;
         bool placing2 = false;
         bool building = false;
+        bool running = false;
 
         int num;
         int index;
         Vector3 face;
         Vector3 bridgePosition;
         float speed = 50.0f;
-        //vector<Mesh*> meshes;
-        //vector<vector<GLuint>> textures;
-        //vector<vector<GLuint>> bumpTextures;
-        //vector<AnimationObject*> animations;
-        //vector<ShaderGroup*> shaders;
+        float coolDown = 2.0f;
+        float runPower = 0.0f;
         MaterialCarriage* carriage = nullptr;
+
+        bool robotCut = false;
+        bool robotDig = false;
 
         float currentFrame = 0;
         float frameTime = 0.0f;

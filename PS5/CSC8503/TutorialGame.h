@@ -20,6 +20,8 @@
 #include "PlankObject.h"
 #include "StoneObject.h"
 #include "RailObject.h"
+#include "AnimalObject.h"
+#include "RobotObject.h"
 
 namespace NCL {
 	namespace CSC8503 {
@@ -61,6 +63,18 @@ namespace NCL {
 			
 			BucketObject* GetBucket() const {
 				return bucket;
+			}
+
+			PlayerObject* GetPlayer() const {
+				return player;
+			}
+
+			RobotObject* GetRobot() const {
+				return robot;
+			}
+
+			bool ShowInfo() const {
+				return showInfo;
 			}
 
 			int GetLevel() const {
@@ -148,6 +162,9 @@ namespace NCL {
 			GameObject* AddDesertRockToWorld(const Vector3& position);
 			GameObject* AddWaterToWorld(const Vector3& position);
 			GameObject* AddStationToWorld(const Vector3& position);
+			AnimalObject* AddMooseToWorld(const Vector3& position);
+			DetectionSphereObject* AddDetectionSphereToWorld(const Vector3& position, float radius, AnimalObject* animal);
+			RobotObject* AddRobotToWorld(const Vector3& position);
 			GameObject* AddPadToWorld();
 
 			void AddSceneToWorld(int level);
@@ -185,6 +202,8 @@ namespace NCL {
 			MaterialCarriage* carriage1 = nullptr;
 			ProduceCarriage* carriage2 = nullptr;
 			WaterCarriage* carriage3 = nullptr;
+			AnimalObject* moose = nullptr;
+			RobotObject* robot = nullptr;
 			GameObject* pad = nullptr;
 
 			Mesh*	capsuleMesh = nullptr;
@@ -206,7 +225,8 @@ namespace NCL {
 			Mesh*   railMesh = nullptr;
 			Mesh*   railTurnMesh = nullptr;
 			Mesh*   stationMesh = nullptr;
-			Mesh*   droneMesh = nullptr;
+			Mesh*   mooseMesh = nullptr;
+			Mesh*   robotMesh = nullptr;
 
 			Shader*		basicShader = nullptr;
 
@@ -226,10 +246,8 @@ namespace NCL {
 			Texture* railTexture = nullptr;
 			Texture* railTurnTexture = nullptr;
 			Texture* stationTexture = nullptr;
-			Texture* droneTexture = nullptr;
 
 			MeshAnimation* enemyAnim = nullptr;
-			MeshAnimation* droneAnim = nullptr;
 
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
@@ -249,6 +267,8 @@ namespace NCL {
 			Vector3 pickaxePosition;
 			Vector3 bucketPosition;
 			Vector3 trainPosition;
+			Vector3 moosePosition;
+			Vector3 robotPosition;
 
 			std::string infoString = "";
 			float infoCounter = 0.0f;

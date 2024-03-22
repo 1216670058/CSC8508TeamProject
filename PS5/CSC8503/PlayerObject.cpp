@@ -20,6 +20,10 @@ void PlayerObject::Update(float dt) {
         UseWater();
         BuildBridge();
         LoadMaterial();
+        UseRobot();
+        RunFast(dt);
+
+        showInfo = TutorialGame::GetGame()->ShowInfo();
 
         //Vector3 position = transform.GetPosition();
         //Vector3 p = FindGrid(Vector3(position.x, 2, position.z));
@@ -33,17 +37,8 @@ void PlayerObject::OnCollisionBegin(GameObject* otherObject) {
 
 }
 
-void PlayerObject::UpdateAnimation(float dt) {
-    float LeftX = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftX");
-    float LeftY = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftY");
-
-    if (LeftX != 0 && LeftY != 0)
-        renderObject->UpdateAnimation(dt);
-}
-
 void PlayerObject::PlayerMovement(float dt) {
     Quaternion* qq = new Quaternion();
-    speed = 50;
     //float yaw = Maths::RadiansToDegrees(atan2(-np.x, -np.z));
     //start->GetTransform().SetOrientation(qq->EulerAnglesToQuaternion(0, yaw, 0));
     float LeftX = TutorialGame::GetGame()->GetController()->GetNamedAxis("LeftX");
@@ -230,4 +225,49 @@ bool PlayerObject::CanPlaceRail() {
         isPath = true;
 
     return canConnect && isPath && notRail;
+}
+
+void PlayerObject::UseRobot() {
+    if (TutorialGame::GetGame()->GetController()->GetNamedButton("Square")) {
+        if (slot == 2 || slot == 3) {
+            Ray r = Ray(transform.GetPosition(), face);
+            RayCollision closestCollision;
+            if (TutorialGame::GetGame()->GetWorld().Raycast(r, closestCollision, true, this)) {
+                GameObject* closest = (GameObject*)closestCollision.node;
+                if (closest->GetTypeID() == 11 && closestCollision.rayDistance < 5.0f) {
+                    TutorialGame::GetGame()->GetRobot()->SetPlayer(this);
+                    if (slot == 2) 
+                        robotDig = true;
+                    if (slot == 3) 
+                        robotCut = true;
+                }
+            } 
+        }
+    }
+}
+
+void PlayerObject::RunFast(float dt) {
+    if (coolDown < 2.0f) {
+        coolDown += dt;
+    }
+    if (TutorialGame::GetGame()->GetController()->GetNamedButton("R2") && coolDown >= 2.0f) {
+        running = true;
+        coolDown = 0.0f;
+        runPower = 0.11f;
+    }
+    if (running) {
+        if (runPower <= 0) {
+            running = false;
+            speed = 50;
+            physicsObject->SetRealDamping(0.962);
+        }
+        if (runPower > 0 && runPower < 0.05f) {
+            speed = 50;
+            physicsObject->SetRealDamping(0.825);
+        }
+        else if(runPower > 0 && runPower >= 0.05f){
+            speed = 2000;
+        }
+        runPower -= dt;
+    }
 }

@@ -64,7 +64,7 @@ void TutorialGame::InitMeshes() {
     //smurfMesh = renderer->LoadMesh("Smurf.msh");
     mooseMesh = renderer->LoadMesh("Moose.msh");
     robotMesh = renderer->LoadMesh("Robot.msh");
-    //droneMesh = renderer->LoadMesh("Drone.msh");
+    droneMesh = renderer->LoadMesh("Drone.msh");
 
     trainMesh = renderer->LoadOBJMesh("Train.obj");
 }
@@ -212,18 +212,30 @@ void TutorialGame::InitMaterials() {
         robotBumpTextures.emplace_back(texID2);
     }
     
-    //droneMaterial = new MeshMaterial("Drone.mat");
-    //for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
-    //    const MeshMaterialEntry* matEntry =
-    //        droneMaterial->GetMaterialForLayer(i);
-    //
-    //    const string* filename = nullptr;
-    //    matEntry->GetEntry("Diffuse", &filename);
-    //    string path = Assets::TEXTUREDIR + *filename;
-    //    GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
-    //        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
-    //    droneTextures.emplace_back(texID);
-    //}
+    droneMaterial = new MeshMaterial("Drone.mat");
+    for (int i = 0; i < droneMesh->GetSubMeshCount(); ++i) {
+        const MeshMaterialEntry* matEntry =
+            droneMaterial->GetMaterialForLayer(i);
+    
+        const string* filename = nullptr;
+        matEntry->GetEntry("Diffuse", &filename);
+        string path = Assets::TEXTUREDIR + *filename;
+        GLuint texID = SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+        droneTextures.emplace_back(texID);
+    }
+
+    //textures.push_back(maleTextures);
+    //textures.push_back(femaleTextures);
+    //textures.push_back(assassinTextures);
+    //textures.push_back(girlTextures);
+    //textures.push_back(smurfTextures);
+
+    //bumpTextures.push_back(maleBumpTextures);
+    //bumpTextures.push_back(femaleBumpTextures);
+    //bumpTextures.push_back(assassinBumpTextures);
+    //bumpTextures.push_back(girlBumpTextures);
+    //bumpTextures.push_back(smurfBumpTextures);
 }
 
 void TutorialGame::InitAnimations() {
@@ -262,13 +274,20 @@ void TutorialGame::InitAnimations() {
     robotAnimation->SetAnim4(new MeshAnimation("Robot.anm"));
     robotAnimation->SetAnim5(new MeshAnimation("Robot.anm"));
     robotAnimation->SetActiveAnim(robotAnimation->GetAnim1());
-    //droneAnimation = new AnimationObject();
-    //droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim3(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
-    //droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
+
+    droneAnimation = new AnimationObject();
+    droneAnimation->SetAnim1(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim2(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim3(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim4(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetAnim5(new MeshAnimation("Drone.anm"));
+    droneAnimation->SetActiveAnim(droneAnimation->GetAnim1());
+
+    //animations.push_back(maleAnimation);
+    //animations.push_back(femaleAnimation);
+    //animations.push_back(assassinAnimation);
+    //animations.push_back(girlAnimation);
+    //animations.push_back(smurfAnimation);
 }
 
 void TutorialGame::InitShaders() {
@@ -1045,7 +1064,7 @@ DetectionSphereObject* TutorialGame::AddDetectionSphereToWorld(const Vector3& po
 
 AnimalObject* TutorialGame::AddMooseToWorld(const Vector3& position) {
     AnimalObject* moose = new AnimalObject(navGrid, position, world);
-    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     moose->SetBoundingVolume((CollisionVolume*)volume);
 
     moose->GetTransform()
@@ -1097,8 +1116,8 @@ RobotObject* TutorialGame::AddRobotToWorld(const Vector3& position) {
 }
 
 DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
-    DroneObject* drone = new DroneObject();
-    AABBVolume* volume = new AABBVolume(Vector3(1.5, 1.5, 1.5));
+    DroneObject* drone = new DroneObject(navGrid, position, world);
+    AABBVolume* volume = new AABBVolume(Vector3(3, 3, 3));
     drone->SetBoundingVolume((CollisionVolume*)volume);
 
     drone->GetTransform()
@@ -1115,6 +1134,8 @@ DroneObject* TutorialGame::AddDroneToWorld(const Vector3& position) {
     drone->GetPhysicsObject()->InitCubeInertia();
 
     world->AddGameObject(drone);
+
+    GameObject* detSphere = AddDetectionSphereToWorld(position, 80.0f, drone);
 
     return drone;
 }
