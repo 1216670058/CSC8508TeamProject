@@ -33,6 +33,7 @@ void PlankObject::OnCollisionBegin(GameObject* otherObject) {
 }
 
 void PlankObject::Update(float dt) {
+	flag2 = putDown;
 	if (!placed && !putDown && !inCarriage) {
 		CreateBridge();
 	}

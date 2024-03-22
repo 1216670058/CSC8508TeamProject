@@ -426,7 +426,7 @@ void TutorialGame::InitPositions(bool networked, int level) {
 			robotPosition = Vector3(45, 4, 20);
 			moosePosition = Vector3(60, 5, 20);
             dronePosition = Vector3(185, 5, 50);
-		    drone2Position = Vector3(185, 5, 70);
+		    drone2Position = Vector3(0, 0, 0);
 			if (networked) {
 				player2Position = Vector3(15, 4, 25);
 				player3Position = Vector3(25, 4, 25);

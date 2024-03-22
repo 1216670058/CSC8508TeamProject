@@ -191,7 +191,7 @@ void DroneObject::DetectThreat(GameObject* object) {
 			threat = object;
 		}
 	}
-	else if (((object->GetTypeID() == 5 && !object->GetFlag1()) || object->GetTypeID() == 6) && !itemDetected) { // plank, stone
+	else if (((object->GetTypeID() == 5 && !object->GetFlag1() && object->GetFlag2()) || (object->GetTypeID() == 6 && object->GetFlag2())) && !itemDetected) { // plank, stone
 
 		if (item != object) {
 			bool pf = Pathfind(object->GetTransform().GetPosition()); // if item not already pathfound to
