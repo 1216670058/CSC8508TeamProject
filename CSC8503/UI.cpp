@@ -980,7 +980,7 @@ void UI::DrawClientPlayingUI(float dt)
 				ImGui::Image((void*)(intptr_t)axe.img_texture, imageSize);
 				break;
 			case 4:
-				if (!TutorialGame::GetGame()->GetBucket()->GetWater())
+				if (!TutorialGame::GetGame()->GetBucket()->GetFlag1())
 					ImGui::Image((void*)(intptr_t)bucket_empty.img_texture, imageSize);
 				else
 					ImGui::Image((void*)(intptr_t)bucket_fill.img_texture, imageSize);

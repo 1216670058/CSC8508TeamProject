@@ -118,7 +118,7 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
                 object.SetSlot(lastFullState.slot);
                 object.SetSlotNum(lastFullState.slotNum);
             }
-            else if (object.GetTypeID() == 4 || object.GetTypeID() == 22) {
+            else if (object.GetTypeID() == 22) {
                 object.GetRenderObject()->SetColour(lastFullState.colour);
             }
             else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
@@ -137,6 +137,10 @@ bool NetworkObject::ReadFullPacket(FullPacket& p) {
             }
             else if (object.GetTypeID() == 10 || object.GetTypeID() == 11) {
                 object.GetRenderObject()->GetAnimationObject()->SetCurrentFrame(lastFullState.currentFrame);
+            }
+            else if (object.GetTypeID() == 4) {
+                object.GetRenderObject()->SetColour(lastFullState.colour);
+                object.SetFlag1(lastFullState.flag1);
             }
         }
         else {
@@ -220,7 +224,7 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
             fp->fullState.slot = object.GetSlot();
             fp->fullState.slotNum = object.GetSlotNum();
         }
-        else if (object.GetTypeID() == 4 || object.GetTypeID() == 22) {
+        else if (object.GetTypeID() == 22) {
             fp->fullState.colour = object.GetRenderObject()->GetColour();
         }
         else if (object.GetTypeID() == 5 || object.GetTypeID() == 6 || object.GetTypeID() == 7) {
@@ -239,6 +243,10 @@ bool NetworkObject::WriteFullPacket(GamePacket** p) {
         }
         else if (object.GetTypeID() == 10 || object.GetTypeID() == 11) {
             fp->fullState.currentFrame = object.GetRenderObject()->GetAnimationObject()->GetCurrentFrame();
+        }
+        else if (object.GetTypeID() == 4) {
+            fp->fullState.colour = object.GetRenderObject()->GetColour();
+            fp->fullState.flag1 = object.GetFlag1();
         }
 
         *p = fp;
