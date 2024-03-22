@@ -406,7 +406,7 @@ void TutorialGame::AddSceneToWorld(int level)
             if (type == '2')AddTreeToWorld(n.position + Vector3(0, 5.5f, 0));
             if (type == '3')AddRockToWorld(n.position + Vector3(0, -1.5f, 0));
             if (type == '4')AddWaterToWorld(n.position + Vector3(0, -1.5f, 0));
-            if (type == '5')AddStationToWorld(n.position + Vector3(0, -2.5f, 6));
+            if (type == '5')station = AddStationToWorld(n.position + Vector3(0, -2.5f, 6));
             if (type == '6') {
                 RailObject* rail = new RailObject(world);
                 rail = AddRailToWorld(n.position + Vector3(0, -2.5f, 0), false, 0, true);
