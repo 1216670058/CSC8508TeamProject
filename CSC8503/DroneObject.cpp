@@ -1,4 +1,5 @@
 #include "DroneObject.h"
+#include "TutorialGame.h"
 
 using namespace NCL::CSC8503;
 
@@ -90,10 +91,8 @@ DroneObject::DroneObject(NavigationGrid* navGrid, Vector3 startingPos, GameWorld
         // fail after stealing (to continue root selector), success for error
         //itemDetected = false;
         //std::cout << "item stolen\n";
-        item->SetActive(false);
-        item->GetTransform().SetPosition(Vector3(0, -20, 0));
-        item->GetPhysicsObject()->SetInverseMass(0);
-
+        
+        TutorialGame::GetGame()->GetWorld()->RemoveGameObject(item);
 
         return Failure;
         }

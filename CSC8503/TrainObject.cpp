@@ -61,7 +61,7 @@ void TrainObject::Update(float dt) {
         float trainSpeed = 0.07f;
         force = TutorialGame::GetGame()->GetPlayTime()*trainSpeed + TutorialGame::GetGame()->GetLevel() * 1.0f+5.0f;
         if (force >= 30.0f)force = 30.0f;
-        std::cout << force << std::endl;
+        //std::cout << force << std::endl;
         if (path[path.size() - 1] == finishPath) force = 800.0f;
         GetPhysicsObject()->SetLinearVelocity(direction.Normalised() * force * dt);
 

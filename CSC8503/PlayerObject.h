@@ -136,6 +136,7 @@ namespace NCL::CSC8503 {
 
         float coolDown = 2.0f;
         float runPower = 0.0f;
+        float range = 10.0f;
 
         bool robotCut = false;
         bool robotDig = false;

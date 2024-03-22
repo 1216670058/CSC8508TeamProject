@@ -258,7 +258,7 @@ void PlayerObject::CutTree() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < 5.0f) {
+            if (closest->GetTypeID() == 10086 && closestCollision.rayDistance < range) {
                 TutorialGame::GetGame()->GetAudio()->PlayWood();
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 closest->SetFlag1(true);
@@ -287,7 +287,7 @@ void PlayerObject::CutTree() {
             }
         }
         else {
-            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
+            if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 1, 1));
         }
     }
     else
@@ -311,7 +311,7 @@ void PlayerObject::DigRock() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 10010 && closestCollision.rayDistance < 5.0f) {
+            if (closest->GetTypeID() == 10010 && closestCollision.rayDistance < range) {
                 TutorialGame::GetGame()->GetAudio()->PlayIron();
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 closest->SetFlag1(true);
@@ -362,7 +362,7 @@ void PlayerObject::ScoopWater() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
+            if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < range) {
                 TutorialGame::GetGame()->GetAudio()->PlayWaterin();
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
@@ -395,7 +395,7 @@ void PlayerObject::UseWater() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < 5.0f && TutorialGame::GetGame()->GetBucket()->GetWater() == true) {
+            if (closest->GetTypeID() == 23 && closestCollision.rayDistance < range && TutorialGame::GetGame()->GetBucket()->GetWater() == true) {
                 TutorialGame::GetGame()->GetAudio()->PlayWaterout();
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 WaterCarriage* waterCarriage = (WaterCarriage*)closest;
@@ -429,7 +429,7 @@ void PlayerObject::BuildBridge() {
         RayCollision closestCollision;
         if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
             GameObject* closest = (GameObject*)closestCollision.node;
-            if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < 5.0f) {
+            if (closest->GetTypeID() == 10000 && closestCollision.rayDistance < range) {
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 bridgePosition = closest->GetTransform().GetPosition();
                 if (TutorialGame::GetGame()->IsNetworked()) {
@@ -466,7 +466,7 @@ void PlayerObject::LoadMaterial() {
             RayCollision closestCollision;
             if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
                 GameObject* closest = (GameObject*)closestCollision.node;
-                if (closest->GetTypeID() == 21 && closestCollision.rayDistance < 5.0f) {
+                if (closest->GetTypeID() == 21 && closestCollision.rayDistance < range) {
                     TutorialGame::GetGame()->GetAudio()->PlayGet();
                     if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                     carriage = (MaterialCarriage*)closest;
@@ -513,7 +513,7 @@ void PlayerObject::UseRobot() {
             RayCollision closestCollision;
             if (TutorialGame::GetGame()->GetWorld()->Raycast(r, closestCollision, true, this)) {
                 GameObject* closest = (GameObject*)closestCollision.node;
-                if (closest->GetTypeID() == 11 && closestCollision.rayDistance < 5.0f) {
+                if (closest->GetTypeID() == 11 && closestCollision.rayDistance < range) {
                     TutorialGame::GetGame()->GetAudio()->PlayGet();
                     if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                     TutorialGame::GetGame()->GetRobot()->SetPlayer(this);
