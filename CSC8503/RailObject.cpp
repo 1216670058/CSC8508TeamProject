@@ -105,7 +105,7 @@ void RailObject::Update(float dt) {
     }
 }
 
-//1 左,2 右,3 前,4 后
+//1 脳贸,2 脫脪,3 脟掳,4 潞贸
 
 //int GetDirection(Vector3 point1, Vector3 point2)
 //{
@@ -172,7 +172,7 @@ void RailObject::PlaceRail() {
                     }
                 }
             }
-            if ((train->GetLastPath() - Vector3(0, 4.5f, 0) - position).Length() < 14)
+            if ((train->GetLastPath() - Vector3(0, 3.5f, 0) - position).Length() < 14)
                 isPath = true;
             if (n.type == 0 && canConnect && isPath) {
                 placed = true;
