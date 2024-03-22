@@ -334,7 +334,7 @@ void NetworkedGame::UpdateAsServer(float dt) {
         TutorialGame::GetGame()->GetAudio()->PlayFailure();
     }
     if (success) {
-        if (level < 3) {
+        if (level < 5) {
             if (!winFlag) {
                 BoolPacket winPacket;
                 winPacket.flag = true;
@@ -458,7 +458,7 @@ void NetworkedGame::UpdateAsClient(float dt) {
         TutorialGame::GetGame()->GetAudio()->PlayFailure();
     }
     if (success) {
-        if (level < 3) {
+        if (level < 5) {
             renderer->GetUI()->SetSuccess(true);
             level++;
             InitGameWorld(true, level);
