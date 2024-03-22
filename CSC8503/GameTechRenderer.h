@@ -120,11 +120,10 @@ namespace NCL {
             Matrix4     shadowMatrix;
 
             Light* sunLight;
-            Light* redstoneLight1;
-            Light* redstoneLight2;
-            Light* redstoneLight3;
+            Light* stationLight;
             Light* playerLight;
             Light* trainLight;
+            Light* robotLight;
 
             OGLShader* pointLightShader;
             Mesh* sphere;

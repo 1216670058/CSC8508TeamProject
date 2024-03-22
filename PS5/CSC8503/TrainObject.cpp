@@ -132,8 +132,8 @@ void TrainObject::InitPaths(int level) {
 		break;
 	case 5:
 		firstPath = Vector3(50, -2.5f, 10);
-		finalPath = Vector3(120, -2.5f, 100);
-		finishPath = Vector3(140, -2.5f, 100);
+		finalPath = Vector3(270, -2.5f, 160);
+		finishPath = Vector3(290, -2.5f, 160);
 		path.push_back(firstPath);
 		break;
 	default:

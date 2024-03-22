@@ -84,6 +84,10 @@ namespace NCL {
                 return robot;
             }
 
+			GameObject* GetStation() const {
+				return station;
+			}
+
             NavigationGrid* GetNavigationGrid()const {
                 return navGrid;
             }
@@ -379,6 +383,8 @@ namespace NCL {
 			DroneObject* drone = nullptr;
 			DroneObject* drone2 = nullptr;
 			RobotObject* robot = nullptr;
+
+			GameObject* station = nullptr;
 
 			Vector3 player1Position;
 			Vector3 player2Position;
