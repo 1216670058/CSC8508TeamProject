@@ -367,6 +367,7 @@ void PlayerObject::ScoopWater() {
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 1, 0, 1));
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(0, 0, 1, 1));
                 TutorialGame::GetGame()->GetBucket()->SetWater(true);
+                TutorialGame::GetGame()->GetBucket()->SetFlag1(true);
             }
             else {
                 if (TutorialGame::GetGame()->ShowDebug())Debug::DrawLine(transform.GetPosition(), transform.GetPosition() + face * 5.0f, Vector4(1, 0, 0, 1));
@@ -403,6 +404,7 @@ void PlayerObject::UseWater() {
                 TutorialGame::GetGame()->GetTrain()->SetOnFire(false);
                 TutorialGame::GetGame()->GetTrain()->SetFire(100.0f);
                 TutorialGame::GetGame()->GetBucket()->SetWater(false);
+                TutorialGame::GetGame()->GetBucket()->SetFlag1(false);
                 TutorialGame::GetGame()->GetBucket()->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
             }
             else {

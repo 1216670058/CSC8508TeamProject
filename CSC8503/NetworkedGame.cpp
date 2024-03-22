@@ -684,7 +684,7 @@ void NetworkedGame::SpawnPlayer() {
         if (spawnNum == 2) {
             player2->SetSpawned(true);
             player2->GetTransform().SetPosition(player2Position);
-            if (playerNum == -1) {
+            if (playerNum == -1 || playerNum == 2) {
                 playerNum = 2;
                 localPlayer = player2;
             }
@@ -693,7 +693,7 @@ void NetworkedGame::SpawnPlayer() {
         if (spawnNum == 3) {
             player3->SetSpawned(true);
             player3->GetTransform().SetPosition(player3Position);
-            if (playerNum == -1) {
+            if (playerNum == -1 || playerNum == 3) {
                 playerNum = 3;
                 localPlayer = player3;
             }
@@ -702,7 +702,7 @@ void NetworkedGame::SpawnPlayer() {
         if (spawnNum == 4) {
             player4->SetSpawned(true);
             player4->GetTransform().SetPosition(player4Position);
-            if (playerNum == -1) {
+            if (playerNum == -1 || playerNum == 4) {
                 playerNum = 4;
                 localPlayer = player4;
             }
