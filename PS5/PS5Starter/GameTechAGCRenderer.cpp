@@ -15,16 +15,16 @@ using namespace Rendering;
 using namespace CSC8503;
 using namespace PS5;
 
-const int SHADOW_SIZE		= 8192;
-const int FRAMES_IN_FLIGHT	= 2;
+const int SHADOW_SIZE = 8192;
+const int FRAMES_IN_FLIGHT = 2;
 
-const int BINDLESS_TEX_COUNT		= 128; 
-const int BINDLESS_BUFFER_COUNT		= 128;
+const int BINDLESS_TEX_COUNT = 128;
+const int BINDLESS_BUFFER_COUNT = 128;
 
-const size_t LINE_STRIDE = sizeof(Vector4) + sizeof(Vector4); 
+const size_t LINE_STRIDE = sizeof(Vector4) + sizeof(Vector4);
 const size_t TEXT_STRIDE = sizeof(Vector2) + sizeof(Vector2) + sizeof(Vector4);
 
-GameTechAGCRenderer::GameTechAGCRenderer(GameWorld& world) : AGCRenderer(*Window::GetWindow()), gameWorld(world)	{
+GameTechAGCRenderer::GameTechAGCRenderer(GameWorld& world) : AGCRenderer(*Window::GetWindow()), gameWorld(world) {
 	SceError error = SCE_OK;
 	bindlessTextures = (sce::Agc::Core::Texture*)allocator.Allocate(BINDLESS_TEX_COUNT * sizeof(sce::Agc::Core::Texture), sce::Agc::Alignment::kBuffer);
 	sce::Agc::Core::BufferSpec texSpec;
@@ -41,31 +41,31 @@ GameTechAGCRenderer::GameTechAGCRenderer(GameWorld& world) : AGCRenderer(*Window
 
 	skyboxTexture = (AGCTexture*)LoadTexture("Skybox.dds");
 
-	quadMesh = new AGCMesh(); 
+	quadMesh = new AGCMesh();
 	CreateQuad(quadMesh);
 	quadMesh->UploadToGPU(this);
 
 	skinningCompute = new AGCShader("Skinning_c.ags", allocator);
-	gammaCompute	= new AGCShader("Gamma_c.ags", allocator);
+	gammaCompute = new AGCShader("Gamma_c.ags", allocator);
 
 	defaultVertexShader = new AGCShader("Tech_vv.ags", allocator);
-	defaultPixelShader  = new AGCShader("Tech_p.ags"  , allocator);
+	defaultPixelShader = new AGCShader("Tech_p.ags", allocator);
 
-	shadowVertexShader	= new AGCShader("Shadow_vv.ags", allocator);
-	shadowPixelShader	= new AGCShader("Shadow_p.ags", allocator);
+	shadowVertexShader = new AGCShader("Shadow_vv.ags", allocator);
+	shadowPixelShader = new AGCShader("Shadow_p.ags", allocator);
 
-	skyboxVertexShader	= new AGCShader("Skybox_vv.ags", allocator);
-	skyboxPixelShader	= new AGCShader("Skybox_p.ags" , allocator);
+	skyboxVertexShader = new AGCShader("Skybox_vv.ags", allocator);
+	skyboxPixelShader = new AGCShader("Skybox_p.ags", allocator);
 
-	debugLineVertexShader	= new AGCShader("DebugLine_vv.ags", allocator);
-	debugLinePixelShader	= new AGCShader("DebugLine_p.ags" , allocator);
+	debugLineVertexShader = new AGCShader("DebugLine_vv.ags", allocator);
+	debugLinePixelShader = new AGCShader("DebugLine_p.ags", allocator);
 
-	debugTextVertexShader	= new AGCShader("DebugText_vv.ags", allocator);
-	debugTextPixelShader	= new AGCShader("DebugText_p.ags" , allocator);
+	debugTextVertexShader = new AGCShader("DebugText_vv.ags", allocator);
+	debugTextPixelShader = new AGCShader("DebugText_p.ags", allocator);
 
 	allFrames = new FrameData[FRAMES_IN_FLIGHT];
 	for (int i = 0; i < FRAMES_IN_FLIGHT; ++i) {
-		
+
 		{//We store scene object matrices etc in a big UBO
 			allFrames[i].data.dataStart = (char*)allocator.Allocate(1024 * 1024 * 64, sce::Agc::Alignment::kBuffer);
 			allFrames[i].data.data = allFrames[i].data.dataStart;
@@ -81,11 +81,11 @@ GameTechAGCRenderer::GameTechAGCRenderer(GameWorld& world) : AGCRenderer(*Window
 
 	Debug::CreateDebugFont("PressStart2P.fnt", *LoadTexture("PressStart2P.png"));
 
-	shadowTarget	= CreateDepthBufferTarget(SHADOW_SIZE, SHADOW_SIZE);
-	shadowMap		= CreateFrameBufferTextureSlot("Shadowmap");
+	shadowTarget = CreateDepthBufferTarget(SHADOW_SIZE, SHADOW_SIZE);
+	shadowMap = CreateFrameBufferTextureSlot("Shadowmap");
 
-	screenTarget	= CreateColourBufferTarget(Window::GetWindow()->GetScreenSize().x, Window::GetWindow()->GetScreenSize().y, true);
-	screenTex		= CreateFrameBufferTextureSlot("Screen");
+	screenTarget = CreateColourBufferTarget(Window::GetWindow()->GetScreenSize().x, Window::GetWindow()->GetScreenSize().y, true);
+	screenTex = CreateFrameBufferTextureSlot("Screen");
 
 	error = sce::Agc::Core::translate(screenTex->GetAGCPointer(), &screenTarget, sce::Agc::Core::RenderTargetComponent::kData);
 
@@ -97,7 +97,7 @@ GameTechAGCRenderer::GameTechAGCRenderer(GameWorld& world) : AGCRenderer(*Window
 		.setMipFilterMode(sce::Agc::Core::Sampler::MipFilterMode::kPoint);
 }
 
-GameTechAGCRenderer::~GameTechAGCRenderer()	{
+GameTechAGCRenderer::~GameTechAGCRenderer() {
 
 }
 
@@ -135,7 +135,7 @@ Texture* GameTechAGCRenderer::LoadTexture(const std::string& name) {
 	AGCTexture* t = new AGCTexture(name, allocator);
 
 	t->SetAssetID(textureMap.size());
-	textureMap.insert({name, t});
+	textureMap.insert({ name, t });
 
 	bindlessTextures[t->GetAssetID()] = *t->GetAGCPointer();
 
@@ -151,9 +151,9 @@ void GameTechAGCRenderer::RenderFrame() {
 
 	currentFrame->data.Reset();
 
-	currentFrame->globalDataOffset	= 0;
+	currentFrame->globalDataOffset = 0;
 	currentFrame->objectStateOffset = sizeof(ShaderConstants);
-	currentFrame->debugLinesOffset	= currentFrame->objectStateOffset; //We'll be pushing that out later
+	currentFrame->debugLinesOffset = currentFrame->objectStateOffset; //We'll be pushing that out later
 
 	//Step 1: Write the frame's constant data to the buffer
 	WriteRenderPassConstants();
@@ -170,22 +170,22 @@ void GameTechAGCRenderer::RenderFrame() {
 	//Step 7: Draw the debug data to the main scene render target
 	UpdateDebugData();
 	RenderDebugLines();
-	RenderDebugText();	
+	RenderDebugText();
 	//Step 8: Draw the main scene render target to the screen with a compute shader
 	DisplayRenderPass(); //Puts our scene on screen, uses a compute
-	
+
 	currentFrameIndex = (currentFrameIndex + 1) % FRAMES_IN_FLIGHT;
 }
 
 /*
-This method builds a struct that 
+This method builds a struct that
 
 */
 void GameTechAGCRenderer::WriteRenderPassConstants() {
 	ShaderConstants frameData;
 	frameData.lightColour = Vector4(0.8f, 0.8f, 0.5f, 1.0f);
 	frameData.lightRadius = 1000.0f;
-	frameData.lightPosition = Vector3(-100.0f, 60.0f, -100.0f);
+	frameData.lightPosition = Vector3(100.0f, 60.0f, 100.0f);
 	frameData.cameraPos = gameWorld.GetMainCamera().GetPosition();
 
 	frameData.viewMatrix = gameWorld.GetMainCamera().BuildViewMatrix();
@@ -198,7 +198,7 @@ void GameTechAGCRenderer::WriteRenderPassConstants() {
 	frameData.inverseProjMatrix = Matrix::Inverse(frameData.projMatrix);
 
 	frameData.orthoMatrix = Matrix::Orthographic(0.0f, 100.0f, 100.0f, 0.0f, -1.0f, 1.0f);
-	frameData.shadowMatrix = Matrix::Perspective(50.0f, 500.0f, 1.0f, 45.0f) *
+	frameData.shadowMatrix = Matrix::Perspective(100.0f, 500.0f, 1.0f, 45.0f) *
 		Matrix::View(frameData.lightPosition, Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 	frameData.shadowID = shadowMap->GetAssetID();
@@ -221,8 +221,8 @@ void GameTechAGCRenderer::DrawObjects() {
 	for (int i = 0; i < activeObjects.size(); ++i) {
 		AGCMesh* objectMesh = (AGCMesh*)activeObjects[i]->GetMesh();
 
-	//The new mesh is different than previous meshes, flush out the old list
-		if( prevMesh != objectMesh) {
+		//The new mesh is different than previous meshes, flush out the old list
+		if (prevMesh != objectMesh) {
 			prevMesh->BindVertexBuffers(frameContext->m_bdr.getStage(sce::Agc::ShaderType::kGs));
 
 			uint32_t* objID = static_cast<uint32_t*>(frameContext->m_dcb.allocateTopDown(sizeof(uint32_t), sce::Agc::Alignment::kBuffer));
@@ -271,7 +271,7 @@ void GameTechAGCRenderer::GPUSkinningPass() {
 			!m->GetAGCBuffer(VertexAttribute::Normals, inputBuffers[1]) ||
 			!m->GetAGCBuffer(VertexAttribute::Tangents, inputBuffers[2]) ||
 			!m->GetAGCBuffer(VertexAttribute::JointWeights, inputBuffers[3]) ||
-			!m->GetAGCBuffer(VertexAttribute::JointIndices, inputBuffers[4])	) {
+			!m->GetAGCBuffer(VertexAttribute::JointIndices, inputBuffers[4])) {
 			continue;
 		}
 		char* offset = currentFrame->data.data;
@@ -284,7 +284,7 @@ void GameTechAGCRenderer::GPUSkinningPass() {
 		SceError error = sce::Agc::Core::initialize(&inputBuffers[5], &bufSpec);
 
 		inputBuffers[5].setFormat(sce::Agc::Core::Buffer::Format::k32_32_32_32Float);
-		 
+
 		frameContext->m_bdr.getStage(sce::Agc::ShaderType::kCs)
 			.setBuffers(0, 6, inputBuffers)
 			.setRwBuffers(0, 1, &bindlessBuffers[i.outputIndex]);
@@ -353,7 +353,7 @@ void GameTechAGCRenderer::ShadowmapPass() {
 
 	frameContext->m_sb.setState(depthControl);
 
-	frameContext->m_bdr.getStage(sce::Agc::ShaderType::kGs)	
+	frameContext->m_bdr.getStage(sce::Agc::ShaderType::kGs)
 		.setConstantBuffers(0, 1, &currentFrame->constantBuffer)
 		.setBuffers(0, 1, &currentFrame->objectBuffer)
 		.setBuffers(1, 1, &arrayBuffer);
@@ -469,8 +469,8 @@ void GameTechAGCRenderer::RenderDebugLines() {
 		.setDepthWrite(sce::Agc::CxDepthStencilControl::DepthWrite::kDisable);
 	frameContext->m_sb.setState(depthControl);
 
-	char* dataPos		= currentFrame->data.dataStart + currentFrame->debugLinesOffset;
-	size_t dataCount	= currentFrame->lineVertCount;
+	char* dataPos = currentFrame->data.dataStart + currentFrame->debugLinesOffset;
+	size_t dataCount = currentFrame->lineVertCount;
 
 	sce::Agc::Core::BufferSpec bufSpec;
 	bufSpec.initAsRegularBuffer(dataPos, LINE_STRIDE, dataCount);
@@ -501,7 +501,7 @@ void GameTechAGCRenderer::RenderDebugText() {
 		.setColorSourceMultiplier(sce::Agc::CxBlendControl::ColorSourceMultiplier::kSrcAlpha)
 		.setColorDestMultiplier(sce::Agc::CxBlendControl::ColorDestMultiplier::kOneMinusSrcAlpha)
 		.setColorBlendFunc(sce::Agc::CxBlendControl::ColorBlendFunc::kAdd);
-	
+
 	frameContext->m_sb.setState(blendControl);
 
 	char* dataPos = currentFrame->data.dataStart + currentFrame->debugTextOffset;
@@ -543,11 +543,11 @@ void GameTechAGCRenderer::UpdateObjectList() {
 					state.index[0] = 0; //Default Texture
 					state.index[1] = 0; //Skinning buffer
 
-					Texture*t = g->GetDefaultTexture();
-					if (t) {			
+					Texture* t = g->GetDefaultTexture();
+					if (t) {
 						state.index[0] = t->GetAssetID();
 					}
-					
+
 					AGCMesh* m = (AGCMesh*)g->GetMesh();
 					if (m && m->GetJointCount() > 0) {//It's a skeleton mesh, need to update transformed vertices buffer
 
@@ -555,9 +555,9 @@ void GameTechAGCRenderer::UpdateObjectList() {
 						if (!b) {
 							//We've not yet made a buffer to hold the verts of this mesh!
 							//We need a new mesh to store the positions, normals, and tangents of this mesh
-							size_t vertexSize	= sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector4);
-							size_t vertexCount	= m->GetVertexCount();
-							size_t bufferSize	= vertexCount * vertexSize;
+							size_t vertexSize = sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector4);
+							size_t vertexCount = m->GetVertexCount();
+							size_t bufferSize = vertexCount * vertexSize;
 
 							char* vertexData = (char*)allocator.Allocate((uint64_t)(bufferSize), sce::Agc::Alignment::kBuffer);
 
@@ -576,7 +576,7 @@ void GameTechAGCRenderer::UpdateObjectList() {
 						}
 						state.index[1] = b->GetAssetID();
 
-						frameJobs.push_back({g, b->GetAssetID()});
+						frameJobs.push_back({ g, b->GetAssetID() });
 					}
 					currentFrame->data.WriteData<ObjectState>(state);
 					currentFrame->debugLinesOffset += sizeof(ObjectState);

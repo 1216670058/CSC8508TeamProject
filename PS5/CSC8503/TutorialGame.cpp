@@ -16,18 +16,18 @@ using namespace CSC8503;
 
 TutorialGame* TutorialGame::instance = nullptr;
 
-TutorialGame::TutorialGame(GameWorld& inWorld, GameTechRendererInterface& inRenderer, PhysicsSystem& inPhysics) 
-	: world(inWorld), 
-	  renderer(inRenderer),
-	  physics(inPhysics)
+TutorialGame::TutorialGame(GameWorld& inWorld, GameTechRendererInterface& inRenderer, PhysicsSystem& inPhysics)
+	: world(inWorld),
+	renderer(inRenderer),
+	physics(inPhysics)
 {
 	level = 1;
-	forceMagnitude	= 10.0f;
-	useGravity		= false;
+	forceMagnitude = 10.0f;
+	useGravity = false;
 	inSelectionMode = false;
 
 	NCL::PS5::PS5Window* w = (NCL::PS5::PS5Window*)Window::GetWindow();
-	
+
 	world.GetMainCamera().SetController(*w->GetController());
 
 	controller = w->GetController();
@@ -41,7 +41,7 @@ TutorialGame::TutorialGame(GameWorld& inWorld, GameTechRendererInterface& inRend
 
 /*
 
-Each of the little demo scenarios used in the game uses the same 2 meshes, 
+Each of the little demo scenarios used in the game uses the same 2 meshes,
 and the same texture and shader. There's no need to ever load in anything else
 for this module, even in the coursework, but you can add it if you like!
 
@@ -54,7 +54,7 @@ void TutorialGame::InitialiseAssets() {
 	InitGameWorld();
 }
 
-TutorialGame::~TutorialGame()	{
+TutorialGame::~TutorialGame() {
 	delete cubeMesh;
 	delete sphereMesh;
 	delete charMesh;
@@ -111,12 +111,13 @@ void TutorialGame::UpdatePlaying(float dt) {
 		world.SetGameState(GameState::FAILURE);
 	}
 	else if (success) {
-		if (level < 3) {
+		if (level < 5) {
 			infoString = "You Win!!!";
 			infoCounter = 3.0f;
 			infoPos = Vector2(40, 80);
 			infoColour = Debug::CYAN;
 			level++;
+			playTime = 0.0f;
 			InitGameWorld(level);
 		}
 		else {
@@ -131,7 +132,7 @@ void TutorialGame::UpdatePlaying(float dt) {
 			ConvertTime(playTime, hours, minutes, seconds);
 			Debug::Print("Time: " + std::to_string(hours) + ":" + std::to_string(minutes) + ":" + std::to_string(seconds), Vector2(0, 20), Vector4(1, 1, 1, 0.5f));
 			Debug::Print("Distance: " + std::to_string((int)train->GetDistance()), Vector2(0, 25), Vector4(1, 1, 1, 0.5f));
-			Debug::Print("Speed: " + std::to_string(train->GetSpeed()), Vector2(0, 30), Vector4(1, 1, 1, 0.5f));
+			Debug::Print("Speed: " + std::to_string(train->GetForce()), Vector2(0, 30), Vector4(1, 1, 1, 0.5f));
 			Debug::Print("Position: " + std::to_string((int)player->GetTransform().GetPosition().x) + "," + std::to_string((int)player->GetTransform().GetPosition().y) + "," + std::to_string((int)player->GetTransform().GetPosition().z), Vector2(0, 35), Vector4(1, 1, 1, 0.5f));
 			UpdateSlotString();
 			Debug::Print("Inventory: " + slotString, Vector2(0, 40), Vector4(1, 1, 1, 0.5f));
@@ -251,6 +252,10 @@ void TutorialGame::UpdateKeys() {
 		showInfo = !showInfo;
 	}
 
+	if (TutorialGame::GetGame()->GetController()->ButtonPressed("L2")) {
+		success = true;
+	}
+
 	if (TutorialGame::GetGame()->GetController()->ButtonPressed("Triangle")) {
 		usePad = !usePad;
 	}
@@ -269,8 +274,8 @@ void TutorialGame::CameraUpdate() {
 }
 
 void TutorialGame::LockedObjectMovement() {
-	Matrix4 view		= world.GetMainCamera().BuildViewMatrix();
-	Matrix4 camWorld	= Matrix::Inverse(view);
+	Matrix4 view = world.GetMainCamera().BuildViewMatrix();
+	Matrix4 camWorld = Matrix::Inverse(view);
 
 	Vector3 rightAxis = Vector3(camWorld.GetColumn(0)); //view is inverse of model!
 
@@ -291,12 +296,12 @@ void TutorialGame::LockedObjectMovement() {
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyCodes::NEXT)) {
-		selectionObject->GetPhysicsObject()->AddForce(Vector3(0,-10,0));
+		selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
 	}
 }
 
 void TutorialGame::DebugObjectMovement() {
-//If we've selected an object, we can manipulate it with some key presses
+	//If we've selected an object, we can manipulate it with some key presses
 	if (inSelectionMode && selectionObject) {
 		//Twist the selected object!
 		if (Window::GetKeyboard()->KeyDown(KeyCodes::LEFT)) {
@@ -356,7 +361,7 @@ void TutorialGame::InitWorld(int level) {
 
 	InitPositions(level);
 	InitDefaultFloor();
-	InitGameExamples(level);	
+	InitGameExamples(level);
 }
 
 void TutorialGame::InitDefaultFloor() {
@@ -392,13 +397,24 @@ void TutorialGame::InitPositions(int level) {
 		robotPosition = Vector3(45, 7, 35);
 		moosePosition = Vector3(40, 5, 50);
 		break;
-		//case 4:
-		//    player1Position = Vector3(5, 4, 65);
-		//    trainPosition = Vector3(30, 4.5f, 50);
-		//    pickaxePosition = Vector3(20, 6.5f, 40);
-		//    axePosition = Vector3(10, 8, 40);
-		//    bucketPosition = Vector3(30, 6.5f, 40);
-		//    break;
+	case 4:
+		playerPosition = Vector3(5, 4, 35);
+		trainPosition = Vector3(30, -2.5f, 20);
+		pickaxePosition = Vector3(20, 6.5f, 10);
+		axePosition = Vector3(10, 8, 10);
+		bucketPosition = Vector3(30, 6.5f, 10);
+		robotPosition = Vector3(45, 4, 35);
+		moosePosition = Vector3(60, 5, 50);
+		break;
+	case 5:
+		playerPosition = Vector3(5, 4, 25);
+		trainPosition = Vector3(30, -2.5f, 10);
+		pickaxePosition = Vector3(20, 6.5f, 0);
+		axePosition = Vector3(10, 8, 0);
+		bucketPosition = Vector3(30, 6.5f, 0);
+		robotPosition = Vector3(45, 4, 20);
+		moosePosition = Vector3(60, 5, 20);
+		break;
 	default:
 		break;
 	}
@@ -424,9 +440,9 @@ void TutorialGame::InitGameExamples(int level) {
 
 /*
 Every frame, this code will let you perform a raycast, to see if there's an object
-underneath the cursor, and if so 'select it' into a pointer, so that it can be 
+underneath the cursor, and if so 'select it' into a pointer, so that it can be
 manipulated later. Pressing Q will let you toggle between this behaviour and instead
-letting you move the camera around. 
+letting you move the camera around.
 
 */
 bool TutorialGame::SelectObject() {

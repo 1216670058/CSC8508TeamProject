@@ -25,7 +25,7 @@
 
 namespace NCL {
 	namespace CSC8503 {
-		class TutorialGame		{
+		class TutorialGame {
 		public:
 			TutorialGame(GameWorld& gameWorld, GameTechRendererInterface& renderer, PhysicsSystem& physics);
 			~TutorialGame();
@@ -48,7 +48,7 @@ namespace NCL {
 				return navGrid;
 			}
 
-			TrainObject* GetTrain() const{
+			TrainObject* GetTrain() const {
 				return train;
 			}
 			MaterialCarriage* GetMaterialCarriage() const {
@@ -60,7 +60,7 @@ namespace NCL {
 			WaterCarriage* GetWaterCarriage() const {
 				return carriage3;
 			}
-			
+
 			BucketObject* GetBucket() const {
 				return bucket;
 			}
@@ -94,6 +94,10 @@ namespace NCL {
 			}
 			void SetSuccess(bool s) {
 				success = s;
+			}
+
+			float GetPlayTime() {
+				return playTime;
 			}
 
 			bool IsExit() const {
@@ -132,7 +136,7 @@ namespace NCL {
 			/*
 			These are some of the world/object creation functions I created when testing the functionality
 			in the module. Feel free to mess around with them to see different objects being created in different
-			test scenarios (constraints, collision types, and so on). 
+			test scenarios (constraints, collision types, and so on).
 			*/
 			bool SelectObject();
 			void MoveSelectedObject();
@@ -169,10 +173,10 @@ namespace NCL {
 
 			void AddSceneToWorld(int level);
 
-			GameWorld&					world;
-			GameTechRendererInterface&	renderer;
-			PhysicsSystem&				physics;
-			NavigationGrid*             navGrid;
+			GameWorld& world;
+			GameTechRendererInterface& renderer;
+			PhysicsSystem& physics;
+			NavigationGrid* navGrid;
 
 			Controller* controller;
 
@@ -193,7 +197,7 @@ namespace NCL {
 			bool showInfo = false;
 
 			GameObject* selectionObject = nullptr;
-			
+
 			AxeObject* axe = nullptr;
 			PickaxeObject* pickaxe = nullptr;
 			BucketObject* bucket = nullptr;
@@ -206,29 +210,29 @@ namespace NCL {
 			RobotObject* robot = nullptr;
 			GameObject* pad = nullptr;
 
-			Mesh*	capsuleMesh = nullptr;
-			Mesh*	cubeMesh	= nullptr;
-			Mesh*	sphereMesh	= nullptr;
-			Mesh*   charMesh = nullptr;
-			Mesh*   enemyMesh = nullptr;
-			Mesh*   bonusMesh = nullptr;
-			Mesh*   axeMesh = nullptr;
-			Mesh*   pickaxeMesh = nullptr;
-			Mesh*   bucketMesh = nullptr;
-			Mesh*   trainMesh = nullptr;
-			Mesh*   carriageMesh = nullptr;
-			Mesh*   treeMesh = nullptr;
-			Mesh*   rockMesh = nullptr;
-			Mesh*   desertRockMesh = nullptr;
-			Mesh*   plankMesh = nullptr;
-			Mesh*   stoneMesh = nullptr;
-			Mesh*   railMesh = nullptr;
-			Mesh*   railTurnMesh = nullptr;
-			Mesh*   stationMesh = nullptr;
-			Mesh*   mooseMesh = nullptr;
-			Mesh*   robotMesh = nullptr;
+			Mesh* capsuleMesh = nullptr;
+			Mesh* cubeMesh = nullptr;
+			Mesh* sphereMesh = nullptr;
+			Mesh* charMesh = nullptr;
+			Mesh* enemyMesh = nullptr;
+			Mesh* bonusMesh = nullptr;
+			Mesh* axeMesh = nullptr;
+			Mesh* pickaxeMesh = nullptr;
+			Mesh* bucketMesh = nullptr;
+			Mesh* trainMesh = nullptr;
+			Mesh* carriageMesh = nullptr;
+			Mesh* treeMesh = nullptr;
+			Mesh* rockMesh = nullptr;
+			Mesh* desertRockMesh = nullptr;
+			Mesh* plankMesh = nullptr;
+			Mesh* stoneMesh = nullptr;
+			Mesh* railMesh = nullptr;
+			Mesh* railTurnMesh = nullptr;
+			Mesh* stationMesh = nullptr;
+			Mesh* mooseMesh = nullptr;
+			Mesh* robotMesh = nullptr;
 
-			Shader*		basicShader = nullptr;
+			Shader* basicShader = nullptr;
 
 			Texture* basicTex = nullptr;
 			Texture* floorTex = nullptr;
@@ -250,8 +254,8 @@ namespace NCL {
 			MeshAnimation* enemyAnim = nullptr;
 
 			//Coursework Additional functionality	
-			GameObject* lockedObject	= nullptr;
-			Vector3 lockedOffset		= Vector3(0, 14, 20);
+			GameObject* lockedObject = nullptr;
+			Vector3 lockedOffset = Vector3(0, 14, 20);
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;
 			}
