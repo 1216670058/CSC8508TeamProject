@@ -28,6 +28,7 @@ void StoneObject::OnCollisionBegin(GameObject* otherObject) {
 }
 
 void StoneObject::Update(float dt) {
+    flag2 = putDown;
     if (putDown) {
         physicsObject->SetAngularVelocity(Vector3(0, 5, 0));
     }

@@ -48,7 +48,7 @@ void main(void)
     vec3 reflectDir = reflect(-viewDir, normalize (IN.normal));
     vec4 reflectTex = texture(cubeTex, reflectDir);
     
-    albedo = reflectTex + (albedo * 0.25f); 
+    albedo = reflectTex*0.25f + (albedo * 0.25f); 
 	
     fragColour [0] = albedo ;
     fragColour [1] = vec4 (bumpNormal.xyz * 0.5 + 0.5 ,1.0);

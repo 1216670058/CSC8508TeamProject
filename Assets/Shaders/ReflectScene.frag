@@ -60,7 +60,7 @@ void main(void)
 	vec3 reflectDir = reflect(-viewDir, normalize (IN.normal));
     vec4 reflectTex = texture(cubeTex, reflectDir);
 	
-	albedo = reflectTex + (albedo * 0.25f); 
+	albedo = reflectTex*0.25f + (albedo * 0.25f); 
 	
 	albedo.rgb = pow(albedo.rgb, vec3(2.2));
 	
