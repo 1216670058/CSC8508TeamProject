@@ -130,6 +130,9 @@ bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObje
         if (i == ignoreThis) {
             continue;
         }
+        if (i->GetTypeID() == 131) {
+            continue;
+        }
         RayCollision thisCollision;
         if (CollisionDetection::RayIntersection(r, *i, thisCollision)) {
             if (thisCollision.rayDistance < maxLength) {

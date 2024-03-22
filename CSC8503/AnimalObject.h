@@ -53,6 +53,7 @@ namespace NCL::CSC8503 {
 	public:
 		DetectionSphereObject(AnimalObject* animal) {
 			this->animal = animal;
+			typeID = 131;
 		}
 
 		~DetectionSphereObject() {};
